@@ -370,7 +370,7 @@ export default function GeoTaggingTool() {
 
           <div className="mb-6">
              <MetadataPanel 
-               metadata={files[0] ? { ...files[0].metadata, ...globalMetadataEdits } as ImageMetadata : undefined} 
+               metadata={files[0] ? { ...files[0].metadata, ...globalMetadataEdits, gps: coords || files[0].metadata?.gps } as ImageMetadata : undefined} 
                onMetadataChange={(changes) => {
                  setGlobalMetadataEdits(prev => ({ ...prev, ...changes }));
                }}
