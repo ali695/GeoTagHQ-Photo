@@ -1,7 +1,12 @@
-export const runtime = 'edge';
-
 import { NextRequest, NextResponse } from "next/server";
+import { ExifTool } from "exiftool-vendored";
+import sharp from "sharp";
+import { writeFile, unlink } from "fs/promises";
+import path from "path";
+import os from "os";
 import { z } from "zod";
+
+const exiftool = new ExifTool();
 
 const SEOSchema = z.object({
   title: z.string().max(120).optional(),
@@ -21,22 +26,6 @@ const SEOSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
-    let ExifTool, sharp, writeFile, unlink, path, os, exiftool;
-    try {
-      const getReq = eval('require');
-      ExifTool = getReq('exiftool-vendored').ExifTool;
-      sharp = getReq('sharp');
-      const fsProm = getReq('fs/promises');
-      writeFile = fsProm.writeFile;
-      unlink = fsProm.unlink;
-      path = getReq('path');
-      os = getReq('os');
-      exiftool = new ExifTool();
-    } catch (importErr) {
-      console.warn("Node APIs missing in Edge runtime. Processing fallback reached.", importErr);
-      return NextResponse.json({ error: "Server processing requires Node.js but Edge runtime is active. Please use a Node.js compatible host." }, { status: 501 });
-    }
-
     const formData = await req.formData();
     const file = formData.get("file") as File;
     const lat = formData.get("lat")?.toString();
@@ -137,6 +126,7 @@ export async function POST(req: NextRequest) {
     if (seoData.description) {
        tags['XMP-dc:Description'] = seoData.description;
        tags['Caption-Abstract'] = seoData.description; // IPTC
+       // EXIF:ImageDescription is used for title usually, but let's just write to EXIF if needed or just use XMP/IPTC
     }
     if (seoData.keywords) {
        const kwArray = seoData.keywords.split(',').map(s => s.trim()).filter(Boolean);
@@ -188,7 +178,7 @@ export async function POST(req: NextRequest) {
        }
     }
 
-    const fs = eval('require')("fs");
+    const fs = await import("fs");
     const processedBuffer = fs.readFileSync(currentInFilePath);
 
     try {
