@@ -215,9 +215,14 @@ export default function GeoTaggingTool() {
     setFiles([...updatedFiles]);
     setIsProcessing(false);
 
-    if (successCount > 0 && failCount === 0) setSuccessInfo(`Successfully processed ${successCount} photo${successCount > 1 ? 's' : ''}.`);
-    else if (successCount > 0 && failCount > 0) setSuccessInfo(`Successfully processed ${successCount} photo${successCount > 1 ? 's' : ''}, but ${failCount} failed.`);
-    else if (successCount === 0 && failCount > 0) setErrorInfo(`Failed to process ${failCount} photo${failCount > 1 ? 's' : ''}.`);
+    if (successCount > 0 && failCount === 0) {
+      setSuccessInfo(`Successfully processed ${successCount} photo${successCount > 1 ? 's' : ''}.`);
+    } else if (successCount > 0 && failCount > 0) {
+      setSuccessInfo(`Successfully processed ${successCount} photo${successCount > 1 ? 's' : ''}, but ${failCount} failed.`);
+    } else if (successCount === 0 && failCount > 0) {
+      const firstError = updatedFiles.find(f => f.status === 'error')?.error;
+      setErrorInfo(`Failed to process ${failCount} photo${failCount > 1 ? 's' : ''}. ${firstError ? 'Reason: ' + firstError : ''}`);
+    }
   };
 
   const downloadAll = async () => {

@@ -27,13 +27,27 @@ const SEOSchema = z.object({
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
-    const file = formData.get("file") as File;
+    
+    console.log("=== API /geotag-image DEBUG ===");
+    console.log("Method:", req.method);
+    console.log("Content-Type:", req.headers.get("content-type"));
+    console.log("FormData keys:", Array.from(formData.keys()));
+
+    const file = formData.get("file") as File | null;
+    console.log("File exists:", !!file);
+    if (file) {
+      console.log("File name:", file.name, "size:", file.size, "type:", file.type);
+    }
+    
     const lat = formData.get("lat")?.toString();
     const lng = formData.get("lng")?.toString();
+    console.log("lat:", lat, "lng:", lng);
+    
     const make = formData.get("cameraMake")?.toString();
     const model = formData.get("cameraModel")?.toString();
     const dateTaken = formData.get("dateTaken")?.toString();
     const forceJpgConversion = formData.get("bestCompatibility") === "true";
+    console.log("bestCompatibility:", forceJpgConversion);
 
     // Extract SEO fields
     const seoDataRaw = {
@@ -51,16 +65,29 @@ export async function POST(req: NextRequest) {
       countryCode: formData.get("countryCode")?.toString() || undefined,
       websiteUrl: formData.get("websiteUrl")?.toString() || undefined,
     };
+    console.log("seoDataRaw:", seoDataRaw);
 
     let seoData;
     try {
       seoData = SEOSchema.parse(seoDataRaw);
     } catch (e: any) {
-      return NextResponse.json({ error: "Validation Error", details: e.errors }, { status: 400 });
+      console.log("SEOSchema Validation Error:", e.errors);
+      return NextResponse.json({ error: "Validation Error on SEO fields", details: e.errors }, { status: 400 });
     }
 
-    if (!file || (!lat && !lng && Object.keys(seoData).every(k => !seoData[k as keyof typeof seoData]))) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    if (!file) {
+      return NextResponse.json({ error: "Missing uploaded file. Received formData keys: " + Array.from(formData.keys()).join(', ') }, { status: 400 });
+    }
+    
+    if (lat && !lng) {
+      return NextResponse.json({ error: "Longitude missing but Latitude was provided." }, { status: 400 });
+    }
+    if (!lat && lng) {
+      return NextResponse.json({ error: "Latitude missing but Longitude was provided." }, { status: 400 });
+    }
+
+    if (!lat && !lng && Object.keys(seoData).every(k => !seoData[k as keyof typeof seoData]) && !make && !model && !dateTaken) {
+      return NextResponse.json({ error: "No metadata provided to write. Require at least one of: lat/lng, SEO fields, or Camera fields." }, { status: 400 });
     }
 
     let latitude: number | undefined;
