@@ -1,12 +1,33 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ExifTool } from "exiftool-vendored";
 import sharp from "sharp";
-import { writeFile, unlink } from "fs/promises";
-import path from "path";
-import os from "os";
 import { z } from "zod";
+import piexif from "piexifjs";
 
-const exiftool = new ExifTool();
+// Utility for GPS
+function degToDmsRational(degrees: number): [[number, number], [number, number], [number, number]] {
+  const d = Math.abs(degrees);
+  const deg = Math.floor(d);
+  const min = Math.floor((d - deg) * 60);
+  const sec = (d - deg - min / 60) * 3600;
+  return [
+    [deg, 1],
+    [min, 1],
+    [Math.round(sec * 10000), 10000],
+  ];
+}
+
+// Convert string to UCS-2 byte array for Windows XP tags
+function toUCS2ByteArray(str: string): number[] {
+  const arr = [];
+  for (let i = 0; i < str.length; i++) {
+    const code = str.charCodeAt(i);
+    arr.push(code & 0xff);
+    arr.push(code >> 8);
+  }
+  arr.push(0);
+  arr.push(0);
+  return arr;
+}
 
 const SEOSchema = z.object({
   title: z.string().max(120).optional(),
@@ -28,26 +49,13 @@ export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
     
-    console.log("=== API /geotag-image DEBUG ===");
-    console.log("Method:", req.method);
-    console.log("Content-Type:", req.headers.get("content-type"));
-    console.log("FormData keys:", Array.from(formData.keys()));
-
     const file = formData.get("file") as File | null;
-    console.log("File exists:", !!file);
-    if (file) {
-      console.log("File name:", file.name, "size:", file.size, "type:", file.type);
-    }
-    
     const lat = formData.get("lat")?.toString();
     const lng = formData.get("lng")?.toString();
-    console.log("lat:", lat, "lng:", lng);
-    
     const make = formData.get("cameraMake")?.toString();
     const model = formData.get("cameraModel")?.toString();
     const dateTaken = formData.get("dateTaken")?.toString();
     const forceJpgConversion = formData.get("bestCompatibility") === "true";
-    console.log("bestCompatibility:", forceJpgConversion);
 
     // Extract SEO fields
     const seoDataRaw = {
@@ -65,13 +73,11 @@ export async function POST(req: NextRequest) {
       countryCode: formData.get("countryCode")?.toString() || undefined,
       websiteUrl: formData.get("websiteUrl")?.toString() || undefined,
     };
-    console.log("seoDataRaw:", seoDataRaw);
 
     let seoData;
     try {
       seoData = SEOSchema.parse(seoDataRaw);
     } catch (e: any) {
-      console.log("SEOSchema Validation Error:", e.errors);
       return NextResponse.json({ error: "Validation Error on SEO fields", details: e.errors }, { status: 400 });
     }
 
@@ -98,131 +104,100 @@ export async function POST(req: NextRequest) {
       longitude = parseFloat(lng);
       
       if (isNaN(latitude) || latitude < -90 || latitude > 90) {
-        return NextResponse.json({ error: "Invalid latitude" }, { status: 400 });
+         return NextResponse.json({ error: "Invalid latitude" }, { status: 400 });
       }
       if (isNaN(longitude) || longitude < -180 || longitude > 180) {
-        return NextResponse.json({ error: "Invalid longitude" }, { status: 400 });
+         return NextResponse.json({ error: "Invalid longitude" }, { status: 400 });
       }
     }
 
-    const buffer = await file.arrayBuffer();
+    const buffer = Buffer.from(await file.arrayBuffer());
     const originalExt = file.name.split('.').pop()?.toLowerCase() || '';
-    const tempDir = os.tmpdir();
-    const originalFileId = Math.random().toString(36).substring(7);
-    const inFilePath = path.join(tempDir, `in_${originalFileId}.${originalExt}`);
-    await writeFile(inFilePath, Buffer.from(buffer));
-
+    
+    let processedBuffer: Buffer = buffer;
     let processingFormat = originalExt;
-    let currentInFilePath = inFilePath;
     let convertedToJpg = false;
 
-    if (forceJpgConversion && !['jpg', 'jpeg'].includes(originalExt)) {
-       const outJpgPath = path.join(tempDir, `converted_${originalFileId}.jpg`);
-       await sharp(currentInFilePath).jpeg({ quality: 95 }).toFile(outJpgPath);
+    // Convert to JPG if requested, OR if we need to write EXIF (piexifjs only supports JPG natively here)
+    if (forceJpgConversion || !['jpg', 'jpeg'].includes(originalExt)) {
+       processedBuffer = Buffer.from(await sharp(buffer).jpeg({ quality: 95 }).toBuffer());
        processingFormat = 'jpg';
-       currentInFilePath = outJpgPath;
        convertedToJpg = true;
     }
 
-    const tags: any = {};
+    // Now processedBuffer is definitely a JPEG. We can modify its EXIF via piexifjs!
+    const jpegDataStr = "data:image/jpeg;base64," + processedBuffer.toString('base64');
+    let exifObject: any = { '0th': {}, 'Exif': {}, 'GPS': {}, 'Interop': {}, '1st': {}, 'thumbnail': null };
     
-    if (latitude !== undefined && longitude !== undefined) {
-      tags.GPSLatitude = latitude;
-      tags.GPSLatitudeRef = latitude >= 0 ? "N" : "S";
-      tags.GPSLongitude = longitude;
-      tags.GPSLongitudeRef = longitude >= 0 ? "E" : "W";
+    try {
+      const loadedExif = piexif.load(jpegDataStr);
+      exifObject = { ...exifObject, ...loadedExif };
+    } catch (e) {
+      // no existing exif, ignore
     }
 
-    if (make) tags.Make = make;
-    if (model) tags.Model = model;
+    // Set GPS
+    if (latitude !== undefined && longitude !== undefined) {
+      exifObject.GPS = {
+        ...exifObject.GPS,
+        [piexif.GPSIFD.GPSLatitudeRef]: latitude >= 0 ? "N" : "S",
+        [piexif.GPSIFD.GPSLatitude]: degToDmsRational(latitude),
+        [piexif.GPSIFD.GPSLongitudeRef]: longitude >= 0 ? "E" : "W",
+        [piexif.GPSIFD.GPSLongitude]: degToDmsRational(longitude),
+        [piexif.GPSIFD.GPSVersionID]: [2, 2, 0, 0],
+      };
+    }
+
+    // Set Camera attributes
+    if (make) exifObject['0th'][piexif.ImageIFD.Make] = make;
+    if (model) exifObject['0th'][piexif.ImageIFD.Model] = model;
     if (dateTaken) {
        const d = new Date(dateTaken);
        if (!isNaN(d.getTime())) {
           const pad = (n: number) => n.toString().padStart(2, '0');
           const dateStr = `${d.getFullYear()}:${pad(d.getMonth()+1)}:${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-          tags.DateTimeOriginal = dateStr;
+          exifObject['Exif'][piexif.ExifIFD.DateTimeOriginal] = dateStr;
+          exifObject['Exif'][piexif.ExifIFD.DateTimeDigitized] = dateStr;
+          exifObject['0th'][piexif.ImageIFD.DateTime] = dateStr;
        }
     }
 
-    // Assign SEO tags based on requested mapping
+    // Set SEO Data into EXIF using available fields
     if (seoData.title) {
-       tags['XMP-dc:Title'] = seoData.title;
-       tags['ObjectName'] = seoData.title; // IPTC
-       tags['ImageDescription'] = seoData.title; // EXIF
+       exifObject['0th'][piexif.ImageIFD.ImageDescription] = seoData.title;
+       exifObject['0th'][40091] = toUCS2ByteArray(seoData.title); // XPTitle
     }
     if (seoData.description) {
-       tags['XMP-dc:Description'] = seoData.description;
-       tags['Caption-Abstract'] = seoData.description; // IPTC
-       // EXIF:ImageDescription is used for title usually, but let's just write to EXIF if needed or just use XMP/IPTC
+       exifObject['0th'][40092] = toUCS2ByteArray(seoData.description); // XPComment
     }
     if (seoData.keywords) {
-       const kwArray = seoData.keywords.split(',').map(s => s.trim()).filter(Boolean);
-       tags['XMP-dc:Subject'] = kwArray;
-       tags['Keywords'] = kwArray; // IPTC
+       exifObject['0th'][40094] = toUCS2ByteArray(seoData.keywords); // XPKeywords
     }
     if (seoData.businessName) {
-       tags['Artist'] = seoData.businessName; // EXIF
-       tags['XMP-dc:Creator'] = seoData.businessName;
-       tags['By-line'] = seoData.businessName; // IPTC
-    }
-    if (seoData.city) {
-       tags['City'] = seoData.city; // IPTC
-       tags['XMP-photoshop:City'] = seoData.city;
-    }
-    if (seoData.district) {
-       tags['Sub-location'] = seoData.district; // IPTC
-    }
-    if (seoData.country) {
-       tags['Country-PrimaryLocationName'] = seoData.country; // IPTC
-       tags['XMP-photoshop:Country'] = seoData.country;
-    }
-    if (seoData.stateRegion) {
-       tags['Province-State'] = seoData.stateRegion; // IPTC
-       tags['XMP-photoshop:State'] = seoData.stateRegion;
-    }
-    if (seoData.countryCode) {
-       tags['Country-PrimaryLocationCode'] = seoData.countryCode; // IPTC
-    }
-    if (seoData.websiteUrl) {
-       tags['XMP-dc:Source'] = seoData.websiteUrl;
-       tags['Source'] = seoData.websiteUrl; // IPTC
+       exifObject['0th'][piexif.ImageIFD.Artist] = seoData.businessName;
+       exifObject['0th'][40093] = toUCS2ByteArray(seoData.businessName); // XPAuthor
     }
 
+    // Since we only use piexifjs, we cannot easily set XMP/IPTC without binary manipulation.
+    // However, EXIF tags (ImageDescription, XPTitle, XPKeywords) cover main Local SEO signals.
+
+    let finalBuffer = processedBuffer;
     try {
-      await exiftool.write(currentInFilePath, tags, ["-overwrite_original"]);
-    } catch (etError: any) {
-       console.error("ExifTool write failed:", etError);
-       if (!convertedToJpg && !['jpg', 'jpeg'].includes(originalExt)) {
-           console.log("Metadata write failed on original. Converting to JPG as fallback.");
-           const outJpgPath = path.join(tempDir, `conv_fallback_${originalFileId}.jpg`);
-           await sharp(currentInFilePath).jpeg({ quality: 95 }).toFile(outJpgPath);
-           currentInFilePath = outJpgPath;
-           processingFormat = 'jpg';
-           convertedToJpg = true;
-           await exiftool.write(currentInFilePath, tags, ["-overwrite_original"]);
-       } else {
-           throw etError;
-       }
-    }
-
-    const fs = await import("fs");
-    const processedBuffer = fs.readFileSync(currentInFilePath);
-
-    try {
-      if (fs.existsSync(inFilePath)) await unlink(inFilePath);
-      if (convertedToJpg && currentInFilePath !== inFilePath && fs.existsSync(currentInFilePath)) {
-          await unlink(currentInFilePath);
-      }
-    } catch (e) {
-      console.error("Failed to delete tmp file", e);
+      const exifBytes = piexif.dump(exifObject);
+      const newJpegData = piexif.insert(exifBytes, jpegDataStr);
+      const base64Data = newJpegData.split(',')[1];
+      finalBuffer = Buffer.from(base64Data, 'base64');
+    } catch (e: any) {
+      console.error("piexifjs error:", e);
+      return NextResponse.json({ error: "Failed to embed metadata: " + e.message }, { status: 500 });
     }
 
     const newFileName = file.name.replace(/\.[^/.]+$/, "") + "-geotagged." + processingFormat;
     
-    return new NextResponse(processedBuffer, {
+    return new NextResponse(finalBuffer as unknown as BodyInit, {
       status: 200,
       headers: {
-        "Content-Type": processingFormat === 'jpg' ? "image/jpeg" : file.type,
+        "Content-Type": "image/jpeg",
         "Content-Disposition": `attachment; filename="${newFileName}"`,
         "X-Converted-To-Jpg": convertedToJpg ? "true" : "false"
       }
