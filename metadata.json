@@ -1,0 +1,8 @@
+{
+  "name": "Free Geo Tagging Tool",
+  "description": "A browser-based tool to edit GPS EXIF metadata of images.",
+  "requestFramePermissions": [
+    "geolocation"
+  ],
+  "majorCapabilities": []
+}

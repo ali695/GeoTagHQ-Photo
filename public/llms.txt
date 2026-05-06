@@ -1,0 +1,24 @@
+# GeoTagHQ
+
+GeoTagHQ is a free online geo tagging tool for adding GPS coordinates and local SEO metadata to photos.
+
+## Main Tool
+/free-geo-tagging-tool
+
+## Features
+- Add GPS coordinates to photos
+- Select real map locations
+- Edit local SEO metadata
+- Add title, description, keywords, business name, service, city, district and country
+- Generate suggested alt text
+- Download optimized images
+
+## Important Note
+Geo tagging and metadata can support image organization and local SEO workflows, but they do not guarantee Google rankings.
+
+## Pages
+- Privacy Policy: /privacy-policy
+- Terms: /terms
+- Contact: /contact
+- Disclaimer: /disclaimer
+- About: /about
