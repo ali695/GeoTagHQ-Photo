@@ -23,6 +23,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: m.metaTitle,
     description: m.metaDesc,
+    keywords: m.metaKeywords ? m.metaKeywords.split(',').map((k: string) => k.trim()) : undefined,
     alternates: {
       canonical: `${siteUrl}/${p.lang}/free-geo-tagging-tool`,
       languages: {

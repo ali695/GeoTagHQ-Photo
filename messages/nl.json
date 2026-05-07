@@ -29,7 +29,8 @@
     "step2Title": "2. Selecteer de locatie",
     "step2Desc": "Zoek je bedrijf op de map of typ direct uw coördinaten in.",
     "step3Title": "3. Geotaggen en Downloaden",
-    "step3Desc": "We stoppen de locatie en SEO-data in het EXIF bestand."
+    "step3Desc": "We stoppen de locatie en SEO-data in het EXIF bestand.",
+    "metaKeywords": "Geo-tagging, EXIF-editor, GPS-locatie, Lokale SEO, Foto metadata, Locatie toevoegen aan foto, GeoTagHQ"
   },
   "faq": [
     {
