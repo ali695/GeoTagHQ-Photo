@@ -1,0 +1,48 @@
+{
+  "common": {
+    "home": "Home",
+    "contact": "Contact",
+    "privacy": "Privacy Policy",
+    "terms": "Algemene Voorwaarden",
+    "disclaimer": "Disclaimer",
+    "about": "Over Ons",
+    "howItWorks": "Hoe Het Werkt",
+    "localSeo": "Lokale SEO Gids"
+  },
+  "nav": {
+    "tool": "Geotag Tool",
+    "guide": "SEO Gids"
+  },
+  "tool": {
+    "metaTitle": "Gratis Foto Geotagging Tool voor Lokale SEO",
+    "metaDesc": "Voeg GPS-coördinaten toe aan bedrijfsfoto's en scoor in lokale SEO en Google Bedrijfsprofiel. Dé gratis tool voor dienstverleners en bedrijven.",
+    "h1": "Geotag Bedrijfsfoto's in één klik",
+    "subtitle": "Koppel razendsnel locatiegegevens aan afbeeldingen voor dienstverleners en winkels. Boost uw Google Bedrijfsprofiel (GMB) en lokale SEO met 100% privacy in uw eigen browser.",
+    "privacyTitle": "Uw bedrijfsfoto's blijven privé",
+    "privacyDesc": "Geen data-opslag op onze servers. We bewerken de locatie- en EXIF-data direct in uw internetbrowser. Ideaal voor privacygevoelige bedrijfsfoto's en panden.",
+    "seoTitle": "Bereik meer klanten via Lokale SEO",
+    "seoDesc": "Maakt u gebruik van een Google Bedrijfsprofiel? Lokale zoekopdrachten hechten veel waarde aan geo-signalen. Met een correcte geotag bij alle bedrijfsfoto's vergroot de kans om door lokale klanten ontdekt te worden.",
+    "howItWorks": "Locatie toevoegen aan afbeeldingen",
+    "howItWorksDesc": "Een locatie instellen hoeft niet lastig te zijn met deze simpele workflow.",
+    "step1Title": "1. Upload de foto",
+    "step1Desc": "Upload foto's van uw bedrijfspand, klussen of producten.",
+    "step2Title": "2. Selecteer de locatie",
+    "step2Desc": "Zoek je bedrijf op de map of typ direct uw coördinaten in.",
+    "step3Title": "3. Geotaggen en Downloaden",
+    "step3Desc": "We stoppen de locatie en SEO-data in het EXIF bestand."
+  },
+  "faq": [
+    {
+      "q": "Hoe helpt dit dienstverleners?",
+      "a": "Als dienstverlener werkt u in een specifieke regio. Met getagde foto's van werklocaties (zoals afgeronde bouwprojecten), ziet Google Bedrijfsprofiel precies waar uw werkgebied zich bevindt."
+    },
+    {
+      "q": "Slaat deze tool foto's op in een database?",
+      "a": "Nee. Omdat het script in uw eigen browser draait, blijft uw data uit onze bezitting en is de geotag veilig toegepast."
+    },
+    {
+      "q": "Werkt dit met alle foto of afbeeldingsformaten?",
+      "a": "We adviseren altijd JPEG/JPG-formaat voor betrouwbaar schrijven van GPS metadata in het EXIF-profiel."
+    }
+  ]
+}

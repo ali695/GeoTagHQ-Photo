@@ -11,15 +11,15 @@ interface CoordinateInputProps {
 export default function CoordinateInput({ coords, onChange }: CoordinateInputProps) {
   const [lat, setLat] = useState(coords?.lat.toString() || '');
   const [lng, setLng] = useState(coords?.lng.toString() || '');
+  const [prevCoords, setPrevCoords] = useState(coords);
 
-  useEffect(() => {
+  if (coords !== prevCoords) {
+    setPrevCoords(coords);
     if (coords) {
-      // eslint-disable-next-line
       setLat(coords.lat.toString());
-      // eslint-disable-next-line
       setLng(coords.lng.toString());
     }
-  }, [coords]);
+  }
 
   const [error, setError] = useState<string | null>(null);
 

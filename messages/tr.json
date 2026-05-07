@@ -1,0 +1,48 @@
+{
+  "common": {
+    "home": "Ana Sayfa",
+    "contact": "İletişim",
+    "privacy": "Gizlilik Politikası",
+    "terms": "Hizmet Şartları",
+    "disclaimer": "Yasal Uyarı",
+    "about": "Hakkımızda",
+    "howItWorks": "Nasıl Çalışır",
+    "localSeo": "Yerel SEO Rehberi"
+  },
+  "nav": {
+    "tool": "Harita & Etiketleme Aracı",
+    "guide": "SEO Rehberi"
+  },
+  "tool": {
+    "metaTitle": "Ücretsiz Fotoğraf Konum Etiketleme Aracı - Yerel SEO ve Koordinat Ekleme",
+    "metaDesc": "Google İşletme Profili işletme fotoğrafları için GPS ekleyin. Ücretsiz aracımız hizmet bölgeleri belirtmek ve yerel SEO artırmak için EXIF coğrafi konumu ayarlar.",
+    "h1": "Yerel SEO İçin İşletme Fotoğraflarını Konumlandırın",
+    "subtitle": "Hizmet bölgeleri içinde çekilmiş fotoğraflarınıza tek tıkla GPS koordinatları ekleyin. İşletmeniz için ücretsiz çalışır, güvenilir EXIF etiketleyici, tarayıcıda özel işlenir.",
+    "privacyTitle": "%100 Veri Güvenliği",
+    "privacyDesc": "Ofis veya hizmet noktalarındaki fotoğraflarınızı güvenle etiketleyin. Uygulama veritabanına ya da dış sunucuya görsel yollamaz; her şey internet tarayıcınızın içinde hızla çalışır.",
+    "seoTitle": "Google İşletme Profili ile Gücünüzü Katlayın",
+    "seoDesc": "Bölgesel aramalar ve yerel SEO'da konum işlenmiş görseller avantaj sağlar. Hizmet bölgenizdeki GPS verisini doğrudan işletme fotoğraflarınıza yerleştirerek harita listelemelerinizi destekleyin.",
+    "howItWorks": "Fotoğraflara Konum GPS Özelliği Ekleme",
+    "howItWorksDesc": "Karmakarışık yazılımlar yok, Google haritalarınız için EXIF düzeltmeleri sadece üç basit adım.",
+    "step1Title": "1. Fotoğrafı Seçin",
+    "step1Desc": "İşinizi, mağazanızı ya da teslimat noktalarını yansıtan JPG dosyalarınızı atın.",
+    "step2Title": "2. Harita Noktası",
+    "step2Desc": "Konum arayın, enlem ve boylam değerlerinizi ayarlayın.",
+    "step3Title": "3. İndirip Kullanın",
+    "step3Desc": "Nokta verileri fotoğrafın içine gömülür, tek tuşla hazır hâle gelir."
+  },
+  "faq": [
+    {
+      "q": "Bu EXIF etiketleme aracı ücretli mi?",
+      "a": "Tamamen ücretsiz çalışır. İşletme profillerinin optimizasyonu için ekstra yazılım ihtiyacı hissetmezsiniz."
+    },
+    {
+      "q": "Hizmet bölgesi işletmeleri buna neden ihtiyaç duyar?",
+      "a": "Müşterinin yanına giden lokal tesisatçı gibi işleriniz varsa, gittiğiniz ilçelerde çektiğiniz ve konumlanmış hizmet fotoğrafları oradaki sıralamanızı güçlendirir."
+    },
+    {
+      "q": "İşlediğim resimleri siz görüyor musunuz?",
+      "a": "Hayır. Güvenliğinizi düşünerek yalnızca Javascript ile yerel disk belleğiniz üzerinden değiştiriyoruz."
+    }
+  ]
+}

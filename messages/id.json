@@ -1,0 +1,48 @@
+{
+  "common": {
+    "home": "Beranda",
+    "contact": "Kontak",
+    "privacy": "Kebijakan Privasi",
+    "terms": "Syarat Layanan",
+    "disclaimer": "Sanggahan",
+    "about": "Tentang Kami",
+    "howItWorks": "Cara Kerja",
+    "localSeo": "Panduan SEO Lokal"
+  },
+  "nav": {
+    "tool": "Alat Geotag",
+    "guide": "Panduan SEO"
+  },
+  "tool": {
+    "metaTitle": "Alat Geotagging Foto Gratis - SEO Lokal & Profil Bisnis Google",
+    "metaDesc": "Tambahkan titik lokasi (koordinat GPS) pada foto bisnis dan usaha Anda. Alat geotag gratis untuk meningkatkan SEO lokal dan Google Maps Anda.",
+    "h1": "Tambahkan Lokasi Geotag pada Foto Anda",
+    "subtitle": "Sisipkan data lokasi GPS (latitude & longitude) ke data EXIF foto usaha Anda dalam hitungan detik. Optimalkan foto bisnis lokal Anda untuk visibilitas di Google Maps dan pencarian lokal. Gratis 100% dari browser Anda.",
+    "privacyTitle": "Keamanan Data Terjamin, 100% Privat",
+    "privacyDesc": "Privasi adalah prioritas kami. Semua foto dan data EXIF Anda diproses langsung dalam browser perangkat Anda tanpa harus diunggah ke server kami secara permanen.",
+    "seoTitle": "Tingkatkan SEO Lokal Profil Bisnis Anda",
+    "seoDesc": "Bagi sebuah bisnis lokal, Google Maps sangatlah krusial. Memasukkan geotagging koordinat GPS pada foto toko, proyek servis, atau aset properti dapat memvalidasi area kerja bisnis Anda di mata mesin pencari.",
+    "howItWorks": "Cara Cepat Geotag Foto, Tanpa Aplikasi Tambahan",
+    "howItWorksDesc": "Tidak butuh keahlian IT profesional. Tiga langkah mudah optimasi foto usaha.",
+    "step1Title": "1. Unggah Foto",
+    "step1Desc": "Upload foto dalam format JPG.",
+    "step2Title": "2. Pilih Lokasi di Peta",
+    "step2Desc": "Cari alamat lengkap toko Anda dan pin lokasinya di peta interaktif.",
+    "step3Title": "3. Simpan dan Unduh",
+    "step3Desc": "Data GPS akan disisipkan ke file foto, siap untuk dipakai berpromosi."
+  },
+  "faq": [
+    {
+      "q": "Mengapa bisnis lokal butuh geotag foto?",
+      "a": "Geotagging menambahkan bukti lokasi ke foto Anda. Mesin pencarian (seperti Google) menggunakannya untuk menempatkan bisnis Anda relevan dengan area klien di Google Maps."
+    },
+    {
+      "q": "Apakah file aslinya akan berubah secara visual?",
+      "a": "Tidak sama sekali. Alat file geotag ini hanya memodifikasi catatan lokasi tersembunyi (metadata EXIF) di belakang layar foto tanpa mengurangi kualitas visual gambar aslinya."
+    },
+    {
+      "q": "Apakah aplikasi ini berbayar?",
+      "a": "Aplikasi geotagging berbasis web ini sama sekali tidak memungut biaya, alat ini murni bermanfaat untuk pemulihan SEO lokal."
+    }
+  ]
+}

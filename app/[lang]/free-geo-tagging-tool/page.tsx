@@ -3,8 +3,19 @@ import { getMessages } from '@/lib/messages';
 import ToolPageContent from '@/components/tool/ToolPageContent';
 import { LANGUAGES } from '@/lib/constants';
 
-export async function generateMetadata(): Promise<Metadata> {
-  const messages = await getMessages('en');
+type Props = {
+  params: Promise<{ lang: string }>;
+}
+
+export function generateStaticParams() {
+  return LANGUAGES.filter(l => l.code !== 'en').map((lang) => ({
+    lang: lang.code,
+  }));
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const p = await params;
+  const messages = await getMessages(p.lang);
   const m = messages.tool || {};
   
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ais-pre-mmjuvtpvcoditfinnw5al2-488794791272.asia-southeast1.run.app';
@@ -13,7 +24,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: m.metaTitle,
     description: m.metaDesc,
     alternates: {
-      canonical: `${siteUrl}/free-geo-tagging-tool`,
+      canonical: `${siteUrl}/${p.lang}/free-geo-tagging-tool`,
       languages: {
         ...LANGUAGES.reduce((acc, l) => {
           acc[l.code] = l.code === 'en' ? `${siteUrl}/free-geo-tagging-tool` : `${siteUrl}/${l.code}/free-geo-tagging-tool`;
@@ -26,7 +37,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title: m.metaTitle,
       description: m.metaDesc,
       type: 'website',
-      url: '/free-geo-tagging-tool',
+      url: `/${p.lang}/free-geo-tagging-tool`,
       images: ['/og/free-geo-tagging-tool.svg'],
     },
     twitter: {
@@ -42,8 +53,9 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function FreeGeoTaggingToolPage() {
-  const messages = await getMessages('en');
+export default async function LocalizedToolPage({ params }: Props) {
+  const p = await params;
+  const messages = await getMessages(p.lang);
   const faqs = messages.faq || [];
   
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ais-pre-mmjuvtpvcoditfinnw5al2-488794791272.asia-southeast1.run.app';
@@ -54,7 +66,7 @@ export default async function FreeGeoTaggingToolPage() {
       {
         "@type": "WebApplication",
         "name": messages.tool?.h1 || "Free Geo Tagging Tool",
-        "url": `${siteUrl}/free-geo-tagging-tool`,
+        "url": `${siteUrl}/${p.lang}/free-geo-tagging-tool`,
         "applicationCategory": "MultimediaApplication",
         "operatingSystem": "Web",
         "offers": {
@@ -77,7 +89,7 @@ export default async function FreeGeoTaggingToolPage() {
             "@type": "ListItem",
             "position": 2,
             "name": messages.tool?.h1 || "Free Geo Tagging Tool",
-            "item": `${siteUrl}/free-geo-tagging-tool`
+            "item": `${siteUrl}/${p.lang}/free-geo-tagging-tool`
           }
         ]
       },
@@ -101,7 +113,7 @@ export default async function FreeGeoTaggingToolPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <ToolPageContent messages={messages} lang="en" />
+      <ToolPageContent messages={messages} lang={p.lang} />
     </>
   );
 }

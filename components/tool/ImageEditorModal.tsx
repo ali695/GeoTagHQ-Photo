@@ -37,18 +37,18 @@ export default function ImageEditorModal({ file, onClose, onSave }: ImageEditorM
   
   // Use preview or create one
   const [imgSrc, setImgSrc] = useState('');
+  const [prevFile, setPrevFile] = useState(file);
 
-  useEffect(() => {
+  if (file !== prevFile) {
+    setPrevFile(file);
     if (file) {
       if (file.editedBlob) {
-        // eslint-disable-next-line
         setImgSrc(URL.createObjectURL(file.editedBlob));
       } else {
-        // eslint-disable-next-line
         setImgSrc(file.preview || URL.createObjectURL(file.originalFile));
       }
     }
-  }, [file]);
+  }
 
   function onImageLoad(e: React.SyntheticEvent<HTMLImageElement>) {
     const { width, height } = e.currentTarget;

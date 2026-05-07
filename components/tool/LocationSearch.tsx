@@ -104,15 +104,15 @@ export default function LocationSearch({ onSelectCallback }: LocationSearchProps
             setQuery(e.target.value);
           }}
           placeholder="Search city, state, address, landmark..."
-          className="w-full pl-10 pr-10 py-2.5 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+          className="w-full ps-10 pe-10 py-2.5 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
           onFocus={() => {
             if (results.length > 0) setIsOpen(true);
           }}
         />
-        <Search className="absolute left-3 top-3 text-slate-400 w-4 h-4" />
+        <Search className="absolute start-3 top-3 text-slate-400 w-4 h-4" />
         
         {loading && (
-          <div className="absolute right-3 top-2.5">
+          <div className="absolute end-3 top-2.5">
             <Loader2 className="w-4 h-4 text-blue-500 animate-spin" />
           </div>
         )}
@@ -121,7 +121,7 @@ export default function LocationSearch({ onSelectCallback }: LocationSearchProps
           <button 
             type="button" 
             onClick={handleClear}
-            className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600"
+            className="absolute end-3 top-2.5 text-slate-400 hover:text-slate-600"
           >
             <X className="w-4 h-4" />
           </button>

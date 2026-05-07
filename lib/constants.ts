@@ -1,0 +1,15 @@
+export const LANGUAGES = [
+  { code: 'en', name: 'English' },
+  { code: 'de', name: 'Deutsch' },
+  { code: 'es', name: 'Español' },
+  { code: 'pt', name: 'Português' },
+  { code: 'fr', name: 'Français' },
+  { code: 'it', name: 'Italiano' },
+  { code: 'nl', name: 'Nederlands' },
+  { code: 'tr', name: 'Türkçe' },
+  { code: 'ar', name: 'العربية' },
+  { code: 'hi', name: 'हिन्दी' },
+  { code: 'id', name: 'Bahasa Indonesia' },
+  { code: 'ja', name: '日本語' },
+  { code: 'ko', name: '한국어' },
+];

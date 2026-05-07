@@ -1,0 +1,48 @@
+{
+  "common": {
+    "home": "Início",
+    "contact": "Contato",
+    "privacy": "Política de Privacidade",
+    "terms": "Termos de Serviço",
+    "disclaimer": "Aviso Legal",
+    "about": "Sobre",
+    "howItWorks": "Como Funciona",
+    "localSeo": "Guia de SEO Local"
+  },
+  "nav": {
+    "tool": "Ferramenta de Geotag",
+    "guide": "Guia SEO"
+  },
+  "tool": {
+    "metaTitle": "Geotagging de Fotos Online - SEO Local e Google Meu Negócio",
+    "metaDesc": "Insira coordenadas GPS nas fotos de empresas locais. Melhore o SEO local no Brasil e Portugal otimizando fotos para o Google Meu Negócio com nossa ferramenta grátis.",
+    "h1": "Geotagging para SEO Local",
+    "subtitle": "Adicione geolocalização às suas fotos em segundos. Impressione clientes e impulsione o seu Google Meu Negócio com metadatos precisos. Ferramenta gratuita e 100% privada.",
+    "privacyTitle": "Privacidade total para suas imagens profissionais",
+    "privacyDesc": "Sabemos que fotos com geolocalização podem ser sensíveis. Processe tudo diretamente no seu navegador, sem envio de arquivos para a nuvem. Seus dados estão seguros conosco, no Brasil ou em Portugal.",
+    "seoTitle": "Destaque suas empresas locais no Google",
+    "seoDesc": "Se você é uma agência no Brasil ou Portugal, usar fotos otimizadas no Google Meu Negócio é um diferencial. Injetamos dados EXIF nas imagens para comprovar a atividade da empresa na região.",
+    "howItWorks": "Como colocar GPS na foto rapidamente",
+    "howItWorksDesc": "O processo é desenhado para donos de negócios e profissionais de SEO local.",
+    "step1Title": "1. Escolher imagem",
+    "step1Desc": "Faça upload da foto do estabelecimento comercial do seu cliente.",
+    "step2Title": "2. Selecionar o local",
+    "step2Desc": "Busque pelo endereço no mapa ou informe as coordenadas desejadas.",
+    "step3Title": "3. Gravar e Baixar",
+    "step3Desc": "As etiquetas EXIF serão aplicadas e sua foto com geolocalização estará pronta."
+  },
+  "faq": [
+    {
+      "q": "O que é geotagging de fotos?",
+      "a": "É inserir métricas de latitude e longitude ocultas no ficheiro de imagem. Ajuda motores de busca a compreender onde a imagem foi captada."
+    },
+    {
+      "q": "Por que usar isso no Google Meu Negócio?",
+      "a": "Ao subir fotos com as coordenadas do negócio, você reforça a proximidade pro seu SEO local, aumentando suas chances de aparecer no rastreio por mapas."
+    },
+    {
+      "q": "Isto tem custos mentais ou de armazenamento?",
+      "a": "Não! Totalmente grátis e o processamento é fetio com Javascript no próprio dispositivo."
+    }
+  ]
+}

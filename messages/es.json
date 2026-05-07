@@ -1,0 +1,48 @@
+{
+  "common": {
+    "home": "Inicio",
+    "contact": "Contacto",
+    "privacy": "Política de Privacidad",
+    "terms": "Términos del Servicio",
+    "disclaimer": "Aviso Legal",
+    "about": "Acerca de",
+    "howItWorks": "Cómo Funciona",
+    "localSeo": "Guía SEO Local"
+  },
+  "nav": {
+    "tool": "Herramienta Geoetiquetado",
+    "guide": "Guía SEO"
+  },
+  "tool": {
+    "metaTitle": "Herramienta Gratuita de Geoetiquetado de Fotos - SEO Local y Google Maps",
+    "metaDesc": "Añade coordenadas GPS y metadatos a tus fotos online. Ideal para fotógrafos, inmobiliarias, turismo y negocios locales para mejorar el SEO local en Google Maps.",
+    "h1": "Geoetiquetado de Fotos para SEO Local",
+    "subtitle": "Inserta coordenadas GPS a tus imágenes en segundos. Impulsa la visibilidad de tus negocios locales e inmobiliarias en Google Maps. 100% gratis y procesado de forma privada en tu navegador.",
+    "privacyTitle": "Una herramienta segura para fotógrafos y empresas",
+    "privacyDesc": "No subimos tus imágenes a ningún servidor externo. Procesamos los metadatos EXIF directamente en tu navegador, protegiendo la privacidad de tus trabajos de turismo e inmobiliaria.",
+    "seoTitle": "Optimiza negocios locales para Google Maps",
+    "seoDesc": "Para el SEO local, las coordenadas GPS en las fotos son vitales. Etiqueta geográficamente imágenes antes de publicarlas en Google Business Profile para destacar frente a la competencia de tu ciudad.",
+    "howItWorks": "Cómo geolocalizar imágenes fácilmente",
+    "howItWorksDesc": "No necesitas descargar programas para modificar el EXIF de tus fotografías.",
+    "step1Title": "1. Sube tu foto",
+    "step1Desc": "Arrastra y suelta fotos de tu negocio, propiedades o rutas de turismo.",
+    "step2Title": "2. Ubicación en el mapa",
+    "step2Desc": "Escribe una dirección local o mueve el pin hasta encontrar la latitud y longitud exactas.",
+    "step3Title": "3. Descarga la imagen optimizada",
+    "step3Desc": "El GPS se incrusta permanentemente. Lista para subir a Google Maps."
+  },
+  "faq": [
+    {
+      "q": "¿Qué es el geoetiquetado y por qué ayuda al SEO local?",
+      "a": "Es el proceso de añadir ubicación (GPS) al código interno (EXIF) de una foto. A Google le encanta verificar que un negocio local sube fotos tomadas físicamente en su ciudad, mejorando la confianza y el SEO local."
+    },
+    {
+      "q": "¿Es útil para agencias inmobiliarias?",
+      "a": "Totalmente. Si vendes propiedades, añadir geolocalización a las fotos de cada casa ayuda a las plataformas de búsqueda y a Google a indexar esa propiedad en la ubicación correcta."
+    },
+    {
+      "q": "¿Mis fotos se guardan en la nube?",
+      "a": "De ninguna manera. El procesamiento es local en tu navegador."
+    }
+  ]
+}

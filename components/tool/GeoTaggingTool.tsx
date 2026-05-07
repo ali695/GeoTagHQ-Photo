@@ -139,6 +139,11 @@ export default function GeoTaggingTool() {
       return;
     }
 
+    if (!coords) {
+      setErrorInfo("Please pin a location on the map before applying the geotag.");
+      return;
+    }
+
     setIsProcessing(true);
     setErrorInfo(null);
     setSuccessInfo(null);
@@ -370,7 +375,7 @@ export default function GeoTaggingTool() {
 
           <div className="mb-6">
              <MetadataPanel 
-               metadata={files[0] ? { ...files[0].metadata, ...globalMetadataEdits, gps: coords || files[0].metadata?.gps } as ImageMetadata : undefined} 
+               metadata={(files[0] || Object.keys(globalMetadataEdits).length > 0 || coords) ? { ...(files[0]?.metadata || { format: 'image/jpeg', fileSize: 0 } as any), ...globalMetadataEdits, gps: coords || files[0]?.metadata?.gps } as ImageMetadata : undefined} 
                onMetadataChange={(changes) => {
                  setGlobalMetadataEdits(prev => ({ ...prev, ...changes }));
                }}

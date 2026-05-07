@@ -1,0 +1,48 @@
+{
+  "common": {
+    "home": "Home",
+    "contact": "Contact",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "disclaimer": "Disclaimer",
+    "about": "About",
+    "howItWorks": "How It Works",
+    "localSeo": "Local SEO Guide"
+  },
+  "nav": {
+    "tool": "Geo Tagging Tool",
+    "guide": "SEO Guide"
+  },
+  "tool": {
+    "metaTitle": "Free Geo Tagging Tool - Add GPS to Photos Online",
+    "metaDesc": "Use a free geo tagging tool to add GPS coordinates, location data and local SEO metadata to photos online. Upload, pin a location, edit metadata and download optimized images.",
+    "h1": "Free Geo Tagging Tool",
+    "subtitle": "Add GPS location to photos in seconds. Edit EXIF metadata, plot coordinates on a map, and ready your images for local SEO—100% free and processed privately in your browser.",
+    "privacyTitle": "A Free Geo Tagging Tool Built for Privacy",
+    "privacyDesc": "Most online geotagging tools force you to upload your sensitive images to their servers. Our tool utilizes advanced web technologies to parse and write EXIF metadata directly inside your browser. Your photos never leave your device, ensuring total privacy.",
+    "seoTitle": "Geotag Images for Local SEO",
+    "seoDesc": "Uploading photos to Google Business Profile (GBP) or a local business directory? Adding accurate location metadata helps establish geographical relevance. Geotag photos online before posting to signal exactly where your business operates.",
+    "howItWorks": "How the Free Geo Tagging Tool Works",
+    "howItWorksDesc": "Adding GPS coordinates to a JPG photo doesn't require downloading heavy software. Our GPS EXIF editor simplifies the process into a few quick steps.",
+    "step1Title": "1. Upload Image",
+    "step1Desc": "Drag and drop your JPG/JPEG files into the dropzone. We instantly read any existing metadata.",
+    "step2Title": "2. Pin Location",
+    "step2Desc": "Search an address, drag the map marker, or manually enter latitude and longitude coordinates.",
+    "step3Title": "3. Download",
+    "step3Desc": "Click write, and we embed the exact GPS location into the photo's EXIF data. Download instantly."
+  },
+  "faq": [
+    {
+      "q": "What is a free geo tagging tool?",
+      "a": "A free geo tagging tool is a software or web application that allows you to embed GPS location data (latitude and longitude) into the EXIF metadata of your image files, helping map the exact location where the photo was taken or where a subject is located."
+    },
+    {
+      "q": "How do I add GPS location to a photo?",
+      "a": "Upload your photo to our online tool, select a location on the interactive map or enter coordinates manually, and click 'Write GPS & Metadata'. The tool embeds the data directly into the file and lets you download it."
+    },
+    {
+      "q": "Does this tool upload my photos to your servers?",
+      "a": "No. Our application leverages modern web features to process the EXIF data entirely within your browser memory. We never see, store, or transmit your files permanently. Server processing is used only momentarily for compatibility if requested, and files are not saved."
+    }
+  ]
+}

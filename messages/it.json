@@ -1,0 +1,48 @@
+{
+  "common": {
+    "home": "Home",
+    "contact": "Contatti",
+    "privacy": "Privacy Policy",
+    "terms": "Termini di Servizio",
+    "disclaimer": "Disclaimer",
+    "about": "Chi Siamo",
+    "howItWorks": "Come Funziona",
+    "localSeo": "Guida SEO Locale"
+  },
+  "nav": {
+    "tool": "Tool di Geotag",
+    "guide": "Guida SEO"
+  },
+  "tool": {
+    "metaTitle": "Geotag Foto Gratis: Strumento online per SEO Locale",
+    "metaDesc": "Aggiungi coordinate GPS alle foto aziendali per posizionarti meglio su Google Maps. Strumento gratuito per agenzie immobiliari, attività locali e SEO locale.",
+    "h1": "Geotagging Foto per SEO Locale",
+    "subtitle": "Inserisci istantaneamente le coordinate GPS nei metadati EXIF delle tue foto. Progettato per foto aziendali, immobili e attività locali. Gratuito al 100% nel tuo browser.",
+    "privacyTitle": "Protezione Totale delle Tue Foto Aziendali",
+    "privacyDesc": "Lavori con foto esclusive di immobili e attività locali? Con il nostro tool i tuoi scatti non vengono caricati su server terzi: tutta l'iniezione dei dati EXIF avviene in locale sul tuo browser.",
+    "seoTitle": "Domina Google Maps e le Ricerche Locali",
+    "seoDesc": "La SEO locale si nutre di informazioni precise. Immettere dati geografici (coordinate GPS reali) nelle foto aziendali da inserire nel profilo Google migliora la pertinenza territoriale.",
+    "howItWorks": "Aggiungi il GPS alle tue foto in 3 passi",
+    "howItWorksDesc": "Ottimizzare foto per l'attività locale richiede pochi clic e nessun software da installare.",
+    "step1Title": "1. Carica Immagine",
+    "step1Desc": "Trascina le foto dell'impresa o dell'immobile, e noi ne leggeremo i dati EXIF.",
+    "step2Title": "2. Punta sulla Mappa",
+    "step2Desc": "Digita il nome o l'indirizzo esatto dell'attività locale ed estrai la latitudine e longitudine.",
+    "step3Title": "3. Applica e Salva",
+    "step3Desc": "Salva la foto. I metadati per la SEO locale saranno impressi nella nuova immagine."
+  },
+  "faq": [
+    {
+      "q": "Cos'è un tool di Geotagging?",
+      "a": "È uno strumento che salva dati geografici all'interno delle fotografie. Così i sistemi come Google Maps capiscono esattamente dove è scattata."
+    },
+    {
+      "q": "Serve per il posizionamento delle attività locali?",
+      "a": "Sì, Google apprezza immagini aziendali o d'interni coerenti col territorio. L'inserimento di coordinate previene incertezze sulla posizione geografica del business."
+    },
+    {
+      "q": "Il servizio è davvero gratuito?",
+      "a": "Completamente gratuito, senza installazione e i tuoi file restano privati."
+    }
+  ]
+}

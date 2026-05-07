@@ -1,0 +1,48 @@
+{
+  "common": {
+    "home": "Accueil",
+    "contact": "Contact",
+    "privacy": "Politique de confidentialité",
+    "terms": "Conditions d'utilisation",
+    "disclaimer": "Clause de non-responsabilité",
+    "about": "À propos",
+    "howItWorks": "Comment ça marche",
+    "localSeo": "Guide SEO Local"
+  },
+  "nav": {
+    "tool": "Outil de géolocalisation",
+    "guide": "Guide SEO"
+  },
+  "tool": {
+    "metaTitle": "Géolocaliser des Photos Gratuitement - SEO Local & Google Business",
+    "metaDesc": "Ajoutez des coordonnées GPS à vos photos d'entreprise et immobilières. Outil gratuit pour le référencement local et Google Business Profile.",
+    "h1": "Outil de Géolocalisation pour Commerces Locaux",
+    "subtitle": "Insérez des métadonnées de localisation et coordonnées GPS directement dans l'EXIF de vos photos d'entreprise. Idéal pour optimiser votre fiche Google Business Profile et dominer le référencement local.",
+    "privacyTitle": "Garantie de Sécurité et Confidentialité",
+    "privacyDesc": "Ne risquez pas la fuite de vos clichés exclusifs. Notre outil traite vos photos d'agences immobilières et commerces locaux entièrement dans votre navigateur. Aucun transfert externe n'a lieu.",
+    "seoTitle": "Boostez votre présence sur Google Maps",
+    "seoDesc": "Le SEO local s'appuie énormément sur le Google Business Profile (anciennement Google My Business). Géolocaliser vos photos d'entreprise prouve votre présence géographique locale.",
+    "howItWorks": "Comment insérer un point GPS dans une image",
+    "howItWorksDesc": "Éditer l'EXIF d'une photographie d'entreprise n'a jamais été aussi direct.",
+    "step1Title": "1. Télécharger",
+    "step1Desc": "Ajoutez les JPEGs de vos vitrines ou de vos biens immobiliers.",
+    "step2Title": "2. Placer le repère",
+    "step2Desc": "Trouvez l'adresse du commerce local sur la carte interactive.",
+    "step3Title": "3. Exporter l'image",
+    "step3Desc": "Téléchargez votre photo optimisée et insérez-la dans Google Business Profile."
+  },
+  "faq": [
+    {
+      "q": "En quoi consiste cet outil de géolocalisation d'image ?",
+      "a": "Il s'agit d'une application web pour incorporer des données GPS privées ou commerciales dans les fichiers d'images de vos entreprises pour le référencement local."
+    },
+    {
+      "q": "Est-ce sécurisé pour mes photos d'entreprise ?",
+      "a": "Absolument. Traitées en local sur votre appareil, aucune photo de vos agences immobilières ou clients n'est stockée chez nous."
+    },
+    {
+      "q": "Comment cela améliore-t-il le référencement local ?",
+      "a": "Google utilise les coordonnées EXIF pour confirmer qu'une activité commerciale a bien lieu là où votre fiche est référencée."
+    }
+  ]
+}

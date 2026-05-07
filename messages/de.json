@@ -1,0 +1,48 @@
+{
+  "common": {
+    "home": "Startseite",
+    "contact": "Kontakt",
+    "privacy": "Datenschutzerklärung",
+    "terms": "Nutzungsbedingungen",
+    "disclaimer": "Haftungsausschluss",
+    "about": "Über uns",
+    "howItWorks": "So funktioniert's",
+    "localSeo": "Lokaler SEO Guide"
+  },
+  "nav": {
+    "tool": "Geo Tagging Tool",
+    "guide": "SEO Guide"
+  },
+  "tool": {
+    "metaTitle": "Kostenloses Geo Tagging Tool für Google Unternehmensprofil & Lokale SEO",
+    "metaDesc": "Optimieren Sie Immobilienbilder und Fotos für Handwerker & Dienstleister. Fügen Sie Standortdaten, GPS-Koordinaten und EXIF-Metadaten kostenlos im Browser direkt hinzu.",
+    "h1": "Geo-Tagging für Lokale Sichtbarkeit",
+    "subtitle": "Fügen Sie Ihren Fotos in Sekunden GPS-Standortdaten hinzu. Ideal für Ihr Google Unternehmensprofil (Google My Business), Handwerker, Dienstleister und Immobilienmakler. 100% datenschutzfreundlich direkt im Browser.",
+    "privacyTitle": "Voller Datenschutz für Ihre Bilder",
+    "privacyDesc": "Ihre Immobilienbilder und Projektfotos bleiben bei Ihnen. Im Gegensatz zu anderen Tools verarbeiten wir Ihre Bilder lokal im Browser. Es findet kein Upload auf unsere Server statt.",
+    "seoTitle": "Mehr Sichtbarkeit im Google Unternehmensprofil",
+    "seoDesc": "Lokale SEO erfordert präzise Standortdaten. Wenn Sie als Handwerker oder Dienstleister Fotos bei Google Maps hochladen, signalisieren EXIF-Metadaten mit GPS-Koordinaten genau Ihr Einzugsgebiet.",
+    "howItWorks": "Standortdaten in 3 Schritten hinzufügen",
+    "howItWorksDesc": "Sie brauchen keine komplizierte Software, um Fotos für lokales SEO zu optimieren.",
+    "step1Title": "1. Bilder hochladen",
+    "step1Desc": "Ziehen Sie Ihre JPG-Dateien einfach in den markierten Bereich.",
+    "step2Title": "2. Standort markieren",
+    "step2Desc": "Suchen Sie eine Adresse oder platzieren Sie den Pin direkt am Einsatzort.",
+    "step3Title": "3. Speichern & Herunterladen",
+    "step3Desc": "Die GPS-Koordinaten werden fest in die EXIF-Daten geschrieben."
+  },
+  "faq": [
+    {
+      "q": "Warum ist Geo-Tagging wichtig für Handwerker und Dienstleister?",
+      "a": "Mit standortbezogenen Bildern in Ihrem Google Unternehmensprofil zeigen Sie potenziellen Kunden sowie der Suchmaschine genau, in welchen Regionen Sie tätig sind. Dies verbessert die lokale Sichtbarkeit."
+    },
+    {
+      "q": "Was sind EXIF-Metadaten?",
+      "a": "EXIF-Daten sind versteckte Textinformationen in Bilddateien. Hier können GPS-Koordinaten, Aufnahmedatum und Stichworte für besseres Google Maps Ranking hinterlegt werden."
+    },
+    {
+      "q": "Werden meine Immobilienbilder gespeichert?",
+      "a": "Nein. Wir verstehen die Diskretion von Immobilienmaklern. Die Verarbeitung erfolgt zu 100% in Ihrem lokalen Browser."
+    }
+  ]
+}
