@@ -10,7 +10,9 @@ export default function Footer({ lang = 'en', messages }: { lang?: string, messa
     <footer className="bg-slate-900 border-t border-slate-800 text-slate-400 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
         <div className="col-span-1 md:col-span-2">
-          <h3 className="text-white font-semibold mb-4 tracking-tight">GeoTag<span className="text-blue-500">HQ</span></h3>
+          <Link href={toolLink} className="inline-block mb-4 hover:opacity-90 transition-opacity">
+            <img src="/logo.svg" alt="GeoTagHQ Logo" className="h-8 w-auto filter invert brightness-0 opacity-90" />
+          </Link>
           <p className="text-sm text-slate-400 leading-relaxed max-w-sm mb-6">
             A free, browser-based geo tagging tool for adding exact GPS locations to your photos instantly. Built for local SEO, photographers, and privacy-conscious users.
           </p>

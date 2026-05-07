@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import { useParams } from 'next/navigation';
 import UploadDropzone from './UploadDropzone';
 import { readImageMetadata, writeGeoToJpeg } from '@/lib/exif';
 import { ImageFile, ImageMetadata } from '@/types/image';
@@ -14,10 +15,15 @@ import ImageEditorModal from './ImageEditorModal';
 import JSZip from 'jszip';
 import { MapPin, Download, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-
 import SelectedLocationCard from './SelectedLocationCard';
+import { toolDict } from '@/lib/toolDict';
 
 export default function GeoTaggingTool() {
+  const params = useParams();
+  const lang = (typeof params?.lang === 'string' ? params.lang : 'en');
+  
+  const d = toolDict[lang] || toolDict['en'];
+
   const [files, setFiles] = useState<ImageFile[]>([]);
   const [coords, setCoords] = useState<GeoCoordinates | undefined>();
   const [selectedLoc, setSelectedLoc] = useState<import('@/lib/location').SelectedLocation | null>(null);
@@ -32,13 +38,7 @@ export default function GeoTaggingTool() {
   const handleLocationChange = useCallback((newCoords: GeoCoordinates, source: import('@/lib/location').SelectedLocation['source'], displayName?: string, provider?: string) => {
     setCoords(newCoords);
     if (displayName) {
-      setSelectedLoc({
-        displayName,
-        lat: newCoords.lat,
-        lon: newCoords.lng,
-        source,
-        provider
-      });
+      setSelectedLoc({ displayName, lat: newCoords.lat, lon: newCoords.lng, source, provider });
     } else {
       setSelectedLoc(prev => prev ? { ...prev, lat: newCoords.lat, lon: newCoords.lng, source, provider } : {
         displayName: "Loading location...",
@@ -51,48 +51,26 @@ export default function GeoTaggingTool() {
         .then(res => res.json())
         .then(data => {
           if (data.result) {
-            setSelectedLoc({
-              displayName: data.result.displayName,
-              lat: newCoords.lat,
-              lon: newCoords.lng,
-              source,
-              provider: data.result.provider
-            });
+            setSelectedLoc({ displayName: data.result.displayName, lat: newCoords.lat, lon: newCoords.lng, source, provider: data.result.provider });
           } else {
-            setSelectedLoc({
-              displayName: "Custom coordinates selected",
-              lat: newCoords.lat,
-              lon: newCoords.lng,
-              source,
-              provider
-            });
+            setSelectedLoc({ displayName: "Custom coordinates selected", lat: newCoords.lat, lon: newCoords.lng, source, provider });
           }
         })
         .catch(() => {
-          setSelectedLoc({
-            displayName: "Custom coordinates selected",
-            lat: newCoords.lat,
-            lon: newCoords.lng,
-            source,
-            provider
-          });
+          setSelectedLoc({ displayName: "Custom coordinates selected", lat: newCoords.lat, lon: newCoords.lng, source, provider });
         });
     }
   }, []);
 
   const handleDrop = async (acceptedFiles: File[]) => {
     setErrorInfo(null);
-    
-    // Validate batch size
     if (files.length + acceptedFiles.length > 10) {
       setErrorInfo("Maximum batch size is 10 images.");
       return;
     }
-
     const validFiles: File[] = [];
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif', 'image/avif', 'image/tiff'];
-    const maxSizeBytes = 10 * 1024 * 1024; // 10 MB
-
+    const maxSizeBytes = 10 * 1024 * 1024;
     for (const file of acceptedFiles) {
       if (!file.type.startsWith('image/')) {
         setErrorInfo("Please upload images only.");
@@ -108,7 +86,6 @@ export default function GeoTaggingTool() {
       }
       validFiles.push(file);
     }
-
     const newFiles: ImageFile[] = await Promise.all(
       validFiles.map(async (file) => {
         const metadata = await readImageMetadata(file);
@@ -124,10 +101,7 @@ export default function GeoTaggingTool() {
         };
       })
     );
-    
     setFiles((prev) => [...prev, ...newFiles]);
-
-    // If first file has GPS, optionally use it as initial map point
     if (newFiles.length > 0 && newFiles[0].metadata?.gps && !coords) {
       handleLocationChange(newFiles[0].metadata.gps, 'map');
     }
@@ -138,12 +112,10 @@ export default function GeoTaggingTool() {
       setErrorInfo("Please upload at least one image before writing metadata.");
       return;
     }
-
     if (!coords) {
-      setErrorInfo("Please pin a location on the map before applying the geotag.");
+      setErrorInfo(d.errorNoLoc || "Please pin a location on the map before applying the geotag.");
       return;
     }
-
     setIsProcessing(true);
     setErrorInfo(null);
     setSuccessInfo(null);
@@ -151,22 +123,15 @@ export default function GeoTaggingTool() {
     const updatedFiles = [...files];
     let successCount = 0;
     let failCount = 0;
-
     for (let i = 0; i < updatedFiles.length; i++) {
         let file = updatedFiles[i];
         updatedFiles[i] = { ...file, status: 'processing' };
         setFiles([...updatedFiles]);
         file = updatedFiles[i];
-
         try {
           const targetBlob = file.editedBlob || file.originalFile;
           const extName = file.name.substring(file.name.lastIndexOf('.'));
           const standardFile = new File([targetBlob], file.name, { type: file.type || 'application/octet-stream' });
-          const isJpg = ['image/jpeg', 'image/jpg'].includes(file.type) || ['.jpg', '.jpeg'].includes(extName.toLowerCase());
-
-          // We'll use the server-side API for all files now to support all the new SEO tags properly using exiftool.
-          // Because writeGeoToJpeg in browser only supports GPS and maybe basic EXIF.
-          // Let's force server processing for now since we need to write IPTC and XMP.
           const formData = new FormData();
           formData.append("file", standardFile);
           if (coords) {
@@ -174,69 +139,48 @@ export default function GeoTaggingTool() {
             formData.append("lng", coords.lng.toString());
           }
           formData.append("bestCompatibility", processingMode === 'best' ? "true" : "false");
-          
           if (globalMetadataEdits.cameraMake) formData.append("cameraMake", globalMetadataEdits.cameraMake);
           if (globalMetadataEdits.cameraModel) formData.append("cameraModel", globalMetadataEdits.cameraModel);
           if (globalMetadataEdits.dateTaken) formData.append("dateTaken", globalMetadataEdits.dateTaken);
-
           const seoFields = ['title', 'description', 'keywords', 'businessName', 'serviceCategory', 'city', 'district', 'country', 'streetAddress', 'postalCode', 'stateRegion', 'countryCode', 'websiteUrl'] as const;
-          
           seoFields.forEach(field => {
             if (globalMetadataEdits[field]) {
               formData.append(field, globalMetadataEdits[field]!);
             }
           });
-
           const res = await fetch("/api/geotag-image", { method: "POST", body: formData });
-          
           if (!res.ok) {
             const errData = await res.json().catch(() => null);
             throw new Error(errData?.error || "Server processing failed");
           }
-          
           const processedBlob = await res.blob();
           const wasConverted = res.headers.get("X-Converted-To-Jpg") === "true";
-          
           let finalName = file.name;
           if (wasConverted) {
              finalName = file.name.replace(/\.[^/.]+$/, "") + ".jpg";
           }
-
-          updatedFiles[i] = { 
-            ...file, 
-            name: finalName,
-            processedBlob, 
-            status: 'done', 
-            error: undefined 
-          };
+          updatedFiles[i] = { ...file, name: finalName, processedBlob, status: 'done', error: undefined };
           successCount++;
         } catch (error: any) {
-          console.error("Error writing EXIF:", error);
           updatedFiles[i] = { ...file, status: 'error', error: error.message || 'Failed to write data' };
           failCount++;
         }
     }
-
     setFiles([...updatedFiles]);
     setIsProcessing(false);
-
     if (successCount > 0 && failCount === 0) {
-      setSuccessInfo(`Successfully processed ${successCount} photo${successCount > 1 ? 's' : ''}.`);
+      setSuccessInfo(`${successCount} ${d.successFiles || 'files processed successfully!'}`);
     } else if (successCount > 0 && failCount > 0) {
-      setSuccessInfo(`Successfully processed ${successCount} photo${successCount > 1 ? 's' : ''}, but ${failCount} failed.`);
+      setSuccessInfo(`${successCount} ${d.successFiles || 'files processed successfully!'}, but ${failCount} failed.`);
     } else if (successCount === 0 && failCount > 0) {
-      const firstError = updatedFiles.find(f => f.status === 'error')?.error;
-      setErrorInfo(`Failed to process ${failCount} photo${failCount > 1 ? 's' : ''}. ${firstError ? 'Reason: ' + firstError : ''}`);
+      setErrorInfo(`${d.errorGeneral || 'An error occurred. Please try again.'} (${failCount} failed)`);
     }
   };
 
   const downloadAll = async () => {
     const doneFiles = files.filter(f => f.status === 'done' && f.processedBlob);
-    
     if (doneFiles.length === 0) return;
-
     if (doneFiles.length === 1) {
-      // Download single
       const file = doneFiles[0];
       const url = URL.createObjectURL(file.processedBlob!);
       const a = document.createElement('a');
@@ -248,8 +192,6 @@ export default function GeoTaggingTool() {
       URL.revokeObjectURL(url);
       return;
     }
-
-    // Download zip
     const JSZip = (await import('jszip')).default;
     const zip = new JSZip();
     doneFiles.forEach(file => {
@@ -257,7 +199,6 @@ export default function GeoTaggingTool() {
       const ext = file.name.substring(file.name.lastIndexOf('.'));
       zip.file(`${baseName}-geotagged${ext}`, file.processedBlob!);
     });
-
     const content = await zip.generateAsync({ type: 'blob' });
     const url = URL.createObjectURL(content);
     const a = document.createElement('a');
@@ -269,12 +210,10 @@ export default function GeoTaggingTool() {
 
   return (
     <div className="w-full max-w-6xl mx-auto flex flex-col lg:flex-row gap-8">
-      {/* Left Column: Upload & Map */}
       <div className="flex-1 space-y-6 flex flex-col">
         <section className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-          <h2 className="text-xl font-bold text-slate-900 mb-4">1. Upload Photos</h2>
+          <h2 className="text-xl font-bold text-slate-900 mb-4">1. {d.dropTitle?.split(' ')[0]} Photos</h2>
           <UploadDropzone onDropAccepted={handleDrop} />
-          
           <BatchImageList 
             files={files} 
             onRemove={(idx) => {
@@ -289,18 +228,13 @@ export default function GeoTaggingTool() {
 
         <section className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex-grow flex flex-col">
           <h2 className="text-xl font-bold text-slate-900 mb-4">2. Pin Location</h2>
-          
           <div className="space-y-4 flex-grow flex flex-col">
             <LocationSearch onSelectCallback={(c, name, provider) => handleLocationChange(c, 'search', name, provider)} />
-            
             <SelectedLocationCard location={selectedLoc} />
-            
             <div className="flex-grow min-h-[400px] border border-slate-200 rounded-lg overflow-hidden relative">
                <MapPicker initialCoords={coords} onChange={(c) => handleLocationChange(c, 'map')} />
             </div>
-
             <CoordinateInput coords={coords} onChange={(c) => handleLocationChange(c, 'manual')} />
-            
             <div className="flex justify-end pt-2">
               <TooltipProvider>
                 <Tooltip>
@@ -329,25 +263,21 @@ export default function GeoTaggingTool() {
         </section>
       </div>
 
-      {/* Right Column: Metadata & Action */}
       <div className="w-full lg:w-[400px] space-y-6">
         <section className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sticky top-6">
           <h2 className="text-xl font-bold text-slate-900 mb-4">3. Apply Geotag</h2>
-          
           {errorInfo && (
             <div className="mb-4 p-3 flex items-start gap-2 bg-red-50 text-red-700 rounded-lg text-sm border border-red-100">
               <AlertCircle className="w-5 h-5 shrink-0" />
               <p>{errorInfo}</p>
             </div>
           )}
-
           {successInfo && (
             <div className="mb-4 p-3 flex items-start gap-2 bg-emerald-50 text-emerald-700 rounded-lg text-sm border border-emerald-100">
               <CheckCircle2 className="w-5 h-5 shrink-0" />
               <p>{successInfo}</p>
             </div>
           )}
-
           <div className="mb-6">
             <h3 className="text-sm font-semibold text-slate-700 mb-2">Processing Mode</h3>
             <div className="flex gap-2 p-1 bg-slate-100 rounded-lg border border-slate-200">
@@ -384,19 +314,17 @@ export default function GeoTaggingTool() {
                <p className="text-xs text-slate-500 mt-2 text-center">Showing metadata for first photo only</p>
              )}
           </div>
-
           <button
             onClick={handleApplyCoordinates}
             disabled={isProcessing || files.length === 0}
             className="w-full py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm flex items-center justify-center gap-2 mb-4"
           >
             {isProcessing ? (
-              <><Loader2 className="w-5 h-5 animate-spin" /> Processing...</>
+              <><Loader2 className="w-5 h-5 animate-spin" /> {d.processing || 'Processing...'}</>
             ) : (
-              'Write GPS & Metadata'
+              d.writeTags || 'Write GPS & Metadata'
             )}
           </button>
-
           {files.some(f => f.status === 'done') && (
             <div className="pt-4 border-t border-slate-200">
               <button
@@ -404,7 +332,7 @@ export default function GeoTaggingTool() {
                 className="w-full py-3 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition-colors shadow-sm flex items-center justify-center gap-2"
               >
                 <Download className="w-5 h-5" /> 
-                {files.filter(f => f.status === 'done').length > 1 ? 'Download All as ZIP' : 'Download Photo'}
+                Download
               </button>
             </div>
           )}

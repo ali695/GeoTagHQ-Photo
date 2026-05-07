@@ -8,17 +8,15 @@
     </linearGradient>
   </defs>
   
-  <g transform="translate(600, 315)">
-    <!-- Map Pin Icon -->
-    <path d="M0 -120 C-45 -120, -80 -85, -80 -40 C-80 15, 0 120, 0 120 C0 120, 80 15, 80 -40 C80 -85, 45 -120, 0 -120 Z" fill="#2563eb" />
-    <circle cx="0" cy="-40" r="30" fill="#ffffff" />
-    
-    <!-- Camera indicator inside the pin -->
-    <path d="M-15 -45 h30 v20 h-30 z M-5 -50 h10 v5 h-10 z" fill="#2563eb" />
-    <circle cx="0" cy="-35" r="5" fill="#ffffff" />
+  <g transform="translate(560, 260) scale(1.5)">
+    <rect x="-140" y="-120" width="140" height="140" rx="32" fill="#2563eb" />
+    <g transform="translate(-115, -95) scale(3.75)">
+      <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="12" cy="10" r="3" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <!-- Text -->
+    <text x="25" y="-18" font-family="system-ui, sans-serif" font-weight="900" font-size="96" fill="#0f172a" letter-spacing="-0.03em">GeoTag<tspan fill="#2563eb">HQ</tspan></text>
   </g>
+  <text x="600" y="520" font-family="system-ui, sans-serif" font-weight="500" font-size="36" fill="#475569" text-anchor="middle">Free Photo Geo Tagging &amp; EXIF Metadata Editor</text>
 
-  <!-- Text -->
-  <text x="600" y="480" font-family="system-ui, sans-serif" font-weight="bold" font-size="64" fill="#1e293b" text-anchor="middle">GeoTagHQ</text>
-  <text x="600" y="540" font-family="system-ui, sans-serif" font-weight="normal" font-size="32" fill="#475569" text-anchor="middle">Free Geo Tagging Tool</text>
 </svg>
