@@ -55,7 +55,7 @@ export default function BatchImageList({ files, onRemove, onClearAll, onEdit, me
                     </button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Crop & Rotate</p>
+                    <p>Refine & Edit</p>
                   </TooltipContent>
                 </Tooltip>
                 <Tooltip>

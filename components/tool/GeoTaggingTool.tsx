@@ -186,12 +186,22 @@ export default function GeoTaggingTool({ messages }: { messages?: any }) {
           if (globalMetadataEdits.cameraMake) formData.append("cameraMake", globalMetadataEdits.cameraMake);
           if (globalMetadataEdits.cameraModel) formData.append("cameraModel", globalMetadataEdits.cameraModel);
           if (globalMetadataEdits.dateTaken) formData.append("dateTaken", globalMetadataEdits.dateTaken);
-          const seoFields = ['title', 'description', 'keywords', 'businessName', 'serviceCategory', 'city', 'district', 'country', 'streetAddress', 'postalCode', 'stateRegion', 'countryCode', 'websiteUrl'] as const;
+          const seoFields = [
+            'title', 'description', 'keywords', 'businessName', 'serviceCategory', 
+            'city', 'district', 'country', 'streetAddress', 'postalCode', 
+            'stateRegion', 'countryCode', 'websiteUrl', 'schemaMarkup', 
+            'ogTags', 'hreflang', 'semanticClusters'
+          ] as const;
           seoFields.forEach(field => {
-            // Priority: Individual Edit > Global Edit
-            const val = file.editedMetadata?.[field] || globalMetadataEdits[field];
-            if (val) {
-              formData.append(field, val as string);
+            // Priority Check: Individual Edit exists and is NOT undefined
+            // If the user explicitly cleared a field in the individual editor, it should stay empty.
+            if (file.editedMetadata && Object.prototype.hasOwnProperty.call(file.editedMetadata, field)) {
+              const val = file.editedMetadata[field];
+              if (val !== undefined) {
+                formData.append(field, val as string);
+              }
+            } else if (globalMetadataEdits[field] !== undefined) {
+              formData.append(field, globalMetadataEdits[field] as string);
             }
           });
           const res = await fetch("/api/geotag-image", { method: "POST", body: formData });

@@ -50,6 +50,9 @@ export default function MetadataPanel({ metadata, onMetadataChange }: MetadataPa
     if (c === 'india' || c === 'in') {
       return { state: 'State', postal: 'PIN Code', district: 'Locality / Area' };
     }
+    if (c === 'pakistan' || c === 'pk') {
+      return { state: 'Province / State', postal: 'Zip / Postal Code', district: 'Area / Sector' };
+    }
     return { state: 'State / Region', postal: 'Postal Code', district: 'District / Area' };
   };
 

@@ -43,6 +43,10 @@ const SEOSchema = z.object({
   stateRegion: z.string().max(80).optional(),
   countryCode: z.string().max(2).optional(),
   websiteUrl: z.union([z.string().url(), z.literal('')]).optional(),
+  schemaMarkup: z.string().optional(),
+  ogTags: z.string().optional(),
+  hreflang: z.string().optional(),
+  semanticClusters: z.string().optional(),
 });
 
 export async function POST(req: NextRequest) {
@@ -72,6 +76,10 @@ export async function POST(req: NextRequest) {
       stateRegion: formData.get("stateRegion")?.toString() || undefined,
       countryCode: formData.get("countryCode")?.toString() || undefined,
       websiteUrl: formData.get("websiteUrl")?.toString() || undefined,
+      schemaMarkup: formData.get("schemaMarkup")?.toString() || undefined,
+      ogTags: formData.get("ogTags")?.toString() || undefined,
+      hreflang: formData.get("hreflang")?.toString() || undefined,
+      semanticClusters: formData.get("semanticClusters")?.toString() || undefined,
     };
 
     console.log("=== GEOTAG API INCOMING REQUEST ===");
@@ -210,6 +218,8 @@ export async function POST(req: NextRequest) {
     if (seoData.city) extendedInfo.push(`City: ${seoData.city}`);
     if (seoData.country) extendedInfo.push(`Country: ${seoData.country}`);
     if (seoData.websiteUrl) extendedInfo.push(`Website: ${seoData.websiteUrl}`);
+    if (seoData.schemaMarkup) extendedInfo.push(`Schema: ${seoData.schemaMarkup.substring(0, 1000)}`);
+    if (seoData.semanticClusters) extendedInfo.push(`Topics: ${seoData.semanticClusters}`);
     
     if (extendedInfo.length > 0) {
       const comment = extendedInfo.join(' | ');

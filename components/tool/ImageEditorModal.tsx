@@ -60,7 +60,11 @@ export default function ImageEditorModal({ file, onClose, onSave, d = {}, global
           title: data.title || prev.title,
           description: data.description || prev.description,
           suggestedAltText: data.suggestedAltText || prev.suggestedAltText,
-          keywords: data.keywords || prev.keywords
+          keywords: data.keywords || prev.keywords,
+          schemaMarkup: typeof data.schemaMarkup === 'string' ? data.schemaMarkup : JSON.stringify(data.schemaMarkup, null, 2),
+          ogTags: JSON.stringify(data.ogTags),
+          hreflang: JSON.stringify(data.hreflang),
+          semanticClusters: Array.isArray(data.semanticClusters) ? data.semanticClusters.join(', ') : data.semanticClusters,
         }));
       }
     } catch (e) {
@@ -86,6 +90,10 @@ export default function ImageEditorModal({ file, onClose, onSave, d = {}, global
         businessName: file.metadata.businessName || '',
         websiteUrl: file.metadata.websiteUrl || '',
         businessType: file.metadata.businessType || 'general',
+        schemaMarkup: file.metadata.schemaMarkup || '',
+        ogTags: file.metadata.ogTags || '',
+        hreflang: file.metadata.hreflang || '',
+        semanticClusters: file.metadata.semanticClusters || '',
       });
     }
   }, [file]);
@@ -580,8 +588,8 @@ export default function ImageEditorModal({ file, onClose, onSave, d = {}, global
                 </div>
 
                 <div className="pt-2">
-                  <p className="text-[10px] text-slate-500 leading-tight italic">
-                    Note: These values will override global settings only for this image.
+                  <p className="text-[10px] text-blue-600 font-bold leading-tight uppercase tracking-tight">
+                    PRIORITY: This meta will override global settings.
                   </p>
                 </div>
              </div>
