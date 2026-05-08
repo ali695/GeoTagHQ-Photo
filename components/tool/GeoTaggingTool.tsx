@@ -289,15 +289,15 @@ export default function GeoTaggingTool({ messages }: { messages?: any }) {
                location={selectedLoc} 
                onAutoFillMetadata={(details) => {
                   const newEdits: Partial<ImageMetadata> = {};
-                  if (details.city && !globalMetadataEdits.city) newEdits.city = details.city;
-                  if (details.country && !globalMetadataEdits.country) newEdits.country = details.country;
-                  if (details.state && !globalMetadataEdits.stateRegion) newEdits.stateRegion = details.state;
-                  if (details.district && !globalMetadataEdits.district) newEdits.district = details.district;
-                  if (details.countryCode && !globalMetadataEdits.countryCode) newEdits.countryCode = details.countryCode;
-                  if (details.postcode && !globalMetadataEdits.postalCode) newEdits.postalCode = details.postcode;
                   
                   const addr = details.houseNumber ? `${details.street} ${details.houseNumber}` : details.street;
-                  if (addr && !globalMetadataEdits.streetAddress) newEdits.streetAddress = addr;
+                  if (addr) newEdits.streetAddress = addr;
+                  if (details.city) newEdits.city = details.city;
+                  if (details.district) newEdits.district = details.district;
+                  if (details.country) newEdits.country = details.country;
+                  if (details.countryCode) newEdits.countryCode = details.countryCode;
+                  if (details.postcode) newEdits.postalCode = details.postcode;
+                  if (details.state) newEdits.stateRegion = details.state;
                   
                   if (Object.keys(newEdits).length > 0) {
                      setGlobalMetadataEdits(prev => ({ ...prev, ...newEdits }));

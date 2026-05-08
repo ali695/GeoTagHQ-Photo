@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import ReactCrop, { Crop, PixelCrop, centerCrop, makeAspectCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import { X, RotateCcw, RotateCw, Check, Wand2 } from 'lucide-react';
@@ -37,21 +37,15 @@ export default function ImageEditorModal({ file, onClose, onSave, d = {} }: Imag
   const imgRef = useRef<HTMLImageElement>(null);
   
   // Use preview or create one
-  const [imgSrc, setImgSrc] = useState<string>('');
+  const imgSrc = useMemo(() => {
+    if (!file) return '';
+    if (file.editedBlob) return URL.createObjectURL(file.editedBlob);
+    return file.preview || URL.createObjectURL(file.originalFile);
+  }, [file]);
+
   const [aspect, setAspect] = useState<number | undefined>(undefined);
   const [enhanceQuality, setEnhanceQuality] = useState(false);
-
-  useEffect(() => {
-    if (file) {
-      if (file.editedBlob) {
-        setImgSrc(URL.createObjectURL(file.editedBlob));
-      } else {
-        setImgSrc(file.preview || URL.createObjectURL(file.originalFile));
-      }
-    } else {
-      setImgSrc('');
-    }
-  }, [file]);
+  const [enhanceResolution, setEnhanceResolution] = useState<'Original' | 'HD' | 'FHD' | '2K' | '4K'>('Original');
 
   function onImageLoad(e: React.SyntheticEvent<HTMLImageElement>) {
     const { width, height } = e.currentTarget;
@@ -103,11 +97,28 @@ export default function ImageEditorModal({ file, onClose, onSave, d = {} }: Imag
     // Output canvas size based on rotation
     const isRotated90 = Math.abs(rotation) % 180 === 90;
     
-    // Scale factor for enhancement
-    const enhanceScale = enhanceQuality ? 1.5 : 1.0;
+    // Scale factor for enhancement based on target resolution
+    const baseW = isRotated90 ? cropHeight * scaleY : cropWidth * scaleX;
+    const baseH = isRotated90 ? cropWidth * scaleX : cropHeight * scaleY;
     
-    canvas.width = (isRotated90 ? cropHeight * scaleY : cropWidth * scaleX) * enhanceScale;
-    canvas.height = (isRotated90 ? cropWidth * scaleX : cropHeight * scaleY) * enhanceScale;
+    let enhanceScale = 1.0;
+    if (enhanceResolution !== 'Original') {
+      const maxDim = Math.max(baseW, baseH);
+      let targetMax = maxDim;
+      if (enhanceResolution === 'HD') targetMax = 1280;
+      else if (enhanceResolution === 'FHD') targetMax = 1920;
+      else if (enhanceResolution === '2K') targetMax = 2560;
+      else if (enhanceResolution === '4K') targetMax = 3840;
+      
+      if (targetMax > maxDim) {
+        enhanceScale = targetMax / maxDim;
+      }
+    } else if (enhanceQuality) {
+       enhanceScale = 1.0; // Quality only, no rescale, or maybe bump it slightly
+    }
+
+    canvas.width = baseW * enhanceScale;
+    canvas.height = baseH * enhanceScale;
 
     if (enhanceQuality) {
       ctx.imageSmoothingEnabled = true;
@@ -116,7 +127,7 @@ export default function ImageEditorModal({ file, onClose, onSave, d = {} }: Imag
     }
 
     ctx.scale(enhanceScale, enhanceScale);
-    ctx.translate((isRotated90 ? cropHeight * scaleY : cropWidth * scaleX) / 2, (isRotated90 ? cropWidth * scaleX : cropHeight * scaleY) / 2);
+    ctx.translate(baseW / 2, baseH / 2);
     ctx.rotate((rotation * Math.PI) / 180);
     ctx.translate(-image.naturalWidth / 2, -image.naturalHeight / 2);
 
@@ -216,41 +227,93 @@ export default function ImageEditorModal({ file, onClose, onSave, d = {} }: Imag
         </div>
         
         <div className="p-4 border-t border-slate-200 bg-white flex flex-col sm:flex-row gap-4 justify-between items-center w-full">
-          <div className="flex gap-4 items-center">
-            <div className="flex bg-slate-100 rounded-lg p-1">
-              <button
-                onClick={() => handleAspectChange(undefined)}
-                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${!aspect ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
-              >
-                {d.cropFree || "Free"}
-              </button>
-              <button
-                onClick={() => handleAspectChange(1)}
-                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${aspect === 1 ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
-              >
-                1:1
-              </button>
-              <button
-                onClick={() => handleAspectChange(4/3)}
-                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${aspect === 4/3 ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
-              >
-                4:3
-              </button>
-              <button
-                onClick={() => handleAspectChange(16/9)}
-                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${aspect === 16/9 ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
-              >
-                16:9
-              </button>
+          <div className="flex flex-col gap-4">
+            <div className="flex gap-4 items-center">
+              <div className="flex flex-wrap bg-slate-100 rounded-lg p-1 gap-1">
+                <button
+                  onClick={() => handleAspectChange(undefined)}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${!aspect ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
+                >
+                  {d.cropFree || "Free"}
+                </button>
+                <button
+                  onClick={() => handleAspectChange(1)}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${aspect === 1 ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
+                >
+                  1:1
+                </button>
+                <button
+                  onClick={() => handleAspectChange(4/3)}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${aspect === 4/3 ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
+                >
+                  4:3
+                </button>
+                <button
+                  onClick={() => handleAspectChange(3/4)}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${aspect === 3/4 ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
+                >
+                  3:4
+                </button>
+                <button
+                  onClick={() => handleAspectChange(16/9)}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${aspect === 16/9 ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
+                >
+                  16:9
+                </button>
+                <button
+                  onClick={() => handleAspectChange(9/16)}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${aspect === 9/16 ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
+                >
+                  9:16
+                </button>
+                <button
+                  onClick={() => handleAspectChange(3/2)}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${aspect === 3/2 ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
+                >
+                  3:2
+                </button>
+                <button
+                  onClick={() => handleAspectChange(2/3)}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${aspect === 2/3 ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
+                >
+                  2:3
+                </button>
+                <button
+                  onClick={() => handleAspectChange(5/4)}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${aspect === 5/4 ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
+                >
+                  5:4
+                </button>
+                <button
+                  onClick={() => handleAspectChange(4/5)}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${aspect === 4/5 ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
+                >
+                  4:5
+                </button>
+              </div>
             </div>
-            <div className="flex gap-2">
-              <button onClick={() => setEnhanceQuality(!enhanceQuality)} className={`p-2.5 rounded-lg flex items-center gap-2 font-medium transition-colors ${enhanceQuality ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}>
-                <Wand2 className="w-4 h-4" /> Enhance {enhanceQuality && ' On'}
-              </button>
-              <button onClick={() => handleRotate(-90)} className="p-2.5 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-lg flex items-center gap-2 font-medium transition-colors">
+            
+            <div className="flex gap-2 items-center flex-wrap">
+              <div className="flex items-center gap-2 bg-slate-100 rounded-lg p-1 pr-2">
+                 <button onClick={() => setEnhanceQuality(!enhanceQuality)} className={`p-1.5 px-3 rounded-md flex items-center gap-2 text-sm font-medium transition-colors ${enhanceQuality ? 'bg-white shadow-sm text-indigo-700' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-200'}`}>
+                   <Wand2 className="w-4 h-4" /> Enhance
+                 </button>
+                 <select 
+                    value={enhanceResolution} 
+                    onChange={(e) => setEnhanceResolution(e.target.value as any)}
+                    className="text-xs bg-transparent font-medium border-l border-slate-300 pl-2 ml-1 outline-none text-slate-700 cursor-pointer"
+                 >
+                    <option value="Original">Original Res</option>
+                    <option value="HD">HD (720p)</option>
+                    <option value="FHD">1K / FHD (1080p)</option>
+                    <option value="2K">2K / QHD</option>
+                    <option value="4K">4K / UHD</option>
+                 </select>
+              </div>
+              <button title="Rotate Left" onClick={() => handleRotate(-90)} className="p-2.5 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-lg flex items-center gap-2 font-medium transition-colors">
                 <RotateCcw className="w-4 h-4" />
               </button>
-              <button onClick={() => handleRotate(90)} className="p-2.5 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-lg flex items-center gap-2 font-medium transition-colors">
+              <button title="Rotate Right" onClick={() => handleRotate(90)} className="p-2.5 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-lg flex items-center gap-2 font-medium transition-colors">
                 <RotateCw className="w-4 h-4" />
               </button>
             </div>

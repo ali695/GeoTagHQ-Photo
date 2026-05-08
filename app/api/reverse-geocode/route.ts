@@ -23,7 +23,7 @@ export async function GET(request: Request) {
 
     const { lat, lon } = validationResult.data;
 
-    const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&addressdetails=1&extratags=1&namedetails=1`;
+    const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&addressdetails=1&extratags=1&namedetails=1&zoom=18`;
 
     const response = await fetch(url, {
       headers: {
