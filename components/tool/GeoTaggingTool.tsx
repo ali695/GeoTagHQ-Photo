@@ -9,7 +9,6 @@ import { GeoCoordinates } from '@/types/geo';
 import MetadataPanel from './MetadataPanel';
 import MapPicker from './MapPicker';
 import CoordinateInput from './CoordinateInput';
-import LocationSearch from './LocationSearch';
 import BatchImageList from './BatchImageList';
 import ExtractImagesSection from './ExtractImagesSection';
 import ImageEditorModal from './ImageEditorModal';
@@ -107,8 +106,9 @@ export default function GeoTaggingTool({ messages }: { messages?: any }) {
 
   const handleDrop = async (acceptedFiles: File[]) => {
     setErrorInfo(null);
+    const errs = d.errors || {};
     if (files.length + acceptedFiles.length > 10) {
-      setErrorInfo("Maximum batch size is 10 images.");
+      setErrorInfo(errs.batchSizeExceeded || "Maximum batch size is 10 images.");
       return;
     }
     const validFiles: File[] = [];
@@ -116,15 +116,15 @@ export default function GeoTaggingTool({ messages }: { messages?: any }) {
     const maxSizeBytes = 10 * 1024 * 1024;
     for (const file of acceptedFiles) {
       if (!file.type.startsWith('image/')) {
-        setErrorInfo("Please upload images only.");
+        setErrorInfo(errs.invalidFormat || "Please upload images only.");
         return;
       }
       if (!allowedTypes.includes(file.type) && !file.name.toLowerCase().match(/\.(jpg|jpeg|png|webp|avif|heic|heif|tiff)$/)) {
-        setErrorInfo("This file type is not supported.");
+        setErrorInfo(errs.invalidFormat || "This file type is not supported.");
         return;
       }
       if (file.size > maxSizeBytes) {
-        setErrorInfo("This image is too large. Maximum file size is 10 MB.");
+        setErrorInfo(errs.fileTooLarge || "This image is too large. Maximum file size is 10 MB.");
         return;
       }
       validFiles.push(file);
@@ -188,14 +188,16 @@ export default function GeoTaggingTool({ messages }: { messages?: any }) {
           if (globalMetadataEdits.dateTaken) formData.append("dateTaken", globalMetadataEdits.dateTaken);
           const seoFields = ['title', 'description', 'keywords', 'businessName', 'serviceCategory', 'city', 'district', 'country', 'streetAddress', 'postalCode', 'stateRegion', 'countryCode', 'websiteUrl'] as const;
           seoFields.forEach(field => {
-            if (globalMetadataEdits[field]) {
-              formData.append(field, globalMetadataEdits[field]!);
+            // Priority: Individual Edit > Global Edit
+            const val = file.editedMetadata?.[field] || globalMetadataEdits[field];
+            if (val) {
+              formData.append(field, val as string);
             }
           });
           const res = await fetch("/api/geotag-image", { method: "POST", body: formData });
           if (!res.ok) {
             const errData = await res.json().catch(() => null);
-            throw new Error(errData?.error || "Server processing failed");
+            throw new Error(errData?.error || d.errors?.exifWriteFailed || "Server processing failed");
           }
           const disposition = res.headers.get("Content-Disposition");
           let finalName = file.name;
@@ -284,7 +286,6 @@ export default function GeoTaggingTool({ messages }: { messages?: any }) {
         <section className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex-grow flex flex-col">
           <h2 className="text-xl font-bold text-slate-900 mb-4">{d.step2Pin || "2. Pin Location"}</h2>
           <div className="space-y-4 flex-grow flex flex-col">
-            <LocationSearch messages={messages} onSelectCallback={(c, name, provider, suggestion) => handleLocationChange(c, 'search', name, provider, suggestion)} />
             <SelectedLocationCard 
                location={selectedLoc} 
                onAutoFillMetadata={(details) => {
@@ -304,7 +305,7 @@ export default function GeoTaggingTool({ messages }: { messages?: any }) {
                   }
                }} 
             />
-            <div className="flex-grow min-h-[400px] border border-slate-200 rounded-lg overflow-hidden relative">
+            <div className="flex-grow min-h-[500px] border border-slate-200 rounded-lg overflow-hidden relative shadow-inner flex flex-col">
                <MapPicker initialCoords={coords} zoomLevel={zoomLevel} onChange={(c) => handleLocationChange(c, 'map')} />
             </div>
             <CoordinateInput coords={coords} onChange={(c) => handleLocationChange(c, 'manual')} />
@@ -453,8 +454,9 @@ export default function GeoTaggingTool({ messages }: { messages?: any }) {
         <ImageEditorModal
           file={files[editingFileIndex]}
           d={d}
+          globalMetadata={globalMetadataEdits}
           onClose={() => setEditingFileIndex(null)}
-          onSave={(editedBlob, previewUrl) => {
+          onSave={(editedBlob, previewUrl, metadata) => {
             const newFiles = [...files];
             if (newFiles[editingFileIndex].preview && newFiles[editingFileIndex].preview?.startsWith('blob:')) {
                URL.revokeObjectURL(newFiles[editingFileIndex].preview as string);
@@ -463,6 +465,7 @@ export default function GeoTaggingTool({ messages }: { messages?: any }) {
               ...newFiles[editingFileIndex],
               editedBlob,
               preview: previewUrl,
+              editedMetadata: metadata ? { ...newFiles[editingFileIndex].editedMetadata, ...metadata } : newFiles[editingFileIndex].editedMetadata,
               status: 'pending',
             };
             setFiles(newFiles);

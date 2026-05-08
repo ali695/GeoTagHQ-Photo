@@ -66,7 +66,17 @@
     "showingMetadataFirstOnly": "Metadaten nur für das erste Foto anzeigen",
     "editCropImage": "Bild bearbeiten & zuschneiden",
     "cropFree": "Frei",
-    "applyEdits": "Änderungen anwenden"
+    "applyEdits": "Änderungen anwenden",
+    "errors": {
+      "noFiles": "Keine Dateien zur Verarbeitung ausgewählt.",
+      "invalidFormat": "Nicht unterstütztes Dateiformat. Bitte verwenden Sie JPG, PNG, WebP oder HEIC.",
+      "exifWriteFailed": "Fehler beim Schreiben der EXIF-Metadaten. Die Datei könnte beschädigt oder schreibgeschützt sein.",
+      "gpsExtractionFailed": "GPS-Koordinaten konnten nicht aus dem gewählten Ort extrahiert werden.",
+      "networkError": "Netzwerkfehler bei der Generierung der SEO-Metadaten. Bitte prüfen Sie Ihre Verbindung.",
+      "aiQuotaExceeded": "KI-Generierungslimit erreicht. Bitte versuchen Sie es später erneut oder geben Sie die Metadaten manuell ein.",
+      "browserUnsupported": "Ihr Browser unterstützt keine lokale EXIF-Bearbeitung. Bitte aktualisieren Sie auf einen modernen Browser.",
+      "exportFailed": "Fehler beim Exportieren des geotaggten Bildes. Verringern Sie die Qualität oder die Bildgröße."
+    }
   },
   "faq": [
     {

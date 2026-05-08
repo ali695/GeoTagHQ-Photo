@@ -204,6 +204,19 @@ export async function POST(req: NextRequest) {
        exifObject['0th'][40093] = toUCS2ByteArray(seoData.businessName); // XPAuthor
     }
 
+    // Extended SEO tags into UserComment for discovery
+    const extendedInfo = [];
+    if (seoData.serviceCategory) extendedInfo.push(`Service: ${seoData.serviceCategory}`);
+    if (seoData.city) extendedInfo.push(`City: ${seoData.city}`);
+    if (seoData.country) extendedInfo.push(`Country: ${seoData.country}`);
+    if (seoData.websiteUrl) extendedInfo.push(`Website: ${seoData.websiteUrl}`);
+    
+    if (extendedInfo.length > 0) {
+      const comment = extendedInfo.join(' | ');
+      // UserComment is in Exif IFD
+      exifObject['Exif'][piexif.ExifIFD.UserComment] = [0, 0, 0, 0, 0, 0, 0, 0, ...Buffer.from(comment, 'utf8')];
+    }
+
     // Since we only use piexifjs, we cannot easily set XMP/IPTC without binary manipulation.
     // However, EXIF tags (ImageDescription, XPTitle, XPKeywords) cover main Local SEO signals.
 

@@ -3,14 +3,16 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 import ReactCrop, { Crop, PixelCrop, centerCrop, makeAspectCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
-import { X, RotateCcw, RotateCw, Check, Wand2 } from 'lucide-react';
-import { ImageFile } from '@/types/image';
+import { X, RotateCcw, RotateCw, Check, Wand2, Info, Tag, FileText, Type, Image as ImageIcon } from 'lucide-react';
+import { ImageFile, ImageMetadata } from '@/types/image';
+import { generateSeoMetadata } from '@/lib/gemini';
 
 interface ImageEditorModalProps {
   file: ImageFile | null;
   onClose: () => void;
-  onSave: (editedBlob: Blob, previewUrl: string) => void;
+  onSave: (editedBlob: Blob, previewUrl: string, metadata?: Partial<ImageMetadata>) => void;
   d?: any;
+  globalMetadata?: Partial<ImageMetadata>;
 }
 
 // Helper to center crop initially
@@ -30,11 +32,140 @@ function centerAspectCrop(mediaWidth: number, mediaHeight: number, aspect: numbe
   );
 }
 
-export default function ImageEditorModal({ file, onClose, onSave, d = {} }: ImageEditorModalProps) {
+export default function ImageEditorModal({ file, onClose, onSave, d = {}, globalMetadata = {} }: ImageEditorModalProps) {
   const [crop, setCrop] = useState<Crop>();
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
   const [rotation, setRotation] = useState(0);
   const imgRef = useRef<HTMLImageElement>(null);
+
+  // Metadata overrides state
+  const [localMeta, setLocalMeta] = useState<Partial<ImageMetadata>>({});
+  const [isGeneratingAi, setIsGeneratingAi] = useState(false);
+
+  const handleAiSuggest = async () => {
+    setIsGeneratingAi(true);
+    try {
+      const data = await generateSeoMetadata({
+        businessName: localMeta.businessName || globalMetadata.businessName,
+        serviceCategory: localMeta.serviceCategory || globalMetadata.serviceCategory,
+        city: globalMetadata.city,
+        country: globalMetadata.country,
+        businessType: localMeta.businessType || 'general',
+        language: 'en' // Default or passed prop
+      });
+
+      if (data) {
+        setLocalMeta(prev => ({
+          ...prev,
+          title: data.title || prev.title,
+          description: data.description || prev.description,
+          suggestedAltText: data.suggestedAltText || prev.suggestedAltText,
+          keywords: data.keywords || prev.keywords
+        }));
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsGeneratingAi(false);
+    }
+  };
+
+  useEffect(() => {
+    if (file && file.editedMetadata) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setLocalMeta(file.editedMetadata);
+    } else if (file && file.metadata) {
+      // Initialize with existing if any, or empty
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setLocalMeta({
+        title: file.metadata.title || '',
+        description: file.metadata.description || '',
+        keywords: file.metadata.keywords || '',
+        serviceCategory: file.metadata.serviceCategory || '',
+        suggestedAltText: file.metadata.suggestedAltText || '',
+        businessName: file.metadata.businessName || '',
+        websiteUrl: file.metadata.websiteUrl || '',
+        businessType: file.metadata.businessType || 'general',
+      });
+    }
+  }, [file]);
+
+  const handleMetaChange = (field: keyof ImageMetadata, value: string) => {
+    setLocalMeta(prev => {
+      const next = { ...prev, [field]: value };
+      
+      // If changing businessType, auto-fill serviceCategory
+      if (field === 'businessType' && value !== 'general') {
+        const presetToCategory: Record<string, string> = {
+          'tree_service': 'Tree Service & Arborist',
+          'towing': 'Towing & Roadside Assistance',
+          'pest_control': 'Pest Control Services',
+          'concrete': 'Concrete & Epoxy Contractors',
+          'fencing': 'Fencing Installation',
+          'locksmith': 'Professional Locksmith',
+          'junk_removal': 'Junk Removal & Hauling',
+          'remediation': 'Water Damage & Mold Remediation',
+          'painting': 'Painting Contractors',
+          'electrician': 'Electrical Services',
+          'hotel': 'Hotel & Accommodation',
+          'restaurant': 'Restaurant & Dining',
+          'plumber': 'Plumbing Services',
+          'real_estate': 'Real Estate Agency',
+          'ecommerce': 'E-Commerce Store',
+          'automotive': 'Automotive & Car Repair',
+          'healthcare': 'Healthcare & Medical Clinic',
+          'legal': 'Legal Services & Law Firm',
+          'fitness': 'Gym & Fitness Center',
+          'salon': 'Hair Salon & Beauty Spa',
+          'cleaning': 'Professional Cleaning Services',
+          'landscaping': 'Landscaping & Gardening',
+          'hvac': 'HVAC Services',
+          'roofing': 'Roofing Contractors',
+          'dentist': 'Dental Care Clinic',
+          'photographer': 'Professional Photography',
+          'event_planning': 'Event Planning & Catering',
+          'tech_support': 'IT & Tech Support',
+          'accounting': 'Accounting & Tax Services',
+          'marketing': 'Digital Marketing Agency',
+          'jewelry': 'Luxury Jewelry',
+          'fashion': 'High-end Fashion Boutique',
+          'foundation_repair': 'Foundation Repair Specialist',
+          'duct_cleaning': 'Air Duct Cleaning Service',
+          'window_cleaning': 'Professional Window Cleaning',
+          'siding': 'Siding & Gutter Installation',
+          'flooring': 'Flooring Contractor',
+          'garage_door': 'Garage Door Repair Service',
+          'solar': 'Solar Power System Installer',
+          'appliance_repair': 'Home Appliance Repair',
+          'pool_service': 'Pool Cleaning & Maintenance',
+          'masonry': 'Masonry & Stone Work',
+          'carpentry': 'Carpentry & Custom Woodworking',
+          'welding': 'Welding & Metal Fabrication',
+          'architect': 'Professional Architecture Firm',
+          'interior_design': 'Interior Design Studio',
+          'vet': 'Veterinary Clinic',
+          'pet_grooming': 'Pet Grooming & Spa',
+          'construction': 'General Contractor & Construction',
+          'logistics': 'Logistics & Freight Services',
+          'security': 'Private Security & Guard Services',
+          'tax_service': 'Tax Preparation & Strategy',
+          'chiropractor': 'Chiropractic Health Center',
+          'pharmacy': 'Local Pharmacy',
+          'insurance': 'Insurance Agency',
+          'travel_agency': 'Travel & Vacation Agency',
+          'car_wash': 'Full Service Car Wash',
+          'trucking': 'Trucking & Haulage',
+          'moving_company': 'Local & Long Distance Moving',
+          'auto_glass': 'Auto Glass Repair & Replace',
+          'boat_repair': 'Marine & Boat Repair'
+        };
+        if (presetToCategory[value]) {
+          next.serviceCategory = presetToCategory[value];
+        }
+      }
+      return next;
+    });
+  };
   
   // Use preview or create one
   const imgSrc = useMemo(() => {
@@ -189,7 +320,7 @@ export default function ImageEditorModal({ file, onClose, onSave, d = {} }: Imag
     cropCanvas.toBlob((blob) => {
       if (blob) {
         const previewUrl = URL.createObjectURL(blob);
-        onSave(blob, previewUrl);
+        onSave(blob, previewUrl, localMeta);
       }
     }, 'image/jpeg', exportQuality);
   };
@@ -206,24 +337,255 @@ export default function ImageEditorModal({ file, onClose, onSave, d = {} }: Imag
           </button>
         </div>
         
-        <div className="flex-grow p-6 flex flex-col items-center justify-center overflow-auto bg-slate-100">
-          {imgSrc && (
-            <ReactCrop
-              crop={crop}
-              aspect={aspect}
-              onChange={(_, percentCrop) => setCrop(percentCrop)}
-              onComplete={(c) => setCompletedCrop(c)}
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                ref={imgRef}
-                alt="Crop me"
-                src={imgSrc}
-                style={{ transform: `rotate(${rotation}deg)`, maxHeight: '60vh', transition: 'transform 0.2s' }}
-                onLoad={onImageLoad}
-              />
-            </ReactCrop>
-          )}
+        <div className="flex-grow p-6 flex flex-col md:flex-row items-center md:items-stretch justify-center overflow-auto bg-slate-100 gap-6">
+          <div className="flex-grow flex items-center justify-center min-h-[300px]">
+            {imgSrc && (
+              <ReactCrop
+                crop={crop}
+                aspect={aspect}
+                onChange={(_, percentCrop) => setCrop(percentCrop)}
+                onComplete={(c) => setCompletedCrop(c)}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  ref={imgRef}
+                  alt="Crop me"
+                  src={imgSrc}
+                  style={{ transform: `rotate(${rotation}deg)`, maxHeight: '60vh', transition: 'transform 0.2s' }}
+                  onLoad={onImageLoad}
+                />
+              </ReactCrop>
+            )}
+          </div>
+
+          <div className="w-full md:w-80 bg-white border border-slate-200 rounded-xl p-5 shadow-sm overflow-y-auto">
+             <div className="flex items-center justify-between mb-4">
+               <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                 <Info className="w-4 h-4 text-blue-500" /> Individual SEO Meta
+               </h4>
+               <button 
+                 onClick={handleAiSuggest}
+                 disabled={isGeneratingAi}
+                 className="text-[10px] bg-blue-50 text-blue-600 px-2 py-1 rounded flex items-center gap-1 hover:bg-blue-100 transition-colors disabled:opacity-50"
+               >
+                 <Wand2 className={`w-3 h-3 ${isGeneratingAi ? 'animate-pulse' : ''}`} />
+                 {isGeneratingAi ? '...' : 'Suggest'}
+               </button>
+             </div>
+             
+             <div className="space-y-4">
+                 <div>
+                    <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1 flex items-center gap-1.5">
+                      <Tag className="w-3 h-3" /> Business Type Preset
+                    </label>
+                    <select 
+                      value={localMeta.businessType || 'general'} 
+                      onChange={(e) => handleMetaChange('businessType', e.target.value)}
+                      className="w-full text-xs border border-slate-300 rounded-md px-2 py-2 outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                    >
+                      <option value="general">General Business</option>
+                      <option disabled>--- Rank & Rent / Local SEO ---</option>
+                      <option value="tree_service">Tree Service / Arborist</option>
+                      <option value="towing">Towing Service</option>
+                      <option value="pest_control">Pest Control</option>
+                      <option value="concrete">Concrete & Epoxy</option>
+                      <option value="fencing">Fencing Contractors</option>
+                      <option value="locksmith">Locksmith</option>
+                      <option value="junk_removal">Junk Removal</option>
+                      <option value="remediation">Water Damage / Mold</option>
+                      <option value="painting">Painting Services</option>
+                      <option value="electrician">Electrician</option>
+                      <option value="roofing">Roofing Contractors</option>
+                      <option value="hvac">HVAC / Air Conditioning</option>
+                      <option value="plumber">Plumber</option>
+                      <option value="flooring">Flooring Contractor</option>
+                      <option value="siding">Siding & Gutters</option>
+                      <option value="pool_service">Pool Cleaning & Service</option>
+                      <option value="garage_door">Garage Door Repair</option>
+                      <option value="solar">Solar Energy Installer</option>
+                      <option value="appliance_repair">Appliance Repair</option>
+                      <option value="window_cleaning">Window Cleaning</option>
+                      <option value="foundation_repair">Foundation Repair</option>
+                      <option value="duct_cleaning">Air Duct Cleaning</option>
+                      <option value="landscaping">Landscaping & Lawn Care</option>
+                      <option disabled>--- Local Trades & Services ---</option>
+                      <option value="automotive">Automotive Repair</option>
+                      <option value="welding">Welding & Metal Fab</option>
+                      <option value="carpentry">Carpentry & Woodwork</option>
+                      <option value="masonry">Masonry & Brickwork</option>
+                      <option value="insulation">Insulation Contractor</option>
+                      <option value="drywall">Drywall & Plastering</option>
+                      <option value="excavation">Excavation & Grading</option>
+                      <option value="handyman">Handyman Services</option>
+                      <option value="pressure_washing">Pressure Washing</option>
+                      <option value="pest_control">Pest Control</option>
+                      <option value="janitorial">Janitorial Services</option>
+                      <option value="security_systems">Security Systems</option>
+                      <option disabled>--- Hospitality & Retail ---</option>
+                      <option value="hotel">Hotel / Stays</option>
+                      <option value="restaurant">Restaurant / Cafe</option>
+                      <option value="bar">Bar / Pub</option>
+                      <option value="salon">Salon & Spa</option>
+                      <option value="fitness">Gym & Fitness</option>
+                      <option value="ecommerce">E-Commerce</option>
+                      <option value="coffee_shop">Coffee Shop</option>
+                      <option value="bakery">Bakery</option>
+                      <option value="retail_clothing">Clothing Store</option>
+                      <option value="grocery">Grocery Store</option>
+                      <option value="pet_grooming">Pet Grooming</option>
+                      <option value="veterinary">Veterinary Clinic</option>
+                      <option value="flower_shop">Florist</option>
+                      <option value="boutique">Boutique Store</option>
+                      <option disabled>--- Professional & Medical ---</option>
+                      <option value="real_estate">Real Estate</option>
+                      <option value="healthcare">Medical Clinic</option>
+                      <option value="dentist">Dental Clinic</option>
+                      <option value="legal">Law Firm</option>
+                      <option value="accounting">Accounting Services</option>
+                      <option value="marketing">Digital Marketing</option>
+                      <option value="tech_support">IT Support</option>
+                      <option value="chiropractor">Chiropractor</option>
+                      <option value="optometry">Optometry / Eyewear</option>
+                      <option value="pharmacy">Pharmacy</option>
+                      <option value="insurance">Insurance Agency</option>
+                      <option value="travel_agency">Travel Agency</option>
+                      <option value="architecture">Architect</option>
+                      <option value="engineering">Engineering Firm</option>
+                      <option disabled>--- Creative & Luxury ---</option>
+                      <option value="photographer">Photography</option>
+                      <option value="event_planning">Event Planning</option>
+                      <option value="jewelry">Luxury Jewelry</option>
+                      <option value="fashion">Fashion Boutique</option>
+                      <option value="interior_design">Interior Design</option>
+                      <option value="architect">Architecture Firm</option>
+                      <option value="art_gallery">Art Gallery</option>
+                      <option value="tatoo_studio">Tattoo Studio</option>
+                      <option value="luxury_cars">Exotic Car Rental</option>
+                      <option disabled>--- Automotive & Transport ---</option>
+                      <option value="car_wash">Car Wash & Detailing</option>
+                      <option value="car_rental">Car Rental</option>
+                      <option value="tire_shop">Tire & Wheel Shop</option>
+                      <option value="trucking">Trucking & Logistics</option>
+                      <option value="moving_company">Moving Company</option>
+                      <option value="auto_glass">Auto Glass Repair</option>
+                      <option value="boat_repair">Boat & Marine Repair</option>
+                      <option value="taxi_service">Taxi & Limo Service</option>
+                      <option disabled>--- Industrial & Logistics ---</option>
+                      <option value="construction">General Construction</option>
+                      <option value="manufacturing">Manufacturing Plant</option>
+                      <option value="logistics">Logistics & Freight</option>
+                      <option value="warehouse">Warehousing Facility</option>
+                      <option value="waste_management">Waste & Recycling</option>
+                      <option value="security">Security Services</option>
+                      <option value="oil_gas">Oil & Gas Services</option>
+                      <option disabled>--- Social & Public ---</option>
+                      <option value="education">School / University</option>
+                      <option value="church">Place of Worship</option>
+                      <option value="community_center">Community Center</option>
+                      <option value="charity">Non-profit / Charity</option>
+                      <option value="government">Government Office</option>
+                      <option value="library">Public Library</option>
+                    </select>
+                 </div>
+
+                <div>
+                   <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1 flex items-center gap-1.5">
+                     <Type className="w-3 h-3" /> Business Name
+                   </label>
+                   <input 
+                     type="text" 
+                     value={localMeta.businessName || ''} 
+                     onChange={(e) => handleMetaChange('businessName', e.target.value)}
+                     placeholder="Your Company Name"
+                     className="w-full text-xs border border-slate-300 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
+                   />
+                </div>
+
+                <div>
+                   <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1 flex items-center gap-1.5">
+                     <Wand2 className="w-3 h-3" /> Website URL
+                   </label>
+                   <input 
+                     type="text" 
+                     value={localMeta.websiteUrl || ''} 
+                     onChange={(e) => handleMetaChange('websiteUrl', e.target.value)}
+                     placeholder="https://example.com"
+                     className="w-full text-xs border border-slate-300 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
+                   />
+                </div>
+
+                <div>
+                   <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1 flex items-center gap-1.5">
+                     <Type className="w-3 h-3" /> Service Category
+                   </label>
+                   <input 
+                     type="text" 
+                     value={localMeta.serviceCategory || ''} 
+                     onChange={(e) => handleMetaChange('serviceCategory', e.target.value)}
+                     placeholder="e.g. Roofing Contractors"
+                     className="w-full text-xs border border-slate-300 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
+                   />
+                </div>
+
+                <div>
+                   <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1 flex items-center gap-1.5">
+                     <Type className="w-3 h-3" /> Image Title
+                   </label>
+                   <input 
+                     type="text" 
+                     value={localMeta.title || ''} 
+                     onChange={(e) => handleMetaChange('title', e.target.value)}
+                     placeholder="e.g. Roof Repair Service"
+                     className="w-full text-xs border border-slate-300 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
+                   />
+                </div>
+
+                <div>
+                   <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1 flex items-center gap-1.5">
+                     <Tag className="w-3 h-3" /> Service / Description
+                   </label>
+                   <textarea 
+                     rows={3}
+                     value={localMeta.description || ''} 
+                     onChange={(e) => handleMetaChange('description', e.target.value)}
+                     placeholder="e.g. Professional roof repair and maintenance..."
+                     className="w-full text-xs border border-slate-300 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                   />
+                </div>
+
+                <div>
+                   <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1 flex items-center gap-1.5">
+                     <FileText className="w-3 h-3" /> Keywords / Tags
+                   </label>
+                   <input 
+                     type="text" 
+                     value={localMeta.keywords || ''} 
+                     onChange={(e) => handleMetaChange('keywords', e.target.value)}
+                     placeholder="roofing, repair, local"
+                     className="w-full text-xs border border-slate-300 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
+                   />
+                </div>
+
+                <div>
+                   <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1 flex items-center gap-1.5">
+                     <ImageIcon className="w-3 h-3" /> Alt Text
+                   </label>
+                   <input 
+                     type="text" 
+                     value={localMeta.suggestedAltText || ''} 
+                     onChange={(e) => handleMetaChange('suggestedAltText', e.target.value)}
+                     placeholder="Image description for accessibility"
+                     className="w-full text-xs border border-slate-300 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
+                   />
+                </div>
+
+                <div className="pt-2">
+                  <p className="text-[10px] text-slate-500 leading-tight italic">
+                    Note: These values will override global settings only for this image.
+                  </p>
+                </div>
+             </div>
+          </div>
         </div>
         
         <div className="p-4 border-t border-slate-200 bg-white flex flex-col sm:flex-row gap-4 justify-between items-center w-full">

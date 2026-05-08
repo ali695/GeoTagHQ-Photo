@@ -18,25 +18,31 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${baseUrl}/privacy-policy`,
       lastModified,
       changeFrequency: 'yearly',
-      priority: 0.3,
+      priority: 0.1,
     },
     {
-      url: `${baseUrl}/terms-of-service`,
+      url: `${baseUrl}/terms`,
       lastModified,
       changeFrequency: 'yearly',
-      priority: 0.3,
+      priority: 0.1,
     },
     {
       url: `${baseUrl}/contact`,
       lastModified,
-      changeFrequency: 'yearly',
-      priority: 0.4,
+      changeFrequency: 'monthly',
+      priority: 0.5,
     },
     {
       url: `${baseUrl}/disclaimer`,
       lastModified,
       changeFrequency: 'yearly',
-      priority: 0.3,
+      priority: 0.1,
+    },
+    {
+      url: `${baseUrl}/about`,
+      lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.5,
     }
   ];
 }

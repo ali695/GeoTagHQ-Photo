@@ -66,7 +66,19 @@
     "showingMetadataFirstOnly": "Showing metadata for first photo only",
     "editCropImage": "Edit & Crop Image",
     "cropFree": "Free",
-    "applyEdits": "Apply Edits"
+    "applyEdits": "Apply Edits",
+    "errors": {
+      "noFiles": "No files selected for processing.",
+      "invalidFormat": "Unsupported file format. Please use JPG, PNG, WebP, or HEIC.",
+      "exifWriteFailed": "Failed to write EXIF metadata. The file might be corrupted or read-only.",
+      "gpsExtractionFailed": "Could not extract GPS coordinates from the selected location.",
+      "networkError": "Network error while generating SEO metadata. Please check your connection.",
+      "aiQuotaExceeded": "AI generation limit reached. Please try again later or enter metadata manually.",
+      "browserUnsupported": "Your browser does not support local EXIF editing. Please update to a modern browser.",
+      "exportFailed": "Failed to export the geotagged image. Try reducing the quality or resizing the image.",
+      "batchSizeExceeded": "Maximum batch size is 10 images.",
+      "fileTooLarge": "This image is too large. Maximum file size is 10 MB."
+    }
   },
   "faq": [
     {

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { ImageMetadata } from '@/types/image';
 import { Camera, Calendar, HardDrive, FileType, Map, Wand2, Copy, CheckCircle2 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { generateSeoMetadata } from '@/lib/gemini';
 
 interface MetadataPanelProps {
   metadata?: ImageMetadata;
@@ -25,6 +26,34 @@ export default function MetadataPanel({ metadata, onMetadataChange }: MetadataPa
   const [isGenerating, setIsGenerating] = useState(false);
   const [seoLang, setSeoLang] = useState('en');
   const [businessType, setBusinessType] = useState('general');
+
+  const getLocationLabels = (country?: string) => {
+    const c = country?.toLowerCase().trim() || '';
+    if (c === 'usa' || c === 'united states' || c === 'united states of america' || c === 'us') {
+      return { state: 'State', postal: 'ZIP Code', district: 'Neighborhood / Area' };
+    }
+    if (c === 'united kingdom' || c === 'uk' || c === 'britain' || c === 'england' || c === 'scotland' || c === 'wales') {
+      return { state: 'County', postal: 'Postcode', district: 'Borough' };
+    }
+    if (c === 'canada' || c === 'ca') {
+      return { state: 'Province', postal: 'Postal Code', district: 'Neighborhood' };
+    }
+    if (c === 'australia' || c === 'au') {
+      return { state: 'State', postal: 'Postcode', district: 'Suburb' };
+    }
+    if (c === 'germany' || c === 'deutschland' || c === 'de') {
+      return { state: 'State / Bundesland', postal: 'Postleitzahl (PLZ)', district: 'Bezirk' };
+    }
+    if (c === 'france' || c === 'fr') {
+      return { state: 'Region / Department', postal: 'Code Postal', district: 'Arrondissement' };
+    }
+    if (c === 'india' || c === 'in') {
+      return { state: 'State', postal: 'PIN Code', district: 'Locality / Area' };
+    }
+    return { state: 'State / Region', postal: 'Postal Code', district: 'District / Area' };
+  };
+
+  const labels = getLocationLabels(editState.country);
 
   useEffect(() => {
     if (metadata) {
@@ -59,83 +88,35 @@ export default function MetadataPanel({ metadata, onMetadataChange }: MetadataPa
       const lower = value.toLowerCase();
       if (lower.includes('plumb')) setBusinessType('plumber');
       else if (lower.includes('roof')) setBusinessType('roofing');
-      else if (lower.includes('hvac') || lower.includes('heating') || lower.includes('air cond') || lower.includes('ac ')) setBusinessType('hvac');
+      else if (lower.includes('hvac') || lower.includes('heating') || lower.includes('air cond')) setBusinessType('hvac');
       else if (lower.includes('clean') || lower.includes('maid')) setBusinessType('cleaning');
-      else if (lower.includes('landscap') || lower.includes('lawn') || lower.includes('garden') || lower.includes('yard')) setBusinessType('landscaping');
-      else if (lower.includes('auto') || lower.includes('car') || lower.includes('mechanic')) setBusinessType('automotive');
+      else if (lower.includes('landscap') || lower.includes('lawn') || lower.includes('garden')) setBusinessType('landscaping');
+      else if (lower.includes('auto') || lower.includes('car repair') || lower.includes('mechanic')) setBusinessType('automotive');
       else if (lower.includes('hotel') || lower.includes('motel') || lower.includes('hostel')) setBusinessType('hotel');
       else if (lower.includes('restaurant') || lower.includes('cafe') || lower.includes('food')) setBusinessType('restaurant');
       else if (lower.includes('salon') || lower.includes('spa') || lower.includes('hair') || lower.includes('barber')) setBusinessType('salon');
-      else if (lower.includes('gym') || lower.includes('fitness') || lower.includes('yoga') || lower.includes('pilates')) setBusinessType('fitness');
-      else if (lower.includes('real estate') || lower.includes('realtor') || lower.includes('property')) setBusinessType('real_estate');
+      else if (lower.includes('gym') || lower.includes('fitness') || lower.includes('yoga')) setBusinessType('fitness');
+      else if (lower.includes('real estate') || lower.includes('realtor')) setBusinessType('real_estate');
       else if (lower.includes('dentist') || lower.includes('dental')) setBusinessType('dentist');
-      else if (lower.includes('law') || lower.includes('legal') || lower.includes('attorney') || lower.includes('lawyer')) setBusinessType('legal');
-      else if (lower.includes('account') || lower.includes('cpa') || lower.includes('tax') || lower.includes('bookkeep')) setBusinessType('accounting');
-      else if (lower.includes('tree') || lower.includes('arbor')) setBusinessType('tree_service');
-      else if (lower.includes('pest') || lower.includes('exterminator')) setBusinessType('pest_control');
-      else if (lower.includes('tow') || lower.includes('wrecker')) setBusinessType('towing');
-      else if (lower.includes('locksmith') || lower.includes('key')) setBusinessType('locksmith');
-      else if (lower.includes('junk') || lower.includes('trash') || lower.includes('dumpster')) setBusinessType('junk_removal');
+      else if (lower.includes('law') || lower.includes('legal') || lower.includes('attorney')) setBusinessType('legal');
+      else if (lower.includes('account') || lower.includes('cpa') || lower.includes('tax')) setBusinessType('accounting');
+      else if (lower.includes('tree')) setBusinessType('tree_service');
+      else if (lower.includes('pest')) setBusinessType('pest_control');
+      else if (lower.includes('tow')) setBusinessType('towing');
+      else if (lower.includes('locksmith')) setBusinessType('locksmith');
+      else if (lower.includes('junk')) setBusinessType('junk_removal');
       else if (lower.includes('fence') || lower.includes('fencing')) setBusinessType('fencing');
-      else if (lower.includes('concrete') || lower.includes('epoxy') || lower.includes('cement')) setBusinessType('concrete');
-      else if (lower.includes('mold') || lower.includes('water damag') || lower.includes('fire damag') || lower.includes('remediat')) setBusinessType('remediation');
-      else if (lower.includes('paint') || lower.includes('painter')) setBusinessType('painting');
+      else if (lower.includes('concrete') || lower.includes('epoxy')) setBusinessType('concrete');
+      else if (lower.includes('mold') || lower.includes('water damag')) setBusinessType('remediation');
+      else if (lower.includes('paint')) setBusinessType('painting');
       else if (lower.includes('electrician') || lower.includes('electrical')) setBusinessType('electrician');
-      else if (lower.includes('carpenter') || lower.includes('wood') || lower.includes('cabinet')) setBusinessType('carpentry');
-      else if (lower.includes('masonry') || lower.includes('brick') || lower.includes('stone')) setBusinessType('masonry');
-      else if (lower.includes('weld') || lower.includes('metal')) setBusinessType('welding');
-      else if (lower.includes('glass') || lower.includes('window')) setBusinessType('glass');
-      else if (lower.includes('garage')) setBusinessType('garage_door');
-      else if (lower.includes('pool')) setBusinessType('pool_cleaning');
-      else if (lower.includes('gutter')) setBusinessType('gutter_cleaning');
-      else if (lower.includes('snow') || lower.includes('plow')) setBusinessType('snow_removal');
-      else if (lower.includes('floor') || lower.includes('carpet')) setBusinessType('flooring');
-      else if (lower.includes('mov') || lower.includes('relocat')) setBusinessType('moving');
-      else if (lower.includes('appliance') || lower.includes('repair')) setBusinessType('appliance_repair');
-      else if (lower.includes('chiro')) setBusinessType('chiropractor');
-      else if (lower.includes('physical therapy') || lower.includes('physiotherapy')) setBusinessType('physical_therapy');
-      else if (lower.includes('massage')) setBusinessType('massage_therapy');
-      else if (lower.includes('optometrist') || lower.includes('eye')) setBusinessType('optometrist');
-      else if (lower.includes('pharmacy') || lower.includes('drug')) setBusinessType('pharmacy');
-      else if (lower.includes('vet') || lower.includes('animal hosp')) setBusinessType('vet');
-      else if (lower.includes('pet groom') || lower.includes('groom')) setBusinessType('pet_grooming');
-      else if (lower.includes('dog') || lower.includes('pet sit')) setBusinessType('dog_walking');
-      else if (lower.includes('tutor') || lower.includes('math') || lower.includes('prep')) setBusinessType('tutor');
-      else if (lower.includes('driving')) setBusinessType('driving_school');
-      else if (lower.includes('music') || lower.includes('piano') || lower.includes('guitar')) setBusinessType('music_school');
-      else if (lower.includes('dance')) setBusinessType('dance_studio');
-      else if (lower.includes('grocer') || lower.includes('supermarket') || lower.includes('market')) setBusinessType('grocery');
-      else if (lower.includes('baker') || lower.includes('pastry') || lower.includes('cake')) setBusinessType('bakery');
-      else if (lower.includes('bar') || lower.includes('pub') || lower.includes('club') || lower.includes('nightclub') || lower.includes('lounge')) setBusinessType('bar');
-      else if (lower.includes('coffee')) setBusinessType('cafe');
-      else if (lower.includes('food truck')) setBusinessType('food_truck');
-      else if (lower.includes('liquor') || lower.includes('wine') || lower.includes('beer')) setBusinessType('liquor_store');
-      else if (lower.includes('florist') || lower.includes('flower')) setBusinessType('florist');
-      else if (lower.includes('hardware') || lower.includes('lumber') || lower.includes('home improvement')) setBusinessType('hardware_store');
-      else if (lower.includes('pet store') || lower.includes('pet suppl')) setBusinessType('pet_store');
-      else if (lower.includes('nail')) setBusinessType('nail_salon');
-      else if (lower.includes('dj') || lower.includes('entertainment')) setBusinessType('dj');
-      else if (lower.includes('video') || lower.includes('film')) setBusinessType('videography');
-      else if (lower.includes('print') || lower.includes('sign')) setBusinessType('print_shop');
-      else if (lower.includes('architect')) setBusinessType('architecture');
-      else if (lower.includes('consult')) setBusinessType('consulting');
-      else if (lower.includes('insurance') || lower.includes('broker')) setBusinessType('insurance');
-      else if (lower.includes('notary')) setBusinessType('notary');
-      else if (lower.includes('e-commerce') || lower.includes('online')) setBusinessType('ecommerce');
-      else if (lower.includes('medical') || lower.includes('clinic') || lower.includes('health')) setBusinessType('healthcare');
-      else if (lower.includes('market')) setBusinessType('marketing');
-      else if (lower.includes('tech') || lower.includes('it support')) setBusinessType('tech_support');
-      else if (lower.includes('event') || lower.includes('party')) setBusinessType('event_planning');
-      else if (lower.includes('photo')) setBusinessType('photographer');
-      else if (lower.includes('jewelry') || lower.includes('jewel')) setBusinessType('jewelry');
-      else if (lower.includes('fashion') || lower.includes('cloth') || lower.includes('boutique') || lower.includes('apparel')) setBusinessType('fashion');
     }
   };
 
   const handleGenerateSEO = async () => {
     setIsGenerating(true);
     try {
-      const payload = {
+      const data = await generateSeoMetadata({
         businessName: editState.businessName,
         serviceCategory: editState.serviceCategory,
         city: editState.city,
@@ -143,19 +124,9 @@ export default function MetadataPanel({ metadata, onMetadataChange }: MetadataPa
         country: editState.country,
         businessType: businessType,
         language: seoLang
-      };
-
-      const res = await fetch('/api/generate-seo', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
       });
 
-      if (res.ok) {
-        const data = await res.json();
-        
+      if (data) {
         // Advanced SEO defaults
         const country = editState.country;
         let genCountryCode = '';
@@ -180,6 +151,10 @@ export default function MetadataPanel({ metadata, onMetadataChange }: MetadataPa
           stateRegion: editState.city || '',
           countryCode: genCountryCode,
           websiteUrl: genWebsite,
+          schemaMarkup: typeof data.schemaMarkup === 'string' ? data.schemaMarkup : JSON.stringify(data.schemaMarkup, null, 2),
+          ogTags: JSON.stringify(data.ogTags, null, 2),
+          hreflang: JSON.stringify(data.hreflang, null, 2),
+          semanticClusters: Array.isArray(data.semanticClusters) ? data.semanticClusters.join(', ') : '',
         };
         
         setEditState(prev => ({ ...prev, ...updates }));
@@ -281,7 +256,9 @@ export default function MetadataPanel({ metadata, onMetadataChange }: MetadataPa
       </details>
 
       <div className="w-full flex flex-wrap items-center justify-between gap-4">
-        <h4 className="font-bold text-slate-900 text-sm">Basic Local SEO Metadata</h4>
+        <h4 className="font-bold text-slate-900 text-sm">
+          Basic Local SEO Metadata
+        </h4>
         <div className="flex flex-wrap items-center gap-2">
           <select 
             value={businessType} 
@@ -300,46 +277,6 @@ export default function MetadataPanel({ metadata, onMetadataChange }: MetadataPa
                    'remediation': 'Water Damage & Mold Remediation',
                    'painting': 'Painting Contractors',
                    'electrician': 'Electrical Services',
-                   'carpentry': 'Carpentry & Woodworking',
-                   'masonry': 'Masonry & Bricklaying',
-                   'welding': 'Welding & Metalwork',
-                   'glass': 'Glass & Window Repair',
-                   'garage_door': 'Garage Door Services',
-                   'pool_cleaning': 'Pool Cleaning & Maintenance',
-                   'gutter_cleaning': 'Gutter Cleaning',
-                   'snow_removal': 'Snow Removal Services',
-                   'flooring': 'Flooring Installation',
-                   'moving': 'Moving & Relocation Services',
-                   'appliance_repair': 'Appliance Repair',
-                   'chiropractor': 'Chiropractor',
-                   'physical_therapy': 'Physical Therapy',
-                   'massage_therapy': 'Massage Therapy',
-                   'optometrist': 'Optometrist & Eye Care',
-                   'pharmacy': 'Pharmacy',
-                   'vet': 'Veterinarian Clinic',
-                   'pet_grooming': 'Pet Grooming',
-                   'dog_walking': 'Dog Walking & Sitting',
-                   'tutor': 'Tutoring & Education',
-                   'driving_school': 'Driving School',
-                   'music_school': 'Music Lessons',
-                   'dance_studio': 'Dance Studio',
-                   'grocery': 'Grocery Store & Supermarket',
-                   'bakery': 'Bakery & Pastry Shop',
-                   'bar': 'Bar & Nightclub',
-                   'cafe': 'Coffee Shop & Cafe',
-                   'food_truck': 'Food Truck',
-                   'liquor_store': 'Liquor Store',
-                   'florist': 'Florist & Flower Shop',
-                   'hardware_store': 'Hardware Store',
-                   'pet_store': 'Pet Store & Supplies',
-                   'nail_salon': 'Nail Salon',
-                   'dj': 'DJ & Entertainment',
-                   'videography': 'Videography & Film Production',
-                   'print_shop': 'Print Shop & Signage',
-                   'architecture': 'Architect & Building Design',
-                   'consulting': 'Business Consulting',
-                   'insurance': 'Insurance Agency',
-                   'notary': 'Notary Public',
                    'hotel': 'Hotel & Accommodation',
                    'restaurant': 'Restaurant & Dining',
                    'plumber': 'Plumbing Services',
@@ -361,7 +298,36 @@ export default function MetadataPanel({ metadata, onMetadataChange }: MetadataPa
                    'accounting': 'Accounting & Tax Services',
                    'marketing': 'Digital Marketing Agency',
                    'jewelry': 'Luxury Jewelry',
-                   'fashion': 'High-end Fashion Boutique'
+                   'fashion': 'High-end Fashion Boutique',
+                   'foundation_repair': 'Foundation Repair Specialist',
+                   'duct_cleaning': 'Air Duct Cleaning Service',
+                   'window_cleaning': 'Professional Window Cleaning',
+                   'siding': 'Siding & Gutter Installation',
+                   'flooring': 'Flooring Contractor',
+                   'garage_door': 'Garage Door Repair Service',
+                   'solar': 'Solar Power System Installer',
+                   'appliance_repair': 'Home Appliance Repair',
+                   'pool_service': 'Pool Cleaning & Maintenance',
+                   'masonry': 'Masonry & Stone Work',
+                   'carpentry': 'Carpentry & Custom Woodworking',
+                   'welding': 'Welding & Metal Fabrication',
+                   'architect': 'Professional Architecture Firm',
+                   'interior_design': 'Interior Design Studio',
+                   'vet': 'Veterinary Clinic',
+                   'pet_grooming': 'Pet Grooming & Spa',
+                   'construction': 'General Contractor & Construction',
+                   'logistics': 'Logistics & Freight Services',
+                   'security': 'Private Security & Guard Services',
+                   'tax_service': 'Tax Preparation & Strategy',
+                   'chiropractor': 'Chiropractic Health Center',
+                   'pharmacy': 'Local Pharmacy',
+                   'insurance': 'Insurance Agency',
+                   'travel_agency': 'Travel & Vacation Agency',
+                   'car_wash': 'Full Service Car Wash',
+                   'trucking': 'Trucking & Haulage',
+                   'moving_company': 'Local & Long Distance Moving',
+                   'auto_glass': 'Auto Glass Repair & Replace',
+                   'boat_repair': 'Marine & Boat Repair'
                  };
                  if (presetToCategory[e.target.value]) {
                    handleChange('serviceCategory', presetToCategory[e.target.value]);
@@ -383,76 +349,96 @@ export default function MetadataPanel({ metadata, onMetadataChange }: MetadataPa
             <option value="remediation">Water Damage / Mold</option>
             <option value="painting">Painting Services</option>
             <option value="electrician">Electrician</option>
-            <option disabled>--- Local Trades & Home Services ---</option>
-            <option value="plumber">Plumber</option>
-            <option value="hvac">HVAC Services</option>
             <option value="roofing">Roofing Contractors</option>
-            <option value="cleaning">Cleaning Services</option>
-            <option value="landscaping">Landscaping</option>
-            <option value="carpentry">Carpentry & Woodworking</option>
-            <option value="masonry">Masonry & Bricklaying</option>
-            <option value="welding">Welding & Metalwork</option>
-            <option value="glass">Glass & Window Repair</option>
-            <option value="garage_door">Garage Door Services</option>
-            <option value="pool_cleaning">Pool Cleaning & Maintenance</option>
-            <option value="gutter_cleaning">Gutter Cleaning</option>
-            <option value="snow_removal">Snow Removal Services</option>
-            <option value="flooring">Flooring Installation</option>
-            <option value="moving">Moving & Relocation Services</option>
+            <option value="hvac">HVAC / Air Conditioning</option>
+            <option value="plumber">Plumber</option>
+            <option value="flooring">Flooring Contractor</option>
+            <option value="siding">Siding & Gutters</option>
+            <option value="pool_service">Pool Cleaning & Service</option>
+            <option value="garage_door">Garage Door Repair</option>
+            <option value="solar">Solar Energy Installer</option>
             <option value="appliance_repair">Appliance Repair</option>
-            <option disabled>--- Automotive ---</option>
+            <option value="window_cleaning">Window Cleaning</option>
+            <option value="foundation_repair">Foundation Repair</option>
+            <option value="duct_cleaning">Air Duct Cleaning</option>
+            <option value="landscaping">Landscaping & Lawn Care</option>
+            <option disabled>--- Local Trades & Services ---</option>
             <option value="automotive">Automotive Repair</option>
-            <option disabled>--- Hospitality & Food ---</option>
+            <option value="welding">Welding & Metal Fab</option>
+            <option value="carpentry">Carpentry & Woodwork</option>
+            <option value="masonry">Masonry & Brickwork</option>
+            <option value="insulation">Insulation Contractor</option>
+            <option value="drywall">Drywall & Plastering</option>
+            <option value="excavation">Excavation & Grading</option>
+            <option value="handyman">Handyman Services</option>
+            <option value="pressure_washing">Pressure Washing</option>
+            <option value="pest_control">Pest Control</option>
+            <option value="janitorial">Janitorial Services</option>
+            <option value="security_systems">Security Systems</option>
+            <option disabled>--- Hospitality & Retail ---</option>
             <option value="hotel">Hotel / Stays</option>
             <option value="restaurant">Restaurant / Cafe</option>
-            <option value="bakery">Bakery & Pastry Shop</option>
-            <option value="bar">Bar & Nightclub</option>
-            <option value="cafe">Coffee Shop & Cafe</option>
-            <option value="food_truck">Food Truck</option>
-            <option disabled>--- Retail & Online ---</option>
-            <option value="ecommerce">E-Commerce</option>
-            <option value="grocery">Grocery Store</option>
-            <option value="liquor_store">Liquor Store</option>
-            <option value="florist">Florist</option>
-            <option value="hardware_store">Hardware Store</option>
-            <option value="pet_store">Pet Store & Supplies</option>
-            <option disabled>--- Beauty, Wellness & Pets ---</option>
+            <option value="bar">Bar / Pub</option>
             <option value="salon">Salon & Spa</option>
-            <option value="nail_salon">Nail Salon</option>
             <option value="fitness">Gym & Fitness</option>
-            <option value="vet">Veterinarian</option>
+            <option value="ecommerce">E-Commerce</option>
+            <option value="coffee_shop">Coffee Shop</option>
+            <option value="bakery">Bakery</option>
+            <option value="retail_clothing">Clothing Store</option>
+            <option value="grocery">Grocery Store</option>
             <option value="pet_grooming">Pet Grooming</option>
-            <option value="dog_walking">Dog Walking</option>
-            <option disabled>--- Professional, B2B & Real Estate ---</option>
+            <option value="veterinary">Veterinary Clinic</option>
+            <option value="flower_shop">Florist</option>
+            <option value="boutique">Boutique Store</option>
+            <option disabled>--- Professional & Medical ---</option>
             <option value="real_estate">Real Estate</option>
+            <option value="healthcare">Medical Clinic</option>
+            <option value="dentist">Dental Clinic</option>
             <option value="legal">Law Firm</option>
             <option value="accounting">Accounting Services</option>
             <option value="marketing">Digital Marketing</option>
             <option value="tech_support">IT Support</option>
-            <option value="architecture">Architecture</option>
-            <option value="consulting">Business Consulting</option>
-            <option value="insurance">Insurance Agency</option>
-            <option value="notary">Notary Public</option>
-            <option disabled>--- Health & Medical ---</option>
-            <option value="healthcare">Medical Clinic</option>
-            <option value="dentist">Dental Clinic</option>
             <option value="chiropractor">Chiropractor</option>
-            <option value="physical_therapy">Physical Therapy</option>
-            <option value="massage_therapy">Massage Therapy</option>
-            <option value="optometrist">Optometrist</option>
+            <option value="optometry">Optometry / Eyewear</option>
             <option value="pharmacy">Pharmacy</option>
-            <option disabled>--- Education, Events & Creative ---</option>
-            <option value="tutor">Tutoring & Education</option>
-            <option value="driving_school">Driving School</option>
-            <option value="music_school">Music Lessons</option>
-            <option value="dance_studio">Dance Studio</option>
+            <option value="insurance">Insurance Agency</option>
+            <option value="travel_agency">Travel Agency</option>
+            <option value="architecture">Architect</option>
+            <option value="engineering">Engineering Firm</option>
+            <option disabled>--- Creative & Luxury ---</option>
             <option value="photographer">Photography</option>
             <option value="event_planning">Event Planning</option>
-            <option value="dj">DJ & Entertainment</option>
-            <option value="videography">Videography</option>
-            <option value="print_shop">Print Shop</option>
             <option value="jewelry">Luxury Jewelry</option>
             <option value="fashion">Fashion Boutique</option>
+            <option value="interior_design">Interior Design</option>
+            <option value="architect">Architecture Firm</option>
+            <option value="art_gallery">Art Gallery</option>
+            <option value="tatoo_studio">Tattoo Studio</option>
+            <option value="luxury_cars">Exotic Car Rental</option>
+            <option disabled>--- Automotive & Transport ---</option>
+            <option value="car_wash">Car Wash & Detailing</option>
+            <option value="car_rental">Car Rental</option>
+            <option value="tire_shop">Tire & Wheel Shop</option>
+            <option value="trucking">Trucking & Logistics</option>
+            <option value="moving_company">Moving Company</option>
+            <option value="auto_glass">Auto Glass Repair</option>
+            <option value="boat_repair">Boat & Marine Repair</option>
+            <option value="taxi_service">Taxi & Limo Service</option>
+            <option disabled>--- Industrial & Logistics ---</option>
+            <option value="construction">General Construction</option>
+            <option value="manufacturing">Manufacturing Plant</option>
+            <option value="logistics">Logistics & Freight</option>
+            <option value="warehouse">Warehousing Facility</option>
+            <option value="waste_management">Waste & Recycling</option>
+            <option value="security">Security Services</option>
+            <option value="oil_gas">Oil & Gas Services</option>
+            <option disabled>--- Social & Public ---</option>
+            <option value="education">School / University</option>
+            <option value="church">Place of Worship</option>
+            <option value="community_center">Community Center</option>
+            <option value="charity">Non-profit / Charity</option>
+            <option value="government">Government Office</option>
+            <option value="library">Public Library</option>
           </select>
           <select 
             value={seoLang} 
@@ -503,7 +489,7 @@ export default function MetadataPanel({ metadata, onMetadataChange }: MetadataPa
              <input type="text" maxLength={80} value={editState.city || ''} onChange={(e) => handleChange('city', e.target.value)} placeholder="e.g. Hamburg" className="w-full text-sm border border-slate-300 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500" />
            </div>
            <div>
-             <label className="block text-xs font-semibold text-slate-700 mb-1">District</label>
+             <label className="block text-xs font-semibold text-slate-700 mb-1">{labels.district}</label>
              <input type="text" maxLength={80} value={editState.district || ''} onChange={(e) => handleChange('district', e.target.value)} placeholder="e.g. Wilhelmsburg" className="w-full text-sm border border-slate-300 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500" />
            </div>
            <div>
@@ -554,11 +540,11 @@ export default function MetadataPanel({ metadata, onMetadataChange }: MetadataPa
                <input type="text" maxLength={120} value={editState.streetAddress || ''} onChange={(e) => handleChange('streetAddress', e.target.value)} placeholder="e.g. Musterstraße 12" className="w-full text-sm border border-slate-300 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
-               <label className="block text-xs font-semibold text-slate-700 mb-1">Postal Code</label>
+               <label className="block text-xs font-semibold text-slate-700 mb-1">{labels.postal}</label>
                <input type="text" maxLength={20} value={editState.postalCode || ''} onChange={(e) => handleChange('postalCode', e.target.value)} placeholder="e.g. 21107" className="w-full text-sm border border-slate-300 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
-               <label className="block text-xs font-semibold text-slate-700 mb-1">State / Region</label>
+               <label className="block text-xs font-semibold text-slate-700 mb-1">{labels.state}</label>
                <input type="text" maxLength={80} value={editState.stateRegion || ''} onChange={(e) => handleChange('stateRegion', e.target.value)} placeholder="e.g. Hamburg" className="w-full text-sm border border-slate-300 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
@@ -569,6 +555,63 @@ export default function MetadataPanel({ metadata, onMetadataChange }: MetadataPa
                <label className="block text-xs font-semibold text-slate-700 mb-1">Website URL</label>
                <input type="url" value={editState.websiteUrl || ''} onChange={(e) => handleChange('websiteUrl', e.target.value)} placeholder="e.g. https://example.com" className="w-full text-sm border border-slate-300 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
+
+            {/* AI Generated Advanced SEO */}
+            {editState.schemaMarkup && (
+              <div className="col-span-2 mt-4 space-y-4">
+                <div className="bg-slate-900 rounded-lg p-4 relative group">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">JSON-LD Schema Markup</span>
+                    <button 
+                      onClick={() => {
+                        navigator.clipboard.writeText(editState.schemaMarkup || '');
+                        alert('Schema copied to clipboard');
+                      }}
+                      className="text-xs bg-slate-800 text-slate-300 hover:text-white px-2 py-1 rounded transition-colors"
+                    >
+                      Copy Schema
+                    </button>
+                  </div>
+                  <pre className="text-[11px] text-emerald-400 font-mono overflow-x-auto whitespace-pre-wrap max-h-40">
+                    {editState.schemaMarkup}
+                  </pre>
+                </div>
+
+                <div className="bg-slate-50 border border-slate-200 rounded-lg p-4">
+                  <div className="flex justify-between items-center mb-3">
+                    <h6 className="text-xs font-bold text-slate-900">OpenGraph & Social Meta</h6>
+                    <button 
+                      onClick={() => {
+                        const tags = JSON.parse(editState.ogTags || '{}');
+                        const metaStr = Object.entries(tags).map(([k, v]) => `<meta property="${k}" content="${v}" />`).join('\n');
+                        navigator.clipboard.writeText(metaStr);
+                        alert('OG Tags copied as HTML meta tags');
+                      }}
+                      className="text-[10px] bg-blue-50 text-blue-600 px-2 py-1 rounded font-bold hover:bg-blue-100 transition-colors"
+                    >
+                      Copy OG Tags
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-1 gap-2">
+                    {editState.ogTags && Object.entries(JSON.parse(editState.ogTags)).map(([key, val]: [string, any]) => (
+                      <div key={key} className="flex items-center justify-between text-[11px] py-1 border-b border-slate-100 last:border-0">
+                        <span className="font-medium text-slate-500">{key}:</span>
+                        <span className="text-slate-900 truncate ml-4 max-w-[200px]">{val}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {editState.semanticClusters && (
+                  <div className="bg-purple-50 border border-purple-100 rounded-lg p-4">
+                    <h6 className="text-xs font-bold text-purple-900 mb-2">Semantic Keywords Clusters</h6>
+                    <p className="text-[11px] text-purple-800 leading-relaxed italic">
+                      {editState.semanticClusters}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </details>

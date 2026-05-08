@@ -23,6 +23,7 @@ export interface ImageMetadata {
   district?: string;
   country?: string;
   suggestedAltText?: string;
+  businessType?: string;
 
   // Advanced Metadata
   streetAddress?: string;
@@ -30,6 +31,12 @@ export interface ImageMetadata {
   stateRegion?: string;
   countryCode?: string;
   websiteUrl?: string;
+  
+  // Advanced SEO Fields
+  schemaMarkup?: string;
+  ogTags?: string; // JSON string
+  hreflang?: string; // JSON string
+  semanticClusters?: string; // JSON string
 }
 
 export interface ImageFile {
@@ -43,6 +50,6 @@ export interface ImageFile {
   status?: 'pending' | 'processing' | 'done' | 'error';
   processedBlob?: Blob;
   editedBlob?: Blob; // Added for cropping/rotating
-  editedMetadata?: ImageMetadata; // Added for metadata editing
+  editedMetadata?: Partial<ImageMetadata>; // Added for metadata editing
   error?: string;
 }
