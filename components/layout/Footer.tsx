@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { LANGUAGES } from '@/lib/constants';
 
 export default function Footer({ lang = 'en', messages }: { lang?: string, messages?: any }) {
@@ -10,11 +11,11 @@ export default function Footer({ lang = 'en', messages }: { lang?: string, messa
     <footer className="bg-slate-900 border-t border-slate-800 text-slate-400 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
         <div className="col-span-1 md:col-span-2">
-          <Link href={toolLink} className="inline-block mb-4 hover:opacity-90 transition-opacity">
-            <img src="/logo.svg" alt="GeoTagHQ Logo" className="h-8 w-auto filter invert brightness-0 opacity-90" />
+          <Link href={toolLink} className="inline-flex mb-4 hover:opacity-90 transition-opacity">
+            <Image src="/logo-dark.svg" alt="GeoTagHQ Logo" width={150} height={40} className="w-auto h-8" unoptimized />
           </Link>
           <p className="text-sm text-slate-400 leading-relaxed max-w-sm mb-6">
-            A free, browser-based geo tagging tool for adding exact GPS locations to your photos instantly. Built for local SEO, photographers, and privacy-conscious users.
+            {mCommon.footerDesc || 'A free, browser-based geo tagging tool for adding exact GPS locations to your photos instantly. Built for local SEO, photographers, and privacy-conscious users.'}
           </p>
           <div className="flex flex-wrap gap-x-4 gap-y-2">
             {LANGUAGES.map((l) => (
@@ -30,7 +31,7 @@ export default function Footer({ lang = 'en', messages }: { lang?: string, messa
         </div>
         
         <div>
-          <h4 className="text-white font-medium mb-4 text-sm uppercase tracking-wider">Useful Links</h4>
+          <h4 className="text-white font-medium mb-4 text-sm uppercase tracking-wider">{mCommon.usefulLinks || 'Useful Links'}</h4>
           <ul className="space-y-2 text-sm">
             <li><Link href={toolLink} className="hover:text-white transition-colors">{m.tool}</Link></li>
             <li><Link href={`${toolLink}#how-it-works`} className="hover:text-white transition-colors">{mCommon.howItWorks}</Link></li>
@@ -38,7 +39,7 @@ export default function Footer({ lang = 'en', messages }: { lang?: string, messa
         </div>
 
         <div>
-          <h4 className="text-white font-medium mb-4 text-sm uppercase tracking-wider">Legal</h4>
+          <h4 className="text-white font-medium mb-4 text-sm uppercase tracking-wider">{mCommon.legal || 'Legal'}</h4>
           <ul className="space-y-2 text-sm">
             <li><Link href="/privacy-policy" className="hover:text-white transition-colors">{mCommon.privacy || 'Privacy Policy'}</Link></li>
             <li><Link href="/terms-of-service" className="hover:text-white transition-colors">{mCommon.terms || 'Terms of Service'}</Link></li>
@@ -48,7 +49,7 @@ export default function Footer({ lang = 'en', messages }: { lang?: string, messa
         </div>
       </div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-8 border-t border-slate-800 text-sm text-center">
-        &copy; {new Date().getFullYear()} GeoTagHQ. All rights reserved.
+        &copy; {new Date().getFullYear()} GeoTagHQ. {mCommon.allRightsReserved || 'All rights reserved.'}
       </div>
     </footer>
   );

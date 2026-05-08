@@ -10,9 +10,11 @@ interface BatchImageListProps {
   onRemove: (index: number) => void;
   onClearAll: () => void;
   onEdit: (index: number) => void;
+  messages?: any;
 }
 
-export default function BatchImageList({ files, onRemove, onClearAll, onEdit }: BatchImageListProps) {
+export default function BatchImageList({ files, onRemove, onClearAll, onEdit, messages }: BatchImageListProps) {
+  const t = messages?.tool || {};
   if (files.length === 0) return null;
 
   return (
@@ -93,27 +95,32 @@ export default function BatchImageList({ files, onRemove, onClearAll, onEdit }: 
                 <div className="mt-1 flex flex-col gap-1">
                   {file.metadata?.gps ? (
                     <span className="flex-none"><span className="inline-flex items-center gap-1 text-[10px] text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded font-medium">
-                      <CheckCircle className="w-3 h-3" /> Has GPS
+                      <CheckCircle className="w-3 h-3" /> {t.hasGps || "Has GPS"}
                     </span></span>
                   ) : (
                     <span className="flex-none"><span className="inline-flex items-center gap-1 text-[10px] text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded font-medium">
-                      <AlertCircle className="w-3 h-3" /> No GPS
+                      <AlertCircle className="w-3 h-3" /> {t.noGps || "No GPS"}
                     </span></span>
                   )}
                   
-                  {file.status === 'done' && (
-                    <span className="flex-none"><span className="inline-flex items-center gap-1 text-[10px] text-blue-600 font-medium">
-                      <CheckCircle className="w-3 h-3" /> Geotagged
-                    </span></span>
+                  {file.status === 'done' && file.processedBlob && (
+                    <span className="flex-none flex flex-col gap-0.5">
+                      <span className="inline-flex items-center gap-1 text-[10px] text-blue-600 font-medium">
+                        <CheckCircle className="w-3 h-3" /> {t.geotagged || "Geotagged"}
+                      </span>
+                      <span className="text-[10px] text-slate-500">
+                         {Math.round(file.size / 1024)}KB → {Math.round(file.processedBlob.size / 1024)}KB
+                      </span>
+                    </span>
                   )}
                   {file.status === 'processing' && (
                     <span className="flex-none"><span className="inline-flex items-center gap-1 text-[10px] text-slate-500 font-medium animate-pulse">
-                      <Clock className="w-3 h-3" /> Processing...
+                      <Clock className="w-3 h-3" /> {t.processingFile || "Processing..."}
                     </span></span>
                   )}
                   {file.status === 'error' && (
                     <span className="flex-none"><span className="inline-flex items-center gap-1 text-[10px] text-red-600 bg-red-50 px-1.5 py-0.5 rounded font-medium">
-                      <AlertCircle className="w-3 h-3" /> Failed
+                      <AlertCircle className="w-3 h-3" /> {t.failedAction || "Failed"}
                     </span></span>
                   )}
                 </div>

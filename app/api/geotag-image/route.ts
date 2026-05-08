@@ -135,14 +135,20 @@ export async function POST(req: NextRequest) {
     const originalExt = file.name.split('.').pop()?.toLowerCase() || '';
     
     let processedBuffer: Buffer = buffer;
-    let processingFormat = originalExt;
-    let convertedToJpg = false;
+    
+    const compressionMode = formData.get("compressionMode")?.toString() || 'none';
+    const targetFormat = formData.get("exportFormat")?.toString() || 'original';
 
-    // Convert to JPG if requested, OR if we need to write EXIF (piexifjs only supports JPG natively here)
-    if (forceJpgConversion || !['jpg', 'jpeg'].includes(originalExt)) {
-       processedBuffer = Buffer.from(await sharp(buffer).jpeg({ quality: 95 }).toBuffer());
-       processingFormat = 'jpg';
-       convertedToJpg = true;
+    // Intermediate JPG quality for metadata
+    let quality = 95;
+    if (compressionMode === 'low') quality = 60;
+    else if (compressionMode === 'medium') quality = 75;
+    else if (compressionMode === 'high') quality = 90;
+
+    // Convert to JPG first, because piexifjs ONLY works with JPGs.
+    let isJpg = ['jpg', 'jpeg'].includes(originalExt);
+    if (!isJpg || compressionMode !== 'none') {
+       processedBuffer = Buffer.from(await sharp(buffer).jpeg({ quality }).toBuffer());
     }
 
     // Now processedBuffer is definitely a JPEG. We can modify its EXIF via piexifjs!
@@ -212,14 +218,56 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Failed to embed metadata: " + e.message }, { status: 500 });
     }
 
-    const newFileName = file.name.replace(/\.[^/.]+$/, "") + "-geotagged." + processingFormat;
+    let formatToConvert = targetFormat === 'original' ? (['jpg', 'jpeg'].includes(originalExt) ? 'jpg' : originalExt) : targetFormat;
+    let mimeType = 'image/jpeg';
+    let ext = 'jpg';
+    let convertedFormat = false;
+
+    try {
+       if (formatToConvert === 'png') {
+          mimeType = 'image/png';
+          ext = 'png';
+          convertedFormat = originalExt !== 'png';
+          finalBuffer = await sharp(finalBuffer).withMetadata().png().toBuffer();
+       } else if (formatToConvert === 'webp') {
+          mimeType = 'image/webp';
+          ext = 'webp';
+          convertedFormat = originalExt !== 'webp';
+          finalBuffer = await sharp(finalBuffer).withMetadata().webp({ quality }).toBuffer();
+       } else if (formatToConvert === 'avif') {
+          mimeType = 'image/avif';
+          ext = 'avif';
+          convertedFormat = originalExt !== 'avif';
+          finalBuffer = await sharp(finalBuffer).withMetadata().avif({ quality }).toBuffer();
+       } else if (formatToConvert === 'tiff') {
+          mimeType = 'image/tiff';
+          ext = 'tiff';
+          convertedFormat = originalExt !== 'tiff';
+          finalBuffer = await sharp(finalBuffer).withMetadata().tiff().toBuffer();
+       } else if (formatToConvert === 'gif') {
+          mimeType = 'image/gif';
+          ext = 'gif';
+          convertedFormat = originalExt !== 'gif';
+          finalBuffer = await sharp(finalBuffer).withMetadata().gif().toBuffer();
+       } else {
+          // Defaults to jpg which is our intermediate format
+          convertedFormat = originalExt !== 'jpg' && originalExt !== 'jpeg';
+       }
+    } catch (e) {
+       console.error("Sharp conversion error after EXIF:", e);
+       // Fallback to jpeg
+       mimeType = 'image/jpeg';
+       ext = 'jpg';
+    }
+
+    const newFileName = file.name.replace(/\.[^/.]+$/, "") + "-geotagged." + ext;
     
     return new NextResponse(finalBuffer as unknown as BodyInit, {
       status: 200,
       headers: {
-        "Content-Type": "image/jpeg",
+        "Content-Type": mimeType,
         "Content-Disposition": `attachment; filename="${newFileName}"`,
-        "X-Converted-To-Jpg": convertedToJpg ? "true" : "false"
+        "X-Converted": convertedFormat ? "true" : "false"
       }
     });
 

@@ -7,7 +7,11 @@
     "disclaimer": "Disclaimer",
     "about": "Chi Siamo",
     "howItWorks": "Come Funziona",
-    "localSeo": "Guida SEO Locale"
+    "localSeo": "Guida SEO Locale",
+    "footerDesc": "Un tool di geotagging gratuito via browser per aggiungere istantaneamente posizioni GPS esatte alle tue foto. Realizzato per SEO locale, fotografi e utenti attenti alla privacy.",
+    "usefulLinks": "Link Utili",
+    "legal": "Note Legali",
+    "allRightsReserved": "Tutti i diritti riservati."
   },
   "nav": {
     "tool": "Tool di Geotag",
@@ -30,7 +34,39 @@
     "step2Desc": "Digita il nome o l'indirizzo esatto dell'attività locale ed estrai la latitudine e longitudine.",
     "step3Title": "3. Applica e Salva",
     "step3Desc": "Salva la foto. I metadati per la SEO locale saranno impressi nella nuova immagine.",
-    "metaKeywords": "Geotagging, Editor EXIF, Posizione GPS, SEO Locale, Metadati Foto, Aggiungi posizione a foto, GeoTagHQ"
+    "metaKeywords": "Geotagging, Editor EXIF, Posizione GPS, SEO Locale, Metadati Foto, Aggiungi posizione a foto, GeoTagHQ",
+    "step1Drop": "1. Trascina foto",
+    "step2Pin": "2. Fissa posizione",
+    "step3Apply": "3. Applica Geotag",
+    "processingMode": "Modalità di elaborazione",
+    "bestCompatibility": "Migliore compatibilità",
+    "keepOriginal": "Mantieni formato originale",
+    "compressPhotos": "Comprimi foto",
+    "compressNone": "Nessuna",
+    "compressLow": "Bassa",
+    "compressMedium": "Media",
+    "compressHigh": "Alta",
+    "uploadToConfigure": "Carica un'immagine per configurare i metadati",
+    "privacyNote": "Nota sulla privacy: Le foto JPG/JPEG vengono elaborate direttamente nel tuo browser.",
+    "privacyNoteSub": "Per gli altri formati, l'immagine potrebbe essere elaborata in modo sicuro dal nostro server ed eliminata.",
+    "dragDropHere": "Trascina qui le foto o fai clic per selezionare",
+    "supportsFormats": "Supporta JPG, JPEG, PNG, WebP, HEIC, HEIF, AVIF e TIFF.",
+    "noLocationSelected": "Nessuna posizione selezionata.",
+    "useCurrentLocation": "Usa la mia posizione attuale",
+    "apply": "Applica",
+    "searchAddress": "Cerca indirizzo, città, strada...",
+    "noteOnReduction": "Nota sulla riduzione:",
+    "compressNoteLow": "La compressione massima può influire sulla nitidezza.",
+    "compressNoteMedium": "Compressione moderata. Buon equilibrio tra qualità visiva e dimensione del file.",
+    "compressNoteHigh": "Compressione leggera. Maggiore dimensione del file.",
+    "compatNote": "Nota di compatibilità:",
+    "compatDesc": "JPG/JPEG offre la migliore compatibilità per i metadati GPS e SEO.",
+    "compatJpgRecommend": "Per la massima compatibilità dei metadati, si consiglia JPG.",
+    "exportFormat": "Formato di esportazione",
+    "showingMetadataFirstOnly": "Mostra i metadati solo della prima foto",
+    "editCropImage": "Modifica e ritaglia",
+    "cropFree": "Libero",
+    "applyEdits": "Applica modifiche"
   },
   "faq": [
     {
@@ -45,5 +81,23 @@
       "q": "Il servizio è davvero gratuito?",
       "a": "Completamente gratuito, senza installazione e i tuoi file restano privati."
     }
-  ]
+  ],
+  "extract": {
+    "extractPhotosHeader": "Estrai foto da URL",
+    "extractPhotosPlaceholder": "Incolla l'URL di una pagina web per estrarre immagini",
+    "extractPhotosBtn": "Estrai foto",
+    "extractImportSelected": "Importa immagini selezionate",
+    "extractImportAll": "Importa tutte le immagini",
+    "extractNoImages": "Nessuna immagine trovata",
+    "extractInvalidUrl": "Per favore inserisci un URL valido",
+    "extractErrorDefault": "Non siamo riusciti a estrarre immagini da questo URL",
+    "extractErrorBlocked": "Il sito web potrebbe bloccare richieste esterne o restituire un errore",
+    "extractBlockedTip": "Alcuni siti web bloccano l'estrazione esterna di immagini",
+    "extractTryDirectUpload": "Prova a caricare l'immagine manualmente o incolla l'URL diretto dell'immagine",
+    "extractWorksBest": "Funziona meglio con pagine web pubbliche e URL diretti di immagini",
+    "extractTryDirectUrlBtn": "URL diretto immagine",
+    "extractExtractedImages": "Immagini estratte",
+    "extractImportSuccess": "Immagine importata con successo",
+    "extractImportFailed": "Questa immagine non può essere importata"
+  }
 }

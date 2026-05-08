@@ -7,7 +7,11 @@
     "disclaimer": "Clause de non-responsabilité",
     "about": "À propos",
     "howItWorks": "Comment ça marche",
-    "localSeo": "Guide SEO Local"
+    "localSeo": "Guide SEO Local",
+    "footerDesc": "Un outil de géolocalisation gratuit via navigateur pour ajouter des emplacements GPS exacts à vos photos instantanément. Conçu pour le SEO local, les photographes et les utilisateurs soucieux de leur vie privée.",
+    "usefulLinks": "Liens Utiles",
+    "legal": "Légal",
+    "allRightsReserved": "Tous droits réservés."
   },
   "nav": {
     "tool": "Outil de géolocalisation",
@@ -30,7 +34,39 @@
     "step2Desc": "Trouvez l'adresse du commerce local sur la carte interactive.",
     "step3Title": "3. Exporter l'image",
     "step3Desc": "Téléchargez votre photo optimisée et insérez-la dans Google Business Profile.",
-    "metaKeywords": "Géolocalisation, Éditeur EXIF, Localisation GPS, SEO Local, Métadonnées Photo, Ajouter localisation photo, GeoTagHQ"
+    "metaKeywords": "Géolocalisation, Éditeur EXIF, Localisation GPS, SEO Local, Métadonnées Photo, Ajouter localisation photo, GeoTagHQ",
+    "step1Drop": "1. Déposez Photos",
+    "step2Pin": "2. Épinglez l'emplacement",
+    "step3Apply": "3. Appliquer Géotag",
+    "processingMode": "Mode de traitement",
+    "bestCompatibility": "Meilleure compatibilité",
+    "keepOriginal": "Conserver le format original",
+    "compressPhotos": "Compresser les photos",
+    "compressNone": "Aucune",
+    "compressLow": "Basse",
+    "compressMedium": "Moyenne",
+    "compressHigh": "Haute",
+    "uploadToConfigure": "Téléchargez une image pour configurer les métadonnées",
+    "privacyNote": "Note de confidentialité : Les photos JPG/JPEG sont traitées directement dans votre navigateur.",
+    "privacyNoteSub": "Pour prendre en charge d'autres formats (comme PNG, HEIC, WebP), votre image peut être traitée en toute sécurité par notre serveur et supprimée immédiatement.",
+    "dragDropHere": "Glissez-déposez les photos ici, ou cliquez pour sélectionner",
+    "supportsFormats": "Prend en charge JPG, JPEG, PNG, WebP, HEIC, HEIF, AVIF et TIFF.",
+    "noLocationSelected": "Aucun emplacement sélectionné pour le moment.",
+    "useCurrentLocation": "Utiliser ma position actuelle",
+    "apply": "Appliquer",
+    "searchAddress": "Rechercher une adresse, ville, rue, repère...",
+    "noteOnReduction": "Note sur la réduction :",
+    "compressNoteLow": "La compression maximale peut affecter la clarté. La taille des fichiers sera fortement réduite.",
+    "compressNoteMedium": "Compression modérée. Bon équilibre entre qualité visuelle et taille du fichier.",
+    "compressNoteHigh": "Compression légère. Plus grande taille de fichier, meilleure fidélité visuelle.",
+    "compatNote": "Note de compatibilité :",
+    "compatDesc": "Le format JPG/JPEG offre la meilleure compatibilité pour les métadonnées GPS et SEO.",
+    "compatJpgRecommend": "Pour une compatibilité maximale des métadonnées, le JPG est recommandé.",
+    "exportFormat": "Format d'exportation",
+    "showingMetadataFirstOnly": "Affichage des métadonnées pour la première photo uniquement",
+    "editCropImage": "Modifier et recadrer l'image",
+    "cropFree": "Libre",
+    "applyEdits": "Appliquer les modifications"
   },
   "faq": [
     {
@@ -45,5 +81,23 @@
       "q": "Comment cela améliore-t-il le référencement local ?",
       "a": "Google utilise les coordonnées EXIF pour confirmer qu'une activité commerciale a bien lieu là où votre fiche est référencée."
     }
-  ]
+  ],
+  "extract": {
+    "extractPhotosHeader": "Extraire des photos à partir d'une URL",
+    "extractPhotosPlaceholder": "Collez l'URL d'une page Web pour extraire des images",
+    "extractPhotosBtn": "Extraire des photos",
+    "extractImportSelected": "Importer les images sélectionnées",
+    "extractImportAll": "Importer toutes les images",
+    "extractNoImages": "Aucune image trouvée",
+    "extractInvalidUrl": "Veuillez entrer une URL valide",
+    "extractErrorDefault": "Nous n'avons pas pu extraire d'images de cette URL",
+    "extractErrorBlocked": "Le site Web peut bloquer les requêtes externes ou renvoyer une erreur",
+    "extractBlockedTip": "Certains sites Web bloquent l'extraction d'images externes",
+    "extractTryDirectUpload": "Essayez de télécharger l'image manuellement ou collez une URL d'image directe",
+    "extractWorksBest": "Fonctionne mieux avec les pages Web publiques et les URL d'images directes",
+    "extractTryDirectUrlBtn": "URL d'image directe",
+    "extractExtractedImages": "Images extraites",
+    "extractImportSuccess": "Image importée avec succès",
+    "extractImportFailed": "Cette image n'a pas pu être importée"
+  }
 }

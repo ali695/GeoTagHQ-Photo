@@ -6,10 +6,12 @@ import { GeoCoordinates } from '@/types/geo';
 import { LocationSuggestion } from '@/lib/location';
 
 interface LocationSearchProps {
-  onSelectCallback: (coords: GeoCoordinates, displayName: string, provider?: string) => void;
+  onSelectCallback: (coords: GeoCoordinates, displayName: string, provider?: string, fullSuggestion?: LocationSuggestion) => void;
+  messages?: any;
 }
 
-export default function LocationSearch({ onSelectCallback }: LocationSearchProps) {
+export default function LocationSearch({ onSelectCallback, messages }: LocationSearchProps) {
+  const t = messages?.tool || {};
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<LocationSuggestion[]>([]);
   const [loading, setLoading] = useState(false);
@@ -27,16 +29,30 @@ export default function LocationSearch({ onSelectCallback }: LocationSearchProps
     setErrorMessage('');
     try {
       const res = await fetch(`/api/geocode?q=${encodeURIComponent(searchQuery)}`);
-      const data = await res.json();
+      
+      let data;
+      try {
+        data = await res.json();
+      } catch (e) {
+        throw new Error('Invalid JSON response');
+      }
+
       if (res.ok) {
-        setResults(data.results || []);
+        // Tag exactMatch if query has numbers and result has house number
+        const hasNumber = /\d/.test(searchQuery);
+        const mappedResults = (data.results || []).map((r: any) => ({
+           ...r,
+           exactMatch: hasNumber && !r.houseNumber ? false : true,
+        }));
+        setResults(mappedResults);
         setIsOpen(true);
-        if (data.results?.length === 0) {
+        if (mappedResults.length === 0) {
           setNoResults(true);
+          setErrorMessage('No matching locations found. Try adding city or country.');
         }
       } else {
         console.error('API Error:', data);
-        setErrorMessage(data.message || 'API Error');
+        setErrorMessage(data.error || 'Location search is temporarily unavailable.');
         setNoResults(true);
         setIsOpen(true);
       }
@@ -50,6 +66,8 @@ export default function LocationSearch({ onSelectCallback }: LocationSearchProps
     }
   }, []);
 
+  const [focusedIndex, setFocusedIndex] = useState(-1);
+
   // Debounce search
   useEffect(() => {
     if (isSelected) return; // Skip fetch if the query change was due to selection
@@ -57,10 +75,12 @@ export default function LocationSearch({ onSelectCallback }: LocationSearchProps
     const timer = setTimeout(() => {
       if (query.trim().length >= 2) {
         performSearch(query);
+        setFocusedIndex(-1);
       } else {
         setResults([]);
         setIsOpen(false);
         setNoResults(false);
+        setFocusedIndex(-1);
       }
     }, 400);
 
@@ -78,11 +98,12 @@ export default function LocationSearch({ onSelectCallback }: LocationSearchProps
   }, []);
 
   const handleSelect = (r: LocationSuggestion) => {
-    onSelectCallback({ lat: r.lat, lng: r.lon }, r.displayName, r.provider);
+    onSelectCallback({ lat: r.lat, lng: r.lon }, r.displayName, r.provider, r);
     setIsSelected(true);
     setQuery(r.displayName);
     setIsOpen(false);
     setResults([]);
+    setFocusedIndex(-1);
   };
 
   const handleClear = () => {
@@ -91,6 +112,27 @@ export default function LocationSearch({ onSelectCallback }: LocationSearchProps
     setResults([]);
     setIsOpen(false);
     setNoResults(false);
+    setFocusedIndex(-1);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!isOpen || results.length === 0) return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setFocusedIndex(prev => (prev < results.length - 1 ? prev + 1 : prev));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setFocusedIndex(prev => (prev > 0 ? prev - 1 : prev));
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (focusedIndex >= 0 && focusedIndex < results.length) {
+        handleSelect(results[focusedIndex]);
+      }
+    } else if (e.key === 'Escape') {
+      setIsOpen(false);
+      setFocusedIndex(-1);
+    }
   };
 
   return (
@@ -102,8 +144,10 @@ export default function LocationSearch({ onSelectCallback }: LocationSearchProps
           onChange={(e) => {
             setIsSelected(false);
             setQuery(e.target.value);
+            setFocusedIndex(-1);
           }}
-          placeholder="Search city, state, address, landmark..."
+          onKeyDown={handleKeyDown}
+          placeholder={t.searchAddress || "Search address, street, city, area, landmark or business name..."}
           className="w-full ps-10 pe-10 py-2.5 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
           onFocus={() => {
             if (results.length > 0) setIsOpen(true);
@@ -139,8 +183,9 @@ export default function LocationSearch({ onSelectCallback }: LocationSearchProps
               <li key={`${r.id}-${i}`}>
                 <button
                   type="button"
-                  className="w-full text-left px-4 py-3 flex items-start gap-3 hover:bg-slate-50 transition-colors border-b border-slate-50 last:border-0"
+                  className={`w-full text-left px-4 py-3 flex items-start gap-3 transition-colors border-b border-slate-50 last:border-0 ${focusedIndex === i ? 'bg-blue-50' : 'hover:bg-slate-50'}`}
                   onClick={() => handleSelect(r)}
+                  onMouseEnter={() => setFocusedIndex(i)}
                 >
                   <MapPin className="text-slate-400 w-4 h-4 mt-1 shrink-0" />
                   <div className="flex flex-col min-w-0">

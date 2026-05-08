@@ -33,7 +33,7 @@ export default function ToolPageContent({ messages, lang }: { messages: any, lan
           </section>
 
           <section className="py-12 px-4 sm:px-6 lg:px-8 -mt-8">
-            <GeoTaggingTool />
+            <GeoTaggingTool messages={messages} />
           </section>
 
           <section className="py-16 bg-white">

@@ -7,7 +7,11 @@
     "disclaimer": "Sanggahan",
     "about": "Tentang Kami",
     "howItWorks": "Cara Kerja",
-    "localSeo": "Panduan SEO Lokal"
+    "localSeo": "Panduan SEO Lokal",
+    "footerDesc": "Alat penandaan geografis berbasis browser gratis untuk menambahkan lokasi GPS persis ke foto Anda secara instan. Dibuat untuk SEO lokal, fotografer, dan pengguna yang sadar privasi.",
+    "usefulLinks": "Tautan Berguna",
+    "legal": "Hukum",
+    "allRightsReserved": "Hak cipta dilindungi undang-undang."
   },
   "nav": {
     "tool": "Alat Geotag",
@@ -30,7 +34,39 @@
     "step2Desc": "Cari alamat lengkap toko Anda dan pin lokasinya di peta interaktif.",
     "step3Title": "3. Simpan dan Unduh",
     "step3Desc": "Data GPS akan disisipkan ke file foto, siap untuk dipakai berpromosi.",
-    "metaKeywords": "Geo Tagging, Editor EXIF, Lokasi GPS, SEO Lokal, Metadata Foto, Tambahkan lokasi ke foto, GeoTagHQ"
+    "metaKeywords": "Geo Tagging, Editor EXIF, Lokasi GPS, SEO Lokal, Metadata Foto, Tambahkan lokasi ke foto, GeoTagHQ",
+    "step1Drop": "1. Taruh Foto",
+    "step2Pin": "2. Pasang Pin Lokasi",
+    "step3Apply": "3. Terapkan Geotag",
+    "processingMode": "Mode Pemrosesan",
+    "bestCompatibility": "Kompatibilitas Terbaik",
+    "keepOriginal": "Pertahankan Format Asli",
+    "compressPhotos": "Kompres Foto",
+    "compressNone": "Tidak ada",
+    "compressLow": "Rendah",
+    "compressMedium": "Sedang",
+    "compressHigh": "Tinggi",
+    "uploadToConfigure": "Unggah gambar untuk mengkonfigurasi metadata",
+    "privacyNote": "Catatan Privasi: Foto JPG/JPEG diproses langsung di peramban Anda.",
+    "privacyNoteSub": "Format lain diproses dengan aman di server dan dihapus setelahnya.",
+    "dragDropHere": "Tarik & lepas foto di sini, atau klik untuk memilih",
+    "supportsFormats": "Mendukung JPG, JPEG, PNG, WebP, HEIC, dan TIFF.",
+    "noLocationSelected": "Belum ada lokasi yang dipilih.",
+    "useCurrentLocation": "Gunakan Lokasi Saat Ini",
+    "apply": "Terapkan",
+    "searchAddress": "Cari alamat, kota, jalan...",
+    "noteOnReduction": "Catatan pengurangan:",
+    "compressNoteLow": "Kompresi maksimal mungkin memengaruhi kejelasan. Ukuran file berkurang.",
+    "compressNoteMedium": "Kompresi sedang. Keseimbangan yang baik antara kualitas dan ukuran file.",
+    "compressNoteHigh": "Kompresi ringan. Ukuran file terbesar dengan kualitas gambar maksimal.",
+    "compatNote": "Catatan Kompatibilitas:",
+    "compatDesc": "JPG/JPEG memberikan kompatibilitas maksimal untuk GPS dan SEO.",
+    "compatJpgRecommend": "Disarankan JPG untuk kompatibilitas maksimal.",
+    "exportFormat": "Format Ekspor",
+    "showingMetadataFirstOnly": "Menampilkan metadata untuk foto pertama saja",
+    "editCropImage": "Sunting & Pangkas Gambar",
+    "cropFree": "Bebas",
+    "applyEdits": "Terapkan Editan"
   },
   "faq": [
     {
@@ -45,5 +81,23 @@
       "q": "Apakah aplikasi ini berbayar?",
       "a": "Aplikasi geotagging berbasis web ini sama sekali tidak memungut biaya, alat ini murni bermanfaat untuk pemulihan SEO lokal."
     }
-  ]
+  ],
+  "extract": {
+    "extractPhotosHeader": "Ekstrak Foto dari URL",
+    "extractPhotosPlaceholder": "Tempel URL halaman web untuk mengekstrak gambar",
+    "extractPhotosBtn": "Ekstrak Foto",
+    "extractImportSelected": "Impor Gambar Terpilih",
+    "extractImportAll": "Impor Semua Gambar",
+    "extractNoImages": "Tidak ada gambar ditemukan",
+    "extractInvalidUrl": "Harap masukkan URL yang valid",
+    "extractErrorDefault": "Kami tidak dapat mengekstrak gambar dari URL ini",
+    "extractErrorBlocked": "Situs web mungkin memblokir permintaan eksternal atau mengembalikan kesalahan",
+    "extractBlockedTip": "Beberapa situs web memblokir ekstraksi gambar eksternal",
+    "extractTryDirectUpload": "Coba unggah gambar secara manual atau tempel URL gambar langsung",
+    "extractWorksBest": "Bekerja paling baik dengan halaman web publik dan URL gambar langsung",
+    "extractTryDirectUrlBtn": "URL Gambar Langsung",
+    "extractExtractedImages": "Gambar yang Diekstrak",
+    "extractImportSuccess": "Gambar berhasil diimpor",
+    "extractImportFailed": "Gambar ini tidak dapat diimpor"
+  }
 }

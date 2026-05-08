@@ -7,7 +7,11 @@
     "disclaimer": "Aviso Legal",
     "about": "Acerca de",
     "howItWorks": "Cómo Funciona",
-    "localSeo": "Guía SEO Local"
+    "localSeo": "Guía SEO Local",
+    "footerDesc": "Una herramienta gratuita de geoetiquetado en el navegador para agregar ubicaciones GPS exactas a sus fotos al instante. Diseñado para SEO local, fotógrafos y usuarios preocupados por la privacidad.",
+    "usefulLinks": "Enlaces Útiles",
+    "legal": "Legal",
+    "allRightsReserved": "Todos los derechos reservados."
   },
   "nav": {
     "tool": "Herramienta Geoetiquetado",
@@ -30,7 +34,39 @@
     "step2Desc": "Escribe una dirección local o mueve el pin hasta encontrar la latitud y longitud exactas.",
     "step3Title": "3. Descarga la imagen optimizada",
     "step3Desc": "El GPS se incrusta permanentemente. Lista para subir a Google Maps.",
-    "metaKeywords": "Geoetiquetado, Editor EXIF, Ubicación GPS, SEO Local, Metadatos de Foto, Añadir ubicación a foto, GeoTagHQ"
+    "metaKeywords": "Geoetiquetado, Editor EXIF, Ubicación GPS, SEO Local, Metadatos de Foto, Añadir ubicación a foto, GeoTagHQ",
+    "step1Drop": "1. Suelta las fotos",
+    "step2Pin": "2. Fija la ubicación",
+    "step3Apply": "3. Aplicar Geoetiqueta",
+    "processingMode": "Modo de procesamiento",
+    "bestCompatibility": "Mejor compatibilidad",
+    "keepOriginal": "Mantener formato original",
+    "compressPhotos": "Comprimir fotos",
+    "compressNone": "Ninguna",
+    "compressLow": "Baja",
+    "compressMedium": "Media",
+    "compressHigh": "Alta",
+    "uploadToConfigure": "Sube una imagen para configurar los metadatos",
+    "privacyNote": "Nota de privacidad: Las fotos JPG/JPEG se procesan directamente en su navegador.",
+    "privacyNoteSub": "Para otros formatos, su imagen puede ser procesada de forma segura por nuestro servidor y eliminada inmediatamente después de geoetiquetar.",
+    "dragDropHere": "Arrastra y suelta las fotos aquí, o haz clic para seleccionar",
+    "supportsFormats": "Admite JPG, JPEG, PNG, WebP, HEIC, HEIF, AVIF y TIFF.",
+    "noLocationSelected": "Aún no se ha seleccionado ninguna ubicación.",
+    "useCurrentLocation": "Usar mi ubicación actual",
+    "apply": "Aplicar",
+    "searchAddress": "Busca dirección, ciudad, calle...",
+    "noteOnReduction": "Nota sobre la reducción:",
+    "compressNoteLow": "La compresión máxima puede afectar la claridad. El tamaño del archivo se reducirá considerablemente.",
+    "compressNoteMedium": "Compresión moderada. Buen equilibrio entre calidad visual y tamaño del archivo.",
+    "compressNoteHigh": "Compresión ligera. Mayor tamaño de archivo, mayor fidelidad visual.",
+    "compatNote": "Nota de compatibilidad:",
+    "compatDesc": "JPG/JPEG ofrece la mejor compatibilidad para los metadatos GPS y SEO.",
+    "compatJpgRecommend": "Para una máxima compatibilidad de metadatos, se recomienda JPG.",
+    "exportFormat": "Formato de exportación",
+    "showingMetadataFirstOnly": "Mostrando metadatos solo de la primera foto",
+    "editCropImage": "Editar y recortar imagen",
+    "cropFree": "Libre",
+    "applyEdits": "Aplicar cambios"
   },
   "faq": [
     {
@@ -45,5 +81,23 @@
       "q": "¿Mis fotos se guardan en la nube?",
       "a": "De ninguna manera. El procesamiento es local en tu navegador."
     }
-  ]
+  ],
+  "extract": {
+    "extractPhotosHeader": "Extraer fotos desde URL",
+    "extractPhotosPlaceholder": "Pega una URL de página web para extraer imágenes",
+    "extractPhotosBtn": "Extraer fotos",
+    "extractImportSelected": "Importar imágenes seleccionadas",
+    "extractImportAll": "Importar todas las imágenes",
+    "extractNoImages": "No se encontraron imágenes",
+    "extractInvalidUrl": "Por favor ingresa una URL válida",
+    "extractErrorDefault": "No pudimos extraer imágenes de esta URL",
+    "extractErrorBlocked": "El sitio web puede bloquear solicitudes externas o devolver un error",
+    "extractBlockedTip": "Algunos sitios web bloquean la extracción de imágenes externas",
+    "extractTryDirectUpload": "Intenta subir la imagen manualmente o pega una URL de imagen directa",
+    "extractWorksBest": "Funciona mejor con páginas web públicas y URLs de imágenes directas",
+    "extractTryDirectUrlBtn": "URL de imagen directa",
+    "extractExtractedImages": "Imágenes extraídas",
+    "extractImportSuccess": "Imagen importada exitosamente",
+    "extractImportFailed": "No se pudo importar esta imagen"
+  }
 }

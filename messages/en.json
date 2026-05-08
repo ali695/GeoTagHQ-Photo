@@ -7,7 +7,11 @@
     "disclaimer": "Disclaimer",
     "about": "About",
     "howItWorks": "How It Works",
-    "localSeo": "Local SEO Guide"
+    "localSeo": "Local SEO Guide",
+    "footerDesc": "A free, browser-based geo tagging tool for adding exact GPS locations to your photos instantly. Built for local SEO, photographers, and privacy-conscious users.",
+    "usefulLinks": "Useful Links",
+    "legal": "Legal",
+    "allRightsReserved": "All rights reserved."
   },
   "nav": {
     "tool": "Geo Tagging Tool",
@@ -30,7 +34,39 @@
     "step2Desc": "Search an address, drag the map marker, or manually enter latitude and longitude coordinates.",
     "step3Title": "3. Download",
     "step3Desc": "Click write, and we embed the exact GPS location into the photo's EXIF data. Download instantly.",
-    "metaKeywords": "Geo Tagging, EXIF Editor, GPS Location, Local SEO, Photo Metadata, Add location to photo, GeoTagHQ"
+    "metaKeywords": "Geo Tagging, EXIF Editor, GPS Location, Local SEO, Photo Metadata, Add location to photo, GeoTagHQ",
+    "step1Drop": "1. Drop Photos",
+    "step2Pin": "2. Pin Location",
+    "step3Apply": "3. Apply Geotag",
+    "processingMode": "Processing Mode",
+    "bestCompatibility": "Best Compatibility",
+    "keepOriginal": "Keep Original Format",
+    "compressPhotos": "Compress Photos",
+    "compressNone": "None",
+    "compressLow": "Low",
+    "compressMedium": "Medium",
+    "compressHigh": "High",
+    "uploadToConfigure": "Upload an image to configure metadata",
+    "privacyNote": "Privacy Note: JPG/JPEG photos are processed directly in your browser.",
+    "privacyNoteSub": "To support other formats (like PNG, HEIC, WebP), your image may be securely processed by our server and deleted immediately after geotagging.",
+    "dragDropHere": "Drag & drop photos here, or click to select",
+    "supportsFormats": "Supports JPG, JPEG, PNG, WebP, HEIC, HEIF, AVIF, and TIFF.",
+    "noLocationSelected": "No location selected yet.",
+    "useCurrentLocation": "Use My Current Location",
+    "apply": "Apply",
+    "searchAddress": "Search address, street, city, area, landmark or business name...",
+    "noteOnReduction": "Note on reduction:",
+    "compressNoteLow": "Maximum compression may affect image clarity. File sizes will be heavily reduced.",
+    "compressNoteMedium": "Moderate compression. Good balance of visual quality and file size.",
+    "compressNoteHigh": "Light compression. Largest file size, highest visual fidelity.",
+    "compatNote": "Compatibility Note:",
+    "compatDesc": "JPG/JPEG offers the best compatibility for GPS and SEO metadata. PNG, WebP, AVIF and HEIC may have limited metadata support depending on the platform where the image is uploaded.",
+    "compatJpgRecommend": "For maximum metadata compatibility, JPG is recommended.",
+    "exportFormat": "Export Format",
+    "showingMetadataFirstOnly": "Showing metadata for first photo only",
+    "editCropImage": "Edit & Crop Image",
+    "cropFree": "Free",
+    "applyEdits": "Apply Edits"
   },
   "faq": [
     {
@@ -45,5 +81,23 @@
       "q": "Does this tool upload my photos to your servers?",
       "a": "No. Our application leverages modern web features to process the EXIF data entirely within your browser memory. We never see, store, or transmit your files permanently. Server processing is used only momentarily for compatibility if requested, and files are not saved."
     }
-  ]
+  ],
+  "extract": {
+    "extractPhotosHeader": "Extract Photos from URL",
+    "extractPhotosPlaceholder": "Paste a webpage URL to extract images",
+    "extractPhotosBtn": "Extract Photos",
+    "extractImportSelected": "Import Selected Images",
+    "extractImportAll": "Import All Images",
+    "extractNoImages": "No images found",
+    "extractInvalidUrl": "Please enter a valid URL",
+    "extractErrorDefault": "We could not extract images from this URL",
+    "extractErrorBlocked": "The website may block external requests or return an error",
+    "extractBlockedTip": "Some websites block external image extraction",
+    "extractTryDirectUpload": "Try uploading the image manually or paste a direct image URL",
+    "extractWorksBest": "Works best with public webpages and direct image URLs",
+    "extractTryDirectUrlBtn": "Direct Image URL",
+    "extractExtractedImages": "Extracted Images",
+    "extractImportSuccess": "Image imported successfully",
+    "extractImportFailed": "This image could not be imported"
+  }
 }

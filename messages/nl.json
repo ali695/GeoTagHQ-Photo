@@ -7,7 +7,11 @@
     "disclaimer": "Disclaimer",
     "about": "Over Ons",
     "howItWorks": "Hoe Het Werkt",
-    "localSeo": "Lokale SEO Gids"
+    "localSeo": "Lokale SEO Gids",
+    "footerDesc": "Een gratis browsergebaseerde geotagging-tool om direct exacte GPS-locaties aan uw foto's toe te voegen. Gebouwd voor lokale SEO, fotografen en privacybewuste gebruikers.",
+    "usefulLinks": "Handige Links",
+    "legal": "Juridisch",
+    "allRightsReserved": "Alle rechten voorbehouden."
   },
   "nav": {
     "tool": "Geotag Tool",
@@ -30,7 +34,39 @@
     "step2Desc": "Zoek je bedrijf op de map of typ direct uw coördinaten in.",
     "step3Title": "3. Geotaggen en Downloaden",
     "step3Desc": "We stoppen de locatie en SEO-data in het EXIF bestand.",
-    "metaKeywords": "Geo-tagging, EXIF-editor, GPS-locatie, Lokale SEO, Foto metadata, Locatie toevoegen aan foto, GeoTagHQ"
+    "metaKeywords": "Geo-tagging, EXIF-editor, GPS-locatie, Lokale SEO, Foto metadata, Locatie toevoegen aan foto, GeoTagHQ",
+    "step1Drop": "1. Foto's Toevoegen",
+    "step2Pin": "2. Locatie Markeren",
+    "step3Apply": "3. Geotag Toepassen",
+    "processingMode": "Verwerkingsmodus",
+    "bestCompatibility": "Beste Compatibiliteit",
+    "keepOriginal": "Origineel Formaat Behouden",
+    "compressPhotos": "Foto's Comprimeren",
+    "compressNone": "Geen",
+    "compressLow": "Laag",
+    "compressMedium": "Gemiddeld",
+    "compressHigh": "Hoog",
+    "uploadToConfigure": "Upload een afbeelding om metadata te configureren",
+    "privacyNote": "Privacyopmerking: JPG/JPEG-foto's worden direct in uw browser verwerkt.",
+    "privacyNoteSub": "Voor andere indelingen kan uw afbeelding veilig door onze server worden verwerkt en onmiddellijk worden verwijderd.",
+    "dragDropHere": "Sleep foto's hierheen of klik om te selecteren",
+    "supportsFormats": "Ondersteunt JPG, JPEG, PNG, WebP, HEIC, HEIF, AVIF en TIFF.",
+    "noLocationSelected": "Nog geen locatie geselecteerd.",
+    "useCurrentLocation": "Gebruik Mijn Huidige Locatie",
+    "apply": "Toepassen",
+    "searchAddress": "Zoek adres, stad, straat...",
+    "noteOnReduction": "Opmerking over reductie:",
+    "compressNoteLow": "Maximale compressie kan de helderheid beïnvloeden.",
+    "compressNoteMedium": "Gematigde compressie. Goede balans tussen visuele kwaliteit en bestandsgrootte.",
+    "compressNoteHigh": "Lichte compressie. Grootste bestandsgrootte.",
+    "compatNote": "Compatibiliteitsopmerking:",
+    "compatDesc": "JPG/JPEG biedt de beste compatibiliteit voor GPS en SEO-metadata.",
+    "compatJpgRecommend": "Voor maximale metadatacompatibiliteit wordt JPG aanbevolen.",
+    "exportFormat": "Exportformaat",
+    "showingMetadataFirstOnly": "Toont metagegevens alleen voor de eerste foto",
+    "editCropImage": "Afbeelding bewerken en bijsnijden",
+    "cropFree": "Vrij",
+    "applyEdits": "Bewerkingen toepassen"
   },
   "faq": [
     {
@@ -45,5 +81,23 @@
       "q": "Werkt dit met alle foto of afbeeldingsformaten?",
       "a": "We adviseren altijd JPEG/JPG-formaat voor betrouwbaar schrijven van GPS metadata in het EXIF-profiel."
     }
-  ]
+  ],
+  "extract": {
+    "extractPhotosHeader": "Foto's extraheren uit URL",
+    "extractPhotosPlaceholder": "Plak een webpagina URL om afbeeldingen te extraheren",
+    "extractPhotosBtn": "Foto's extraheren",
+    "extractImportSelected": "Geselecteerde afbeeldingen importeren",
+    "extractImportAll": "Alle afbeeldingen importeren",
+    "extractNoImages": "Geen afbeeldingen gevonden",
+    "extractInvalidUrl": "Voer een geldige URL in",
+    "extractErrorDefault": "We konden geen afbeeldingen uit deze URL extraheren",
+    "extractErrorBlocked": "De website kan externe verzoeken blokkeren of een fout retourneren",
+    "extractBlockedTip": "Sommige websites blokkeren externe afbeeldingsextractie",
+    "extractTryDirectUpload": "Probeer de afbeelding handmatig te uploaden of plak een directe afbeeldings-URL",
+    "extractWorksBest": "Werkt het beste met openbare webpagina's en directe afbeeldings-URL's",
+    "extractTryDirectUrlBtn": "Directe afbeeldings-URL",
+    "extractExtractedImages": "Geëxtraheerde afbeeldingen",
+    "extractImportSuccess": "Afbeelding succesvol geïmporteerd",
+    "extractImportFailed": "Deze afbeelding kon niet worden geïmporteerd"
+  }
 }

@@ -7,7 +7,11 @@
     "disclaimer": "إخلاء المسؤولية",
     "about": "من نحن",
     "howItWorks": "كيف تعمل",
-    "localSeo": "دليل تحسين محركات البحث المحلي"
+    "localSeo": "دليل تحسين محركات البحث المحلي",
+    "footerDesc": "أداة مجانية لوضع العلامات الجغرافية عبر المتصفح لإضافة مواقع GPS الدقيقة إلى صورك على الفور. مصممة لـ SEO المحلي والمصورين والمستخدمين المهتمين بالخصوصية.",
+    "usefulLinks": "روابط مفيدة",
+    "legal": "قانوني",
+    "allRightsReserved": "جميع الحقوق محفوظة."
   },
   "nav": {
     "tool": "أداة تحديد الموقع",
@@ -30,7 +34,39 @@
     "step2Desc": "استخدم الخريطة التفاعلية لتحديد الموقع الجغرافي بدقة.",
     "step3Title": "مرحلة 3: تحميل الصور",
     "step3Desc": "سيتم كتابة وتضمين إحداثيات الموقع داخل الصورة بشكل نهائي.",
-    "metaKeywords": "تحديد الموقع الجغرافي, محرر EXIF, موقع GPS, محسّن محركات البحث المحلي, البيانات الوصفية للصورة, إضافة موقع للصورة, GeoTagHQ"
+    "metaKeywords": "تحديد الموقع الجغرافي, محرر EXIF, موقع GPS, محسّن محركات البحث المحلي, البيانات الوصفية للصورة, إضافة موقع للصورة, GeoTagHQ",
+    "step1Drop": "1. إسقاط الصور",
+    "step2Pin": "2. تحديد الموقع",
+    "step3Apply": "3. تطبيق الجيوتيك عالي",
+    "processingMode": "وضع المعالجة",
+    "bestCompatibility": "التوافق الأفضل",
+    "keepOriginal": "الاحتفاظ بالصيغة الأصلية",
+    "compressPhotos": "ضغط الصور",
+    "compressNone": "بدون",
+    "compressLow": "منخفض",
+    "compressMedium": "متوسط",
+    "compressHigh": "عالي",
+    "uploadToConfigure": "قم بتحميل صورة لتكوين البيانات الوصفية",
+    "privacyNote": "ملاحظة الخصوصية: تتم معالجة صور JPG/JPEG داخل متصفحك.",
+    "privacyNoteSub": "أما الصيغ الأخرى فتعالج بشكل آمن على سيرفراتنا وتُحذف فوراً.",
+    "dragDropHere": "اسحب وأسقط الصور هنا أو انقر للاختيار",
+    "supportsFormats": "يدعم JPG، JPEG، PNG، WebP، HEIC، و TIFF.",
+    "noLocationSelected": "لم يتم تحديد أي موقع بعد.",
+    "useCurrentLocation": "استخدام موقعي الحالي",
+    "apply": "تطبيق",
+    "searchAddress": "ابحث عن عنوان، مدينة، شارع...",
+    "noteOnReduction": "ملاحظة حول التخفيض:",
+    "compressNoteLow": "قد يؤثر الضغط الأقصى على وضوح الصورة. سيتم تقليل حجم الملف بشكل كبير.",
+    "compressNoteMedium": "ضغط معتدل. توازن جيد بين جودة الصورة وحجم الملف.",
+    "compressNoteHigh": "ضغط خفيف. حجم ملف أكبر مع جودة بصرية عالية.",
+    "compatNote": "ملاحظة التوافق:",
+    "compatDesc": "توفر صيغة JPG أفضل توافق مع بيانات GPS الوصفية وSEO.",
+    "compatJpgRecommend": "نوصي باستخدام JPG لضمان التوافق التام.",
+    "exportFormat": "تنسيق التصدير",
+    "showingMetadataFirstOnly": "إظهار البيانات الوصفية للصورة الأولى فقط",
+    "editCropImage": "تعديل وقص الصورة",
+    "cropFree": "حر",
+    "applyEdits": "تطبيق التعديلات"
   },
   "faq": [
     {
@@ -45,5 +81,23 @@
       "q": "هل الأداة مجانية؟",
       "a": "نعم، الأداة مجانية تماماً للمساعدة في نمو ونشر الشركات المحلية."
     }
-  ]
+  ],
+  "extract": {
+    "extractPhotosHeader": "استخراج الصور من الرابط",
+    "extractPhotosPlaceholder": "الصق رابط صفحة ويب لاستخراج الصور",
+    "extractPhotosBtn": "استخراج الصور",
+    "extractImportSelected": "استيراد الصور المحددة",
+    "extractImportAll": "استيراد كل الصور",
+    "extractNoImages": "لم يتم العثور على صور",
+    "extractInvalidUrl": "الرجاء إدخال رابط صحيح",
+    "extractErrorDefault": "تعذر استخراج الصور من هذا الرابط",
+    "extractErrorBlocked": "قد يحظر الموقع الطلبات الخارجية أو يعود بخطأ",
+    "extractBlockedTip": "بعض المواقع تحظر استخراج الصور الخارجية",
+    "extractTryDirectUpload": "حاول رفع الصورة يدوياً أو الصق رابطاً مباشراً للصورة",
+    "extractWorksBest": "يعمل بشكل أفضل مع صفحات الويب العامة وروابط الصور المباشرة",
+    "extractTryDirectUrlBtn": "رابط مباشر للصورة",
+    "extractExtractedImages": "الصور المستخرجة",
+    "extractImportSuccess": "تم استيراد الصورة بنجاح",
+    "extractImportFailed": "تعذر استيراد هذه الصورة"
+  }
 }

@@ -22,6 +22,9 @@ function formatBytes(bytes: number, decimals = 2) {
 export default function MetadataPanel({ metadata, onMetadataChange }: MetadataPanelProps) {
   const [copied, setCopied] = useState(false);
   const [editState, setEditState] = useState<Partial<ImageMetadata>>({});
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [seoLang, setSeoLang] = useState('en');
+  const [businessType, setBusinessType] = useState('general');
 
   useEffect(() => {
     if (metadata) {
@@ -45,14 +48,6 @@ export default function MetadataPanel({ metadata, onMetadataChange }: MetadataPa
     }
   }, [metadata]);
 
-  if (!metadata) {
-    return (
-      <div className="w-full bg-slate-50 border border-slate-200 rounded-lg p-6 text-center text-slate-500 text-sm">
-        Upload an image to configure metadata
-      </div>
-    );
-  }
-
   const handleChange = (field: keyof ImageMetadata, value: string) => {
     const newState = { ...editState, [field]: value };
     setEditState(newState);
@@ -61,31 +56,65 @@ export default function MetadataPanel({ metadata, onMetadataChange }: MetadataPa
     }
   };
 
-  const handleGenerateSEO = () => {
-    const { businessName, serviceCategory, city, district, country } = editState;
-    
-    const parts = [serviceCategory, city, district].filter(Boolean);
-    const generatedTitle = parts.join(' in ') || '';
-    
-    const descParts = [serviceCategory ? `Professionelle ${serviceCategory}` : '', city ? `in ${city}` : '', district, country, businessName ? `bei ${businessName}.` : '.'].filter(Boolean);
-    const generatedDescription = descParts.join(' ').replace(/ \./g, '.');
+  const handleGenerateSEO = async () => {
+    setIsGenerating(true);
+    try {
+      const payload = {
+        businessName: editState.businessName,
+        serviceCategory: editState.serviceCategory,
+        city: editState.city,
+        district: editState.district,
+        country: editState.country,
+        businessType: businessType,
+        language: seoLang
+      };
 
-    const kwParts = [serviceCategory, city, district, businessName].filter(Boolean);
-    const generatedKeywords = kwParts.join(', ');
+      const res = await fetch('/api/generate-seo', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
 
-    const altParts = [serviceCategory, 'Service', city ? `in ${city}` : '', district, businessName ? `bei ${businessName}` : ''].filter(Boolean);
-    const generatedAltText = altParts.join(' ');
+      if (res.ok) {
+        const data = await res.json();
+        
+        // Advanced SEO defaults
+        const country = editState.country;
+        let genCountryCode = '';
+        if (country) {
+          if (country.toLowerCase() === 'germany' || country.toLowerCase() === 'deutschland') genCountryCode = 'DE';
+          else if (country.toLowerCase() === 'united states' || country.toLowerCase() === 'usa') genCountryCode = 'US';
+          else if (country.toLowerCase() === 'france') genCountryCode = 'FR';
+          else if (country.toLowerCase() === 'spain') genCountryCode = 'ES';
+          else genCountryCode = country.substring(0, 2).toUpperCase();
+        }
 
-    const updates = {
-      title: generatedTitle,
-      description: generatedDescription,
-      keywords: generatedKeywords,
-      suggestedAltText: generatedAltText,
-    };
-    
-    setEditState(prev => ({ ...prev, ...updates }));
-    if (onMetadataChange) {
-      onMetadataChange({ ...editState, ...updates });
+        let genWebsite = '';
+        if (editState.businessName) {
+          genWebsite = `https://www.${editState.businessName.toLowerCase().replace(/[^a-z0-9]/g, '')}.com`;
+        }
+
+        const updates = {
+          title: data.title || '',
+          description: data.description || '',
+          keywords: data.keywords || [editState.serviceCategory, editState.city, editState.district, editState.businessName].filter(Boolean).join(', '),
+          suggestedAltText: data.suggestedAltText || '',
+          stateRegion: editState.city || '',
+          countryCode: genCountryCode,
+          websiteUrl: genWebsite,
+        };
+        
+        setEditState(prev => ({ ...prev, ...updates }));
+        if (onMetadataChange) {
+          onMetadataChange({ ...editState, ...updates });
+        }
+      }
+    } catch(err) {
+      console.error(err);
+    } finally {
+      setIsGenerating(false);
     }
   };
 
@@ -97,14 +126,27 @@ export default function MetadataPanel({ metadata, onMetadataChange }: MetadataPa
     }
   };
 
+  if (!metadata) {
+    return (
+      <div className="w-full bg-slate-50 border border-slate-200 rounded-lg p-6 text-center text-slate-500 text-sm">
+        Upload an image to configure metadata
+      </div>
+    );
+  }
+
   return (
     <div className="w-full flex flex-col gap-6">
       
       {/* Current Metadata (Read-only) */}
-      <div className="bg-slate-50 border border-slate-200 rounded-lg p-5">
-        <h4 className="font-bold text-slate-900 text-sm mb-4 border-b border-slate-200 pb-2">Metadata Summary</h4>
+      <details className="bg-slate-50 border border-slate-200 rounded-lg group">
+        <summary className="font-bold text-slate-900 text-sm p-5 cursor-pointer flex items-center justify-between list-none [&::-webkit-details-marker]:hidden">
+          Metadata Summary
+          <svg className="w-4 h-4 text-slate-500 group-open:rotate-180 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </summary>
         
-        <div className="space-y-4 text-sm">
+        <div className="px-5 pb-5 pt-2 border-t border-slate-200 space-y-4 text-sm mt-2">
           {/* GPS Location */}
           <div>
             <h5 className="font-semibold text-slate-800 mb-1">GPS Location</h5>
@@ -160,17 +202,44 @@ export default function MetadataPanel({ metadata, onMetadataChange }: MetadataPa
             </div>
           ) : null}
         </div>
-      </div>
+      </details>
 
-      <div className="w-full flex items-center justify-between">
+      <div className="w-full flex flex-wrap items-center justify-between gap-4">
         <h4 className="font-bold text-slate-900 text-sm">Basic Local SEO Metadata</h4>
-        <button 
-          onClick={handleGenerateSEO}
-          className="text-xs flex items-center gap-1.5 bg-blue-50 text-blue-700 px-3 py-1.5 rounded-md hover:bg-blue-100 transition-colors font-medium border border-blue-200"
-        >
-          <Wand2 className="w-3.5 h-3.5" />
-          Generate SEO Metadata
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          <select 
+            value={businessType} 
+            onChange={(e) => setBusinessType(e.target.value)}
+            className="text-xs border border-slate-300 rounded-md px-2 py-1 outline-none bg-white"
+          >
+            <option value="general">General</option>
+            <option value="hotel">Hotel / Stays</option>
+            <option value="restaurant">Restaurant / Cafe</option>
+            <option value="plumber">Plumber / Trades</option>
+            <option value="real_estate">Real Estate</option>
+            <option value="ecommerce">E-Commerce</option>
+          </select>
+          <select 
+            value={seoLang} 
+            onChange={(e) => setSeoLang(e.target.value)}
+            className="text-xs border border-slate-300 rounded-md px-2 py-1 outline-none bg-white"
+          >
+            <option value="en">English</option>
+            <option value="de">Deutsch</option>
+            <option value="es">Español</option>
+            <option value="fr">Français</option>
+            <option value="it">Italiano</option>
+            <option value="pt">Português</option>
+          </select>
+          <button 
+            onClick={handleGenerateSEO}
+            disabled={isGenerating}
+            className="text-xs flex items-center gap-1.5 bg-blue-50 text-blue-700 px-3 py-1.5 rounded-md hover:bg-blue-100 transition-colors font-medium border border-blue-200 disabled:opacity-50"
+          >
+            <Wand2 className={`w-3.5 h-3.5 ${isGenerating ? 'animate-pulse' : ''}`} />
+            {isGenerating ? 'Generating...' : 'Generate SEO'}
+          </button>
+        </div>
       </div>
 
       <div className="space-y-4">
@@ -228,8 +297,13 @@ export default function MetadataPanel({ metadata, onMetadataChange }: MetadataPa
         </div>
       </div>
 
-      <div className="border-t border-slate-200 pt-6">
-        <h4 className="font-bold text-slate-900 text-sm mb-4">Advanced Metadata</h4>
+      <details className="mt-6 border-t border-slate-200 pt-6 group">
+        <summary className="font-bold text-slate-900 text-sm mb-4 cursor-pointer flex items-center justify-between list-none [&::-webkit-details-marker]:hidden">
+          Advanced Metadata
+          <svg className="w-4 h-4 text-slate-500 group-open:rotate-180 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </summary>
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="col-span-2">
@@ -254,7 +328,7 @@ export default function MetadataPanel({ metadata, onMetadataChange }: MetadataPa
             </div>
           </div>
         </div>
-      </div>
+      </details>
     </div>
   );
 }

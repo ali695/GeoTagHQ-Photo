@@ -6,9 +6,12 @@ import { UploadCloud, FileImage, AlertCircle } from 'lucide-react';
 
 interface UploadDropzoneProps {
   onDropAccepted: (files: File[]) => void;
+  messages?: any;
 }
 
-export default function UploadDropzone({ onDropAccepted }: UploadDropzoneProps) {
+export default function UploadDropzone({ onDropAccepted, messages }: UploadDropzoneProps) {
+  const t = messages?.tool || {};
+  
   const onDrop = useCallback((acceptedFiles: File[]) => {
     onDropAccepted(acceptedFiles);
   }, [onDropAccepted]);
@@ -41,10 +44,10 @@ export default function UploadDropzone({ onDropAccepted }: UploadDropzoneProps) 
           </div>
           <div>
             <p className="text-lg font-medium text-slate-700">
-              {isDragActive ? "Drop the photos here..." : "Drag & drop photos here, or click to select"}
+              {isDragActive ? (t.dropTitle || "Drop the photos here...") : (t.dragDropHere || "Drag & drop photos here, or click to select")}
             </p>
             <p className="text-sm text-slate-500 mt-1">
-              Supports JPG, JPEG, PNG, WebP, HEIC, HEIF, AVIF, and TIFF.
+              {t.supportsFormats || "Supports JPG, JPEG, PNG, WebP, HEIC, HEIF, AVIF, and TIFF."}
             </p>
           </div>
         </div>
@@ -54,10 +57,10 @@ export default function UploadDropzone({ onDropAccepted }: UploadDropzoneProps) 
         <AlertCircle className="w-5 h-5 text-slate-500 shrink-0" />
         <div className="flex flex-col gap-1">
           <p>
-            <strong>Privacy Note:</strong> JPG/JPEG photos are processed directly in your browser.
+            <strong>{t.privacyNote ? t.privacyNote.split(':')[0] + ':' : "Privacy Note:"}</strong> {t.privacyNote ? t.privacyNote.split(':').slice(1).join(':').trim() : "JPG/JPEG photos are processed directly in your browser."}
           </p>
           <p className="text-xs">
-            To support other formats (like PNG, HEIC, WebP), your image may be securely processed by our server and deleted immediately after geotagging.
+            {t.privacyNoteSub || "To support other formats (like PNG, HEIC, WebP), your image may be securely processed by our server and deleted immediately after geotagging."}
           </p>
         </div>
       </div>

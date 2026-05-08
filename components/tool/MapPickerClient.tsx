@@ -16,6 +16,7 @@ L.Icon.Default.mergeOptions({
 
 interface MapPickerClientProps {
   initialCoords?: GeoCoordinates;
+  zoomLevel?: number;
   onChange: (coords: GeoCoordinates) => void;
 }
 
@@ -47,7 +48,7 @@ function LocationMarker({ position, onChange }: { position: L.LatLng; onChange: 
   );
 }
 
-export default function MapPickerClient({ initialCoords, onChange }: MapPickerClientProps) {
+export default function MapPickerClient({ initialCoords, zoomLevel, onChange }: MapPickerClientProps) {
   // Default to a central location (e.g., somewhere neutral or geographically central) if no location is provided
   const defaultPos = new L.LatLng(51.505, -0.09);
   
@@ -70,9 +71,9 @@ export default function MapPickerClient({ initialCoords, onChange }: MapPickerCl
   return (
     <MapContainer
       center={position}
-      zoom={13}
+      zoom={zoomLevel || 13}
       scrollWheelZoom={true}
-      style={{ height: '400px', width: '100%', borderRadius: '0.5rem', zIndex: 0 }}
+      style={{ height: '100%', width: '100%', borderRadius: '0.5rem', zIndex: 0 }}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -81,15 +82,15 @@ export default function MapPickerClient({ initialCoords, onChange }: MapPickerCl
       <LocationMarker position={position} onChange={handlePositionChange} />
       
       {/* Invisible center updater when initial coordinates change from outside */}
-      <MapCenterUpdater position={position} />
+      <MapCenterUpdater position={position} zoomLevel={zoomLevel} />
     </MapContainer>
   );
 }
 
-function MapCenterUpdater({ position }: { position: L.LatLng }) {
+function MapCenterUpdater({ position, zoomLevel }: { position: L.LatLng, zoomLevel?: number }) {
   const map = useMapEvents({});
   useEffect(() => {
-    map.flyTo(position, map.getZoom());
-  }, [position, map]);
+    map.flyTo(position, zoomLevel || map.getZoom());
+  }, [position, zoomLevel, map]);
   return null;
 }

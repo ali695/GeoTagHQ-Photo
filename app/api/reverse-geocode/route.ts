@@ -1,5 +1,10 @@
 import { NextResponse } from 'next/server';
-import { reverseGeocodeSchema } from '@/lib/schema';
+import { z } from 'zod';
+
+const schema = z.object({
+  lat: z.coerce.number().min(-90).max(90),
+  lon: z.coerce.number().min(-180).max(180),
+});
 
 export async function GET(request: Request) {
   try {
@@ -7,62 +12,96 @@ export async function GET(request: Request) {
     const latStr = searchParams.get('lat');
     const lonStr = searchParams.get('lon');
 
-    const validationResult = reverseGeocodeSchema.safeParse({ lat: latStr, lon: lonStr });
+    const validationResult = schema.safeParse({ lat: latStr, lon: lonStr });
 
     if (!validationResult.success) {
       return NextResponse.json(
-        { error: 'Invalid coordinates' },
+        { success: false, error: 'Invalid coordinates' },
         { status: 400 }
       );
     }
 
     const { lat, lon } = validationResult.data;
 
-    const response = await fetch(
-      `https://photon.komoot.io/reverse?lon=${lon}&lat=${lat}`,
-      {
-        headers: {
-          'Accept': 'application/json',
-        },
-      }
-    );
+    const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&addressdetails=1&extratags=1&namedetails=1`;
+
+    const response = await fetch(url, {
+      headers: {
+        'Accept': 'application/json',
+        'User-Agent': 'GeoTagHQ/1.0 (ma7122671@gmail.com)'
+      },
+    });
 
     if (!response.ok) {
-      throw new Error(`Failed to fetch reverse geocoding data: ${response.status} ${response.statusText}`);
+        if (response.status === 429) {
+            return NextResponse.json(
+                 { success: false, error: 'Location search is temporarily unavailable. Try manual coordinates.' },
+                 { status: 429 }
+            );
+        }
+      return NextResponse.json(
+           { success: false, error: 'Location search is temporarily unavailable.' },
+           { status: response.status }
+      );
     }
 
     const data = await response.json();
 
-    if (!data.features || !Array.isArray(data.features) || data.features.length === 0) {
+    if (data.error) {
       return NextResponse.json(
-        { error: 'No location found for these coordinates' },
+        { success: false, error: 'No location found for these coordinates' },
         { status: 404 }
       );
     }
 
-    const feature = data.features[0];
-    const p = feature.properties;
-    const coords = feature.geometry.coordinates; // [lon, lat]
+    const a = data.address || {};
+    const houseNumber = a.house_number || a.street_number || a.building;
+    const street = a.road || a.pedestrian || a.street || a.path || a.footway || a.cycleway;
+    const district = a.suburb || a.city_district || a.quarter || a.borough || a.neighborhood;
+    const city = a.city || a.town || a.village || a.county;
+    const state = a.state;
+    const country = a.country;
+    const countryCode = a.country_code ? a.country_code.toUpperCase() : undefined;
+    const postcode = a.postcode;
+    const name = data.name;
+
+    const displayParts = [];
+    if (name && name !== street && name !== city && name !== country) displayParts.push(name);
     
-    const displayNameParts = [p.name || p.city, p.state, p.country].filter(Boolean);
-    const displayName = Array.from(new Set(displayNameParts)).join(', ');
+    const st = houseNumber ? `${street} ${houseNumber}` : street;
+    if (st) displayParts.push(st);
+    
+    if (district && district !== city) displayParts.push(district);
+    if (city) displayParts.push(city);
+    if (state && state !== city) displayParts.push(state);
+    if (country) displayParts.push(country);
+
+    let displayName = displayParts.filter(Boolean).join(', ');
+    if (!displayName) {
+        displayName = data.display_name || 'Custom coordinates selected';
+    }
 
     const result = {
-      id: p.osm_id?.toString() || Math.random().toString(),
-      displayName: displayName || 'Unknown Location',
-      city: p.city || p.town || p.village || p.name,
-      state: p.state,
-      country: p.country,
-      lat: coords[1],
-      lon: coords[0],
-      provider: 'photon',
+      id: data.place_id?.toString() || Math.random().toString(),
+      displayName,
+      street,
+      houseNumber,
+      district,
+      city,
+      state,
+      country,
+      countryCode,
+      postcode,
+      lat: parseFloat(data.lat),
+      lon: parseFloat(data.lon),
+      provider: 'nominatim',
     };
 
-    return NextResponse.json({ result });
-  } catch (error: any) {
+    return NextResponse.json({ success: true, result });
+  } catch (error) {
     console.error('Reverse geocoding error:', error);
     return NextResponse.json(
-      { error: 'Failed to reverse geocode location', message: error.message, stack: error.stack },
+      { success: false, error: 'Failed to reverse geocode location. Check network connection.' },
       { status: 500 }
     );
   }

@@ -7,7 +7,11 @@
     "disclaimer": "Yasal Uyarı",
     "about": "Hakkımızda",
     "howItWorks": "Nasıl Çalışır",
-    "localSeo": "Yerel SEO Rehberi"
+    "localSeo": "Yerel SEO Rehberi",
+    "footerDesc": "Fotoğraflarınıza anında kesin GPS konumları eklemek için tarayıcı tabanlı ücretsiz bir coğrafi etiketleme aracı. Yerel SEO, fotoğrafçılar ve gizlilik bilincine sahip kullanıcılar için tasarlandı.",
+    "usefulLinks": "Faydalı Bağlantılar",
+    "legal": "Yasal",
+    "allRightsReserved": "Tüm hakları saklıdır."
   },
   "nav": {
     "tool": "Harita & Etiketleme Aracı",
@@ -30,7 +34,39 @@
     "step2Desc": "Konum arayın, enlem ve boylam değerlerinizi ayarlayın.",
     "step3Title": "3. İndirip Kullanın",
     "step3Desc": "Nokta verileri fotoğrafın içine gömülür, tek tuşla hazır hâle gelir.",
-    "metaKeywords": "Konum Etiketleme, EXIF Düzenleyici, GPS Konumu, Yerel SEO, Fotoğraf Meta Verileri, Fotoğrafa konum ekle, GeoTagHQ"
+    "metaKeywords": "Konum Etiketleme, EXIF Düzenleyici, GPS Konumu, Yerel SEO, Fotoğraf Meta Verileri, Fotoğrafa konum ekle, GeoTagHQ",
+    "step1Drop": "1. Fotoğraf Bırak",
+    "step2Pin": "2. Konum İşaretle",
+    "step3Apply": "3. Geotag Uygula",
+    "processingMode": "İşleme Modu",
+    "bestCompatibility": "En İyi Uyumluluk",
+    "keepOriginal": "Orijinal Formatı Koru",
+    "compressPhotos": "Fotoğrafları Sıkıştır",
+    "compressNone": "Yok",
+    "compressLow": "Düşük",
+    "compressMedium": "Orta",
+    "compressHigh": "Yüksek",
+    "uploadToConfigure": "Meta verileri yapılandırmak için bir resim yükleyin",
+    "privacyNote": "Gizlilik Notu: JPG/JPEG fotoğrafları doğrudan tarayıcınızda işlenir.",
+    "privacyNoteSub": "Diğer formatları desteklemek için, resminiz sunucumuz tarafından güvenli bir şekilde işlenip silinebilir.",
+    "dragDropHere": "Fotoğrafları buraya sürükleyip bırakın veya seçmek için tıklayın",
+    "supportsFormats": "JPG, JPEG, PNG, WebP, HEIC, TIFF destekler.",
+    "noLocationSelected": "Henüz bir konum seçilmedi.",
+    "useCurrentLocation": "Mevcut Konumum",
+    "apply": "Uygula",
+    "searchAddress": "Adres, şehir, sokak, yer işaretleri arayın...",
+    "noteOnReduction": "Küçültme notu:",
+    "compressNoteLow": "Maksimum sıkıştırma görüntü netliğini etkileyebilir.",
+    "compressNoteMedium": "Orta düzey sıkıştırma. Kalite ve dosya boyutu.",
+    "compressNoteHigh": "Hafif sıkıştırma. En yüksek görsel netlik.",
+    "compatNote": "Uyumluluk Notu:",
+    "compatDesc": "JPG/JPEG, GPS ve SEO meta verileri için en iyi uyumluluğu sunar.",
+    "compatJpgRecommend": "Maksimum uyumluluk için JPG önerilir.",
+    "exportFormat": "Dışa Aktarım Formatı",
+    "showingMetadataFirstOnly": "Yalnızca ilk fotoğraf için meta verileri gösteriliyor",
+    "editCropImage": "Resmi Düzenle ve Kırp",
+    "cropFree": "Serbest",
+    "applyEdits": "Düzenlemeleri Uygula"
   },
   "faq": [
     {
@@ -45,5 +81,23 @@
       "q": "İşlediğim resimleri siz görüyor musunuz?",
       "a": "Hayır. Güvenliğinizi düşünerek yalnızca Javascript ile yerel disk belleğiniz üzerinden değiştiriyoruz."
     }
-  ]
+  ],
+  "extract": {
+    "extractPhotosHeader": "URL'den fotoğraf çıkar",
+    "extractPhotosPlaceholder": "Görselleri çıkarmak için bir web sayfası URL'si yapıştır",
+    "extractPhotosBtn": "Fotoğrafları çıkar",
+    "extractImportSelected": "Seçili Görselleri İçe Aktar",
+    "extractImportAll": "Tüm Görselleri İçe Aktar",
+    "extractNoImages": "Görsel bulunamadı",
+    "extractInvalidUrl": "Lütfen geçerli bir URL girin",
+    "extractErrorDefault": "Bu URL'den görsel çıkaramadık",
+    "extractErrorBlocked": "Web sitesi dış istekleri engelliyor veya bir hata döndürüyor olabilir",
+    "extractBlockedTip": "Bazı web siteleri dış görsel çıkarımını engeller",
+    "extractTryDirectUpload": "Görseli manuel olarak yüklemeyi veya doğrudan bir görsel URL'si yapıştırmayı deneyin",
+    "extractWorksBest": "Halka açık web sayfaları ve doğrudan görsel URL'leriyle en iyi şekilde çalışır",
+    "extractTryDirectUrlBtn": "Doğrudan Görsel URL'si",
+    "extractExtractedImages": "Çıkarılan Görseller",
+    "extractImportSuccess": "Görsel başarıyla içe aktarıldı",
+    "extractImportFailed": "Bu görsel içe aktarılamadı"
+  }
 }

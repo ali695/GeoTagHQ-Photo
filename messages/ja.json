@@ -7,7 +7,11 @@
     "disclaimer": "免責事項",
     "about": "私たちについて",
     "howItWorks": "利用方法",
-    "localSeo": "ローカルSEOガイド"
+    "localSeo": "ローカルSEOガイド",
+    "footerDesc": "写真に正確なGPS位置情報をすぐに追加できる無料のブラウザベースのジオタグツール。ローカルSEO、写真家、プライバシーを重視するユーザー向けに設計されています。",
+    "usefulLinks": "お役立ちリンク",
+    "legal": "法的情報",
+    "allRightsReserved": "無断複写・転載を禁じます。"
   },
   "nav": {
     "tool": "ジオタグツール",
@@ -30,7 +34,39 @@
     "step2Desc": "地図上から住所を検索するか、ピンを直接置きます。",
     "step3Title": "3. ダウンロード",
     "step3Desc": "書き込みボタンをクリックすると、GPS情報が埋め込まれます。そのままダウンロードしてください。",
-    "metaKeywords": "ジオタグ, EXIFエディタ, GPS位置情報, ローカルSEO, 写真メタデータ, 写真に位置情報を追加, GeoTagHQ"
+    "metaKeywords": "ジオタグ, EXIFエディタ, GPS位置情報, ローカルSEO, 写真メタデータ, 写真に位置情報を追加, GeoTagHQ",
+    "step1Drop": "1. 写真をドロップ",
+    "step2Pin": "2. 場所をピン留め",
+    "step3Apply": "3. ジオタグを適用",
+    "processingMode": "処理モード",
+    "bestCompatibility": "高い互換性",
+    "keepOriginal": "元のフォーマットを保持",
+    "compressPhotos": "写真を圧縮",
+    "compressNone": "なし",
+    "compressLow": "低",
+    "compressMedium": "中",
+    "compressHigh": "高",
+    "uploadToConfigure": "画像をアップロードしてメタデータを設定します",
+    "privacyNote": "プライバシーメモ：JPG/JPEG写真はブラウザで直接処理されます。",
+    "privacyNoteSub": "その他のフォーマットはサーバーで安全に処理され、即座に削除されます。",
+    "dragDropHere": "ここに写真をドラッグ＆ドロップするか、クリックして選択します",
+    "supportsFormats": "JPG、JPEG、PNG、WebP、HEIC、AVIF、およびTIFFをサポートします。",
+    "noLocationSelected": "場所がまだ選択されていません。",
+    "useCurrentLocation": "現在地を使用する",
+    "apply": "適用",
+    "searchAddress": "都市、住所、ランドマークを検索...",
+    "noteOnReduction": "圧縮について：",
+    "compressNoteLow": "最大の圧縮は画質に影響する場合があります。",
+    "compressNoteMedium": "適度な圧縮。画質とファイルサイズの適切なバランス。",
+    "compressNoteHigh": "軽い圧縮。高い視覚的忠実度。",
+    "compatNote": "互換性に関する注意：",
+    "compatDesc": "JPG/JPEGは、GPSやSEOのメタデータに対する最高の互換性を提供します。",
+    "compatJpgRecommend": "メタデータの最大の互換性のためにJPGが推奨されます。",
+    "exportFormat": "エクスポート形式",
+    "showingMetadataFirstOnly": "最初の写真のメタデータのみ表示",
+    "editCropImage": "画像を編集してトリミング",
+    "cropFree": "フリー",
+    "applyEdits": "編集を適用"
   },
   "faq": [
     {
@@ -45,5 +81,23 @@
       "q": "スマートフォンで撮影した写真を使えますか？",
       "a": "はい、対応しております。ただし、既に位置情報が記録されている場合は、当ツールで任意の場所へと上書き修正することが可能です。"
     }
-  ]
+  ],
+  "extract": {
+    "extractPhotosHeader": "URLから写真を抽出",
+    "extractPhotosPlaceholder": "画像を抽出するにはウェブページのURLを貼り付けてください",
+    "extractPhotosBtn": "写真を抽出",
+    "extractImportSelected": "選択した画像をインポート",
+    "extractImportAll": "すべての画像をインポート",
+    "extractNoImages": "画像が見つかりませんでした",
+    "extractInvalidUrl": "有効なURLを入力してください",
+    "extractErrorDefault": "このURLから画像を抽出できませんでした",
+    "extractErrorBlocked": "ウェブサイトが外部リクエストをブロックしているか、エラーを返しています",
+    "extractBlockedTip": "一部のウェブサイトは外部からの画像抽出をブロックします",
+    "extractTryDirectUpload": "手動で画像をアップロードするか、直接画像URLを貼り付けてみてください",
+    "extractWorksBest": "公開されているウェブページや直接の画像URLで最適に機能します",
+    "extractTryDirectUrlBtn": "直接画像URL",
+    "extractExtractedImages": "抽出された画像",
+    "extractImportSuccess": "画像が正常にインポートされました",
+    "extractImportFailed": "この画像をインポートできませんでした"
+  }
 }

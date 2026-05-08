@@ -11,6 +11,7 @@ import MapPicker from './MapPicker';
 import CoordinateInput from './CoordinateInput';
 import LocationSearch from './LocationSearch';
 import BatchImageList from './BatchImageList';
+import ExtractImagesSection from './ExtractImagesSection';
 import ImageEditorModal from './ImageEditorModal';
 import JSZip from 'jszip';
 import { MapPin, Download, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
@@ -18,27 +19,54 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import SelectedLocationCard from './SelectedLocationCard';
 import { toolDict } from '@/lib/toolDict';
 
-export default function GeoTaggingTool() {
+export default function GeoTaggingTool({ messages }: { messages?: any }) {
   const params = useParams();
   const lang = (typeof params?.lang === 'string' ? params.lang : 'en');
   
-  const d = toolDict[lang] || toolDict['en'];
+  const d = { ...toolDict['en'], ...toolDict[lang], ...(messages?.tool || {}) };
 
   const [files, setFiles] = useState<ImageFile[]>([]);
   const [coords, setCoords] = useState<GeoCoordinates | undefined>();
+  const [zoomLevel, setZoomLevel] = useState<number | undefined>();
   const [selectedLoc, setSelectedLoc] = useState<import('@/lib/location').SelectedLocation | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [errorInfo, setErrorInfo] = useState<string | null>(null);
   const [successInfo, setSuccessInfo] = useState<string | null>(null);
-  const [processingMode, setProcessingMode] = useState<'best' | 'keep'>('best');
+  const [exportFormat, setExportFormat] = useState<'original' | 'jpg' | 'png' | 'webp' | 'avif' | 'tiff' | 'gif'>('original');
+  const [compressionMode, setCompressionMode] = useState<'none' | 'low' | 'medium' | 'high'>('none');
   
   const [editingFileIndex, setEditingFileIndex] = useState<number | null>(null);
   const [globalMetadataEdits, setGlobalMetadataEdits] = useState<Partial<ImageMetadata>>({});
 
-  const handleLocationChange = useCallback((newCoords: GeoCoordinates, source: import('@/lib/location').SelectedLocation['source'], displayName?: string, provider?: string) => {
+  const handleLocationChange = useCallback((newCoords: GeoCoordinates, source: import('@/lib/location').SelectedLocation['source'], displayName?: string, provider?: string, fullSuggestion?: import('@/lib/location').LocationSuggestion) => {
     setCoords(newCoords);
+    
+    // Determine zoom level
+    let zoom = 13; // default
+    if (fullSuggestion?.type === 'address' || fullSuggestion?.houseNumber) {
+      zoom = 17;
+    } else if (fullSuggestion?.type === 'street' || fullSuggestion?.type === 'highway') {
+      zoom = 15;
+    } else if (fullSuggestion?.type === 'landmark' || fullSuggestion?.type === 'park') {
+      zoom = 16;
+    } else if (fullSuggestion?.district || fullSuggestion?.type === ' suburb' || fullSuggestion?.type === 'quarter') {
+      zoom = 13;
+    } else if (fullSuggestion?.city || fullSuggestion?.type === 'city' || fullSuggestion?.type === 'village') {
+      zoom = 11;
+    } else if (fullSuggestion?.country || fullSuggestion?.type === 'country') {
+      zoom = 5;
+    }
+    setZoomLevel(zoom);
+
     if (displayName) {
-      setSelectedLoc({ displayName, lat: newCoords.lat, lon: newCoords.lng, source, provider });
+      setSelectedLoc({ 
+          displayName, 
+          lat: newCoords.lat, 
+          lon: newCoords.lng, 
+          source, 
+          provider,
+          ...fullSuggestion
+      });
     } else {
       setSelectedLoc(prev => prev ? { ...prev, lat: newCoords.lat, lon: newCoords.lng, source, provider } : {
         displayName: "Loading location...",
@@ -48,10 +76,25 @@ export default function GeoTaggingTool() {
         provider
       });
       fetch(`/api/reverse-geocode?lat=${newCoords.lat}&lon=${newCoords.lng}`)
-        .then(res => res.json())
-        .then(data => {
-          if (data.result) {
-            setSelectedLoc({ displayName: data.result.displayName, lat: newCoords.lat, lon: newCoords.lng, source, provider: data.result.provider });
+        .then(async res => {
+          let data;
+          try {
+            data = await res.json();
+          } catch (e) {
+            throw new Error('Invalid JSON response');
+          }
+          return { res, data };
+        })
+        .then(({ res, data }) => {
+          if (res.ok && data.result) {
+            setSelectedLoc({ 
+                displayName: data.result.displayName, 
+                lat: newCoords.lat, 
+                lon: newCoords.lng, 
+                source, 
+                provider: data.result.provider,
+                ...data.result 
+            });
           } else {
             setSelectedLoc({ displayName: "Custom coordinates selected", lat: newCoords.lat, lon: newCoords.lng, source, provider });
           }
@@ -138,7 +181,8 @@ export default function GeoTaggingTool() {
             formData.append("lat", coords.lat.toString());
             formData.append("lng", coords.lng.toString());
           }
-          formData.append("bestCompatibility", processingMode === 'best' ? "true" : "false");
+          formData.append("exportFormat", exportFormat);
+          formData.append("compressionMode", compressionMode);
           if (globalMetadataEdits.cameraMake) formData.append("cameraMake", globalMetadataEdits.cameraMake);
           if (globalMetadataEdits.cameraModel) formData.append("cameraModel", globalMetadataEdits.cameraModel);
           if (globalMetadataEdits.dateTaken) formData.append("dateTaken", globalMetadataEdits.dateTaken);
@@ -153,13 +197,23 @@ export default function GeoTaggingTool() {
             const errData = await res.json().catch(() => null);
             throw new Error(errData?.error || "Server processing failed");
           }
-          const processedBlob = await res.blob();
-          const wasConverted = res.headers.get("X-Converted-To-Jpg") === "true";
+          const disposition = res.headers.get("Content-Disposition");
           let finalName = file.name;
-          if (wasConverted) {
-             finalName = file.name.replace(/\.[^/.]+$/, "") + ".jpg";
+          if (disposition && disposition.indexOf("filename=") !== -1) {
+             const match = disposition.match(/filename="?([^"]+)"?/);
+             if (match && match[1]) {
+                finalName = match[1];
+             }
+          } else {
+             const wasConverted = res.headers.get("X-Converted") === "true";
+             if (wasConverted) {
+                const ext = exportFormat === 'original' ? 'jpg' : exportFormat; // fallback assumption
+                finalName = file.name.replace(/\.[^/.]+$/, "") + "." + ext;
+             }
           }
-          updatedFiles[i] = { ...file, name: finalName, processedBlob, status: 'done', error: undefined };
+          let mimeType = res.headers.get("Content-Type") || "application/octet-stream";
+          const processedBlob = new Blob([await res.blob()], { type: mimeType });
+          updatedFiles[i] = { ...file, name: finalName, type: mimeType, processedBlob, status: 'done', error: undefined };
           successCount++;
         } catch (error: any) {
           updatedFiles[i] = { ...file, status: 'error', error: error.message || 'Failed to write data' };
@@ -185,9 +239,7 @@ export default function GeoTaggingTool() {
       const url = URL.createObjectURL(file.processedBlob!);
       const a = document.createElement('a');
       a.href = url;
-      const baseName = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
-      const ext = file.name.substring(file.name.lastIndexOf('.'));
-      a.download = `${baseName}-geotagged${ext}`;
+      a.download = file.name;
       a.click();
       URL.revokeObjectURL(url);
       return;
@@ -195,9 +247,7 @@ export default function GeoTaggingTool() {
     const JSZip = (await import('jszip')).default;
     const zip = new JSZip();
     doneFiles.forEach(file => {
-      const baseName = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
-      const ext = file.name.substring(file.name.lastIndexOf('.'));
-      zip.file(`${baseName}-geotagged${ext}`, file.processedBlob!);
+      zip.file(file.name, file.processedBlob!);
     });
     const content = await zip.generateAsync({ type: 'blob' });
     const url = URL.createObjectURL(content);
@@ -212,9 +262,14 @@ export default function GeoTaggingTool() {
     <div className="w-full max-w-6xl mx-auto flex flex-col lg:flex-row gap-8">
       <div className="flex-1 space-y-6 flex flex-col">
         <section className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-          <h2 className="text-xl font-bold text-slate-900 mb-4">1. {d.dropTitle?.split(' ')[0]} Photos</h2>
-          <UploadDropzone onDropAccepted={handleDrop} />
+          <h2 className="text-xl font-bold text-slate-900 mb-4">{d.step1Drop || "1. Drop Photos"}</h2>
+          <UploadDropzone onDropAccepted={handleDrop} messages={messages} />
+          <ExtractImagesSection messages={messages} onImport={async (acceptedFiles) => {
+            const newArray = Array.from(acceptedFiles);
+            await handleDrop(newArray);
+          }} />
           <BatchImageList 
+            messages={messages}
             files={files} 
             onRemove={(idx) => {
               const newFiles = [...files];
@@ -227,12 +282,30 @@ export default function GeoTaggingTool() {
         </section>
 
         <section className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex-grow flex flex-col">
-          <h2 className="text-xl font-bold text-slate-900 mb-4">2. Pin Location</h2>
+          <h2 className="text-xl font-bold text-slate-900 mb-4">{d.step2Pin || "2. Pin Location"}</h2>
           <div className="space-y-4 flex-grow flex flex-col">
-            <LocationSearch onSelectCallback={(c, name, provider) => handleLocationChange(c, 'search', name, provider)} />
-            <SelectedLocationCard location={selectedLoc} />
+            <LocationSearch messages={messages} onSelectCallback={(c, name, provider, suggestion) => handleLocationChange(c, 'search', name, provider, suggestion)} />
+            <SelectedLocationCard 
+               location={selectedLoc} 
+               onAutoFillMetadata={(details) => {
+                  const newEdits: Partial<ImageMetadata> = {};
+                  if (details.city && !globalMetadataEdits.city) newEdits.city = details.city;
+                  if (details.country && !globalMetadataEdits.country) newEdits.country = details.country;
+                  if (details.state && !globalMetadataEdits.stateRegion) newEdits.stateRegion = details.state;
+                  if (details.district && !globalMetadataEdits.district) newEdits.district = details.district;
+                  if (details.countryCode && !globalMetadataEdits.countryCode) newEdits.countryCode = details.countryCode;
+                  if (details.postcode && !globalMetadataEdits.postalCode) newEdits.postalCode = details.postcode;
+                  
+                  const addr = details.houseNumber ? `${details.street} ${details.houseNumber}` : details.street;
+                  if (addr && !globalMetadataEdits.streetAddress) newEdits.streetAddress = addr;
+                  
+                  if (Object.keys(newEdits).length > 0) {
+                     setGlobalMetadataEdits(prev => ({ ...prev, ...newEdits }));
+                  }
+               }} 
+            />
             <div className="flex-grow min-h-[400px] border border-slate-200 rounded-lg overflow-hidden relative">
-               <MapPicker initialCoords={coords} onChange={(c) => handleLocationChange(c, 'map')} />
+               <MapPicker initialCoords={coords} zoomLevel={zoomLevel} onChange={(c) => handleLocationChange(c, 'map')} />
             </div>
             <CoordinateInput coords={coords} onChange={(c) => handleLocationChange(c, 'manual')} />
             <div className="flex justify-end pt-2">
@@ -250,7 +323,7 @@ export default function GeoTaggingTool() {
                       }}
                       className="text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1 transition-colors"
                     >
-                      <MapPin className="w-4 h-4" /> Use My Current Location
+                      <MapPin className="w-4 h-4" /> {d.useCurrentLocation || "Use My Current Location"}
                     </button>
                   </TooltipTrigger>
                   <TooltipContent>
@@ -265,7 +338,7 @@ export default function GeoTaggingTool() {
 
       <div className="w-full lg:w-[400px] space-y-6">
         <section className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sticky top-6">
-          <h2 className="text-xl font-bold text-slate-900 mb-4">3. Apply Geotag</h2>
+          <h2 className="text-xl font-bold text-slate-900 mb-4">{d.step3Apply || "3. Apply Geotag"}</h2>
           {errorInfo && (
             <div className="mb-4 p-3 flex items-start gap-2 bg-red-50 text-red-700 rounded-lg text-sm border border-red-100">
               <AlertCircle className="w-5 h-5 shrink-0" />
@@ -279,41 +352,78 @@ export default function GeoTaggingTool() {
             </div>
           )}
           <div className="mb-6">
-            <h3 className="text-sm font-semibold text-slate-700 mb-2">Processing Mode</h3>
-            <div className="flex gap-2 p-1 bg-slate-100 rounded-lg border border-slate-200">
-              <button
-                onClick={() => setProcessingMode('best')}
-                className={`flex-1 py-1.5 px-3 text-xs font-medium rounded-md transition-colors ${processingMode === 'best' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-700'}`}
-              >
-                Best Compatibility
-              </button>
-              <button
-                onClick={() => setProcessingMode('keep')}
-                className={`flex-1 py-1.5 px-3 text-xs font-medium rounded-md transition-colors ${processingMode === 'keep' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-700'}`}
-              >
-                Keep Original Format
-              </button>
-            </div>
-            <div className="mt-3 bg-amber-50 border border-amber-200 text-amber-800 rounded-md p-3 text-xs">
-              <p className="mb-1 font-medium text-amber-900">Compatibility Note:</p>
-              <p>JPG/JPEG offers the best compatibility for GPS and SEO metadata. PNG, WebP, AVIF and HEIC may have limited metadata support depending on the platform where the image is uploaded.</p>
-              {processingMode === 'keep' && (
-                <p className="mt-2 font-medium text-amber-900 bg-amber-200/50 inline-block px-1.5 py-0.5 rounded">For maximum metadata compatibility, JPG is recommended.</p>
-              )}
-            </div>
-          </div>
-
-          <div className="mb-6">
              <MetadataPanel 
                metadata={(files[0] || Object.keys(globalMetadataEdits).length > 0 || coords) ? { ...(files[0]?.metadata || { format: 'image/jpeg', fileSize: 0 } as any), ...globalMetadataEdits, gps: coords || files[0]?.metadata?.gps } as ImageMetadata : undefined} 
                onMetadataChange={(changes) => {
                  setGlobalMetadataEdits(prev => ({ ...prev, ...changes }));
                }}
              />
-             {files.length > 1 && (
-               <p className="text-xs text-slate-500 mt-2 text-center">Showing metadata for first photo only</p>
-             )}
           </div>
+          
+          <div className="mb-6 bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+            <h3 className="text-[13px] font-bold text-slate-900 mb-3 uppercase tracking-wide">{d.exportFormat || "Export Format"}</h3>
+            <div className="flex flex-wrap gap-2">
+              <select
+                value={exportFormat}
+                onChange={(e) => setExportFormat(e.target.value as any)}
+                className="w-full text-sm font-medium border border-slate-300 rounded-lg px-4 py-2.5 outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-slate-50 hover:bg-slate-100 transition-colors shadow-sm appearance-none cursor-pointer"
+                style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.75rem center', backgroundSize: '1rem' }}
+              >
+                <option value="original">Autodetect / Original</option>
+                <option value="jpg">JPG / JPEG</option>
+                <option value="png">PNG</option>
+                <option value="webp">WebP</option>
+                <option value="avif">AVIF</option>
+                <option value="tiff">TIFF</option>
+                <option value="gif">GIF</option>
+              </select>
+            </div>
+            {exportFormat !== 'original' && exportFormat !== 'jpg' && (
+              <p className="text-[11px] text-slate-500 mt-2.5 leading-tight bg-slate-50 p-2 border border-slate-100 rounded">Conversion to <strong className="font-semibold">{exportFormat.toUpperCase()}</strong> preserves EXIF tags via backend processing.</p>
+            )}
+          </div>
+
+          <div className="mb-6 bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+            <h3 className="text-[13px] font-bold text-slate-900 mb-3 uppercase tracking-wide">{d.compressPhotos || "Compress Photos"}</h3>
+            <div className="flex bg-slate-100/80 rounded-lg border border-slate-200/60 p-1">
+              <button
+                onClick={() => setCompressionMode('none')}
+                className={`flex-1 py-2 text-xs font-semibold rounded-md transition-all duration-200 ${compressionMode === 'none' ? 'bg-white shadow-sm text-slate-900 ring-1 ring-slate-200' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'}`}
+              >
+                {d.compressNone || "None"}
+              </button>
+              <button
+                onClick={() => setCompressionMode('high')}
+                className={`flex-1 py-2 text-xs font-semibold rounded-md transition-all duration-200 ${compressionMode === 'high' ? 'bg-white shadow-sm text-slate-900 ring-1 ring-slate-200' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'}`}
+              >
+                {d.compressLow || "Low"}
+              </button>
+              <button
+                onClick={() => setCompressionMode('medium')}
+                className={`flex-1 py-2 text-xs font-semibold rounded-md transition-all duration-200 ${compressionMode === 'medium' ? 'bg-white shadow-sm text-slate-900 ring-1 ring-slate-200' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'}`}
+              >
+                {d.compressMedium || "Medium"}
+              </button>
+              <button
+                onClick={() => setCompressionMode('low')}
+                className={`flex-1 py-2 text-xs font-semibold rounded-md transition-all duration-200 ${compressionMode === 'low' ? 'bg-white shadow-sm text-slate-900 ring-1 ring-slate-200' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'}`}
+              >
+                {d.compressHigh || "High"}
+              </button>
+            </div>
+            {compressionMode !== 'none' && (
+              <div className="mt-3 text-[11px] text-amber-700 bg-amber-50 border border-amber-200/60 rounded-md p-2.5 flex items-start gap-2">
+                <svg className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <div className="leading-tight">
+                  <span className="font-semibold block mb-0.5">{d.noteOnReduction || "Note on reduction:"}</span> 
+                  {compressionMode === 'low' && (d.compressNoteLow || "Maximum compression may affect image clarity. File sizes will be heavily reduced.")}
+                  {compressionMode === 'medium' && (d.compressNoteMedium || "Moderate compression. Good balance of visual quality and file size.")}
+                  {compressionMode === 'high' && (d.compressNoteHigh || "Light compression. Largest file size, highest visual fidelity.")}
+                </div>
+              </div>
+            )}
+          </div>
+
           <button
             onClick={handleApplyCoordinates}
             disabled={isProcessing || files.length === 0}
@@ -342,6 +452,7 @@ export default function GeoTaggingTool() {
       {editingFileIndex !== null && files[editingFileIndex] && (
         <ImageEditorModal
           file={files[editingFileIndex]}
+          d={d}
           onClose={() => setEditingFileIndex(null)}
           onSave={(editedBlob, previewUrl) => {
             const newFiles = [...files];
