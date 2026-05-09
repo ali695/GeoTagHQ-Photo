@@ -1,7 +1,7 @@
 'use client';
 
 import { ImageFile } from '@/types/image';
-import { X, CheckCircle, AlertCircle, Clock, Crop, RotateCcw } from 'lucide-react';
+import { X, CheckCircle, AlertCircle, Clock, Pencil, RotateCcw } from 'lucide-react';
 import Image from 'next/image';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
@@ -40,90 +40,110 @@ export default function BatchImageList({ files, onRemove, onClearAll, onEdit, me
         </TooltipProvider>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      <div className="flex flex-col gap-3">
         <TooltipProvider>
           {files.map((file, index) => (
-            <div key={`${file.name}-${index}`} className="relative border border-slate-200 rounded-lg p-3 bg-white shadow-sm flex items-center gap-3 group">
-              <div className="absolute -top-2 -end-2 flex gap-1 z-10">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button 
-                      onClick={() => onEdit(index)}
-                      className="bg-white rounded-full p-1.5 shadow-md border border-slate-200 text-blue-600 hover:text-blue-800 transition-colors"
-                    >
-                      <Crop className="w-3.5 h-3.5" />
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Refine & Edit</p>
-                  </TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button 
-                      onClick={() => onRemove(index)}
-                      className="bg-white rounded-full p-1.5 shadow-md border border-slate-200 text-slate-500 hover:text-red-600 transition-colors"
-                    >
-                      <X className="w-3.5 h-3.5" />
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Remove photo</p>
-                  </TooltipContent>
-                </Tooltip>
-              </div>
-
+            <div key={`${file.name}-${index}`} className="group relative border border-slate-200 rounded-xl p-3 bg-white shadow-sm hover:shadow-md hover:border-blue-200 transition-all flex flex-col sm:flex-row sm:items-center gap-4">
+              {/* Thumbnail */}
               {file.preview ? (
-                <div className="w-12 h-12 relative rounded-md overflow-hidden bg-slate-100 shrink-0 border border-slate-200">
+                <div className="w-16 h-16 relative rounded-lg overflow-hidden bg-slate-100 shrink-0 border border-slate-200 group-hover:border-blue-100">
                   <Image 
                     src={file.preview} 
                     alt={file.name} 
                     fill 
                     className="object-cover" 
                     referrerPolicy="no-referrer"
-                    unoptimized // Local object URL
+                    unoptimized 
                   />
                 </div>
               ) : (
-                <div className="w-12 h-12 bg-slate-100 rounded-md shrink-0 flex items-center justify-center border border-slate-200">
-                  <span className="text-xs text-slate-400">IMG</span>
+                <div className="w-16 h-16 bg-slate-100 rounded-lg shrink-0 flex items-center justify-center border border-slate-200">
+                  <span className="text-xs text-slate-400 font-bold">IMG</span>
                 </div>
               )}
               
+              {/* Info section */}
               <div className="flex-grow min-w-0">
-                <p className="text-sm font-medium text-slate-700 truncate">{file.name}</p>
-                <div className="mt-1 flex flex-col gap-1">
+                <p className="text-sm font-bold text-slate-800 truncate mb-1">{file.name}</p>
+                <div className="flex flex-wrap items-center gap-2">
                   {file.metadata?.gps ? (
-                    <span className="flex-none"><span className="inline-flex items-center gap-1 text-[10px] text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded font-medium">
+                    <span className="inline-flex items-center gap-1 text-[10px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full font-bold border border-emerald-100">
                       <CheckCircle className="w-3 h-3" /> {t.hasGps || "Has GPS"}
-                    </span></span>
+                    </span>
                   ) : (
-                    <span className="flex-none"><span className="inline-flex items-center gap-1 text-[10px] text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded font-medium">
+                    <span className="inline-flex items-center gap-1 text-[10px] text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full font-bold border border-amber-100">
                       <AlertCircle className="w-3 h-3" /> {t.noGps || "No GPS"}
-                    </span></span>
+                    </span>
                   )}
                   
                   {file.status === 'done' && file.processedBlob && (
-                    <span className="flex-none flex flex-col gap-0.5">
-                      <span className="inline-flex items-center gap-1 text-[10px] text-blue-600 font-medium">
+                    <div className="flex items-center gap-2">
+                      <span className="inline-flex items-center gap-1 text-[10px] text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full font-bold border border-blue-100">
                         <CheckCircle className="w-3 h-3" /> {t.geotagged || "Geotagged"}
                       </span>
-                      <span className="text-[10px] text-slate-500">
+                      <span className="text-[10px] font-medium text-slate-500 bg-slate-50 px-2 py-0.5 rounded-full border border-slate-100">
                          {Math.round(file.size / 1024)}KB → {Math.round(file.processedBlob.size / 1024)}KB
                       </span>
+                    </div>
+                  )}
+                  
+                  {file.status === 'processing' && (
+                    <span className="inline-flex items-center gap-1 text-[10px] text-slate-600 bg-slate-100 px-2 py-0.5 rounded-full font-bold animate-pulse">
+                      <Clock className="w-3 h-3" /> {t.processingFile || "Processing..."}
                     </span>
                   )}
-                  {file.status === 'processing' && (
-                    <span className="flex-none"><span className="inline-flex items-center gap-1 text-[10px] text-slate-500 font-medium animate-pulse">
-                      <Clock className="w-3 h-3" /> {t.processingFile || "Processing..."}
-                    </span></span>
-                  )}
+                  
                   {file.status === 'error' && (
-                    <span className="flex-none"><span className="inline-flex items-center gap-1 text-[10px] text-red-600 bg-red-50 px-1.5 py-0.5 rounded font-medium">
+                    <span className="inline-flex items-center gap-1 text-[10px] text-red-700 bg-red-50 px-2 py-0.5 rounded-full font-bold border border-red-100">
                       <AlertCircle className="w-3 h-3" /> {t.failedAction || "Failed"}
-                    </span></span>
+                    </span>
+                  )}
+
+                  {/* Metadata Indicators */}
+                  {(file.metadata?.title || file.editedMetadata?.title) && (
+                    <span className="inline-flex items-center gap-1 text-[10px] text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-full font-bold border border-indigo-100" title="SEO Title Set">
+                      T
+                    </span>
+                  )}
+                  {(file.metadata?.description || file.editedMetadata?.description) && (
+                    <span className="inline-flex items-center gap-1 text-[10px] text-purple-700 bg-purple-50 px-2 py-0.5 rounded-full font-bold border border-purple-100" title="Meta Description Set">
+                      D
+                    </span>
                   )}
                 </div>
+              </div>
+
+              {/* Action Buttons at the end */}
+              <div className="flex items-center gap-1 shrink-0 bg-slate-50 p-1 rounded-xl">
+                <Tooltip delayDuration={300}>
+                  <TooltipTrigger asChild>
+                    <button 
+                      onClick={() => onEdit(index)}
+                      className="p-2.5 text-blue-600 hover:bg-white hover:shadow-sm rounded-lg transition-all active:scale-95 bg-transparent"
+                    >
+                      <Pencil className="w-4 h-4" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Edit Metadata & Image</p>
+                  </TooltipContent>
+                </Tooltip>
+                
+                <div className="w-px h-6 bg-slate-200 mx-1"></div>
+
+                <Tooltip delayDuration={300}>
+                  <TooltipTrigger asChild>
+                    <button 
+                      onClick={() => onRemove(index)}
+                      className="p-2.5 text-slate-400 hover:text-red-500 hover:bg-white hover:shadow-sm rounded-lg transition-all active:scale-95 bg-transparent"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Remove from list</p>
+                  </TooltipContent>
+                </Tooltip>
               </div>
             </div>
           ))}

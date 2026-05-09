@@ -66,7 +66,32 @@
     "showingMetadataFirstOnly": "Affichage des métadonnées pour la première photo uniquement",
     "editCropImage": "Modifier et recadrer l'image",
     "cropFree": "Libre",
-    "applyEdits": "Appliquer les modifications"
+    "applyEdits": "Appliquer les modifications",
+    "priorityNote": "PRIORITÉ : Ces méta-données remplaceront les paramètres globaux.",
+    "streetAddressLabel": "Adresse",
+    "cityLabel": "Ville",
+    "stateRegionLabel": "État / Région",
+    "postalCodeLabel": "Code Postal",
+    "countryLabel": "Pays",
+    "countryCodeLabel": "Code Pays (ISO)",
+    "websiteUrl": "URL du site Web",
+    "stateLabel": "État",
+    "zipCodeLabel": "Code ZIP",
+    "countyLabel": "Comté",
+    "postcodeLabel": "Code Postal",
+    "provinceLabel": "Province",
+    "bundeslandLabel": "État / Région",
+    "plzLabel": "Code Postal",
+    "errors": {
+      "noFiles": "Aucun fichier sélectionné pour le traitement.",
+      "invalidFormat": "Format de fichier non pris en charge. Veuillez utiliser JPG, PNG, WebP ou HEIC.",
+      "exifWriteFailed": "Échec de l'écriture des méta-données EXIF. Le fichier peut être corrompu ou en lecture seule.",
+      "gpsExtractionFailed": "Impossible d'extraire les coordonnées GPS de l'emplacement sélectionné.",
+      "networkError": "Erreur réseau lors de la génération des méta-données SEO. Veuillez vérifier votre connexion.",
+      "aiQuotaExceeded": "Limite de génération d'IA atteinte. Veuillez réessayer plus tard ou saisir les méta-données manuellement.",
+      "browserUnsupported": "Votre navigateur ne prend pas en charge l'édition EXIF locale. Veuillez mettre à jour vers un navigateur moderne.",
+      "exportFailed": "Échec de l'exportation de l'image géo-marquée. Essayez de réduire la qualité ou de redimensionner l'image."
+    }
   },
   "faq": [
     {

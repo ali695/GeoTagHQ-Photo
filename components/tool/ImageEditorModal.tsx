@@ -6,11 +6,12 @@ import 'react-image-crop/dist/ReactCrop.css';
 import { X, RotateCcw, RotateCw, Check, Wand2, Info, Tag, FileText, Type, Image as ImageIcon } from 'lucide-react';
 import { ImageFile, ImageMetadata } from '@/types/image';
 import { generateSeoMetadata } from '@/lib/gemini';
+import { UI_LABELS } from '@/lib/constants';
 
 interface ImageEditorModalProps {
   file: ImageFile | null;
   onClose: () => void;
-  onSave: (editedBlob: Blob, previewUrl: string, metadata?: Partial<ImageMetadata>) => void;
+  onSave: (editedBlob: Blob, previewUrl: string, metadata?: Partial<ImageMetadata>, fileName?: string) => void;
   d?: any;
   globalMetadata?: Partial<ImageMetadata>;
 }
@@ -54,6 +55,7 @@ export default function ImageEditorModal({ file, onClose, onSave, d = {}, global
 
   // Metadata overrides state
   const [localMeta, setLocalMeta] = useState<Partial<ImageMetadata>>({});
+  const [fileName, setFileName] = useState(file?.name || '');
   const [isGeneratingAi, setIsGeneratingAi] = useState(false);
 
   const handleAiSuggest = async () => {
@@ -62,10 +64,15 @@ export default function ImageEditorModal({ file, onClose, onSave, d = {}, global
       const data = await generateSeoMetadata({
         businessName: localMeta.businessName || globalMetadata.businessName,
         serviceCategory: localMeta.serviceCategory || globalMetadata.serviceCategory,
-        city: globalMetadata.city,
-        country: globalMetadata.country,
+        city: localMeta.city || globalMetadata.city,
+        country: localMeta.country || globalMetadata.country,
         businessType: localMeta.businessType || 'general',
-        language: 'en' // Default or passed prop
+        language: localMeta.language || 'en',
+        streetAddress: localMeta.streetAddress || globalMetadata.streetAddress,
+        postalCode: localMeta.postalCode || globalMetadata.postalCode,
+        stateRegion: localMeta.stateRegion || globalMetadata.stateRegion,
+        countryCode: localMeta.countryCode || globalMetadata.countryCode,
+        district: localMeta.district || globalMetadata.district
       });
 
       if (data) {
@@ -94,7 +101,6 @@ export default function ImageEditorModal({ file, onClose, onSave, d = {}, global
       setLocalMeta(file.editedMetadata);
     } else if (file && file.metadata) {
       // Initialize with existing if any, or empty
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLocalMeta({
         title: file.metadata.title || '',
         description: file.metadata.description || '',
@@ -104,6 +110,13 @@ export default function ImageEditorModal({ file, onClose, onSave, d = {}, global
         businessName: file.metadata.businessName || '',
         websiteUrl: file.metadata.websiteUrl || '',
         businessType: file.metadata.businessType || 'general',
+        language: file.metadata.language || 'en',
+        streetAddress: file.metadata.streetAddress || '',
+        city: file.metadata.city || '',
+        postalCode: file.metadata.postalCode || '',
+        stateRegion: file.metadata.stateRegion || '',
+        country: file.metadata.country || '',
+        countryCode: file.metadata.countryCode || '',
         schemaMarkup: file.metadata.schemaMarkup || '',
         ogTags: file.metadata.ogTags || '',
         hreflang: file.metadata.hreflang || '',
@@ -188,7 +201,77 @@ export default function ImageEditorModal({ file, onClose, onSave, d = {}, global
       return next;
     });
   };
-  
+
+  const getLocationLabels = (country?: string) => {
+    const c = country?.toLowerCase().trim() || '';
+    
+    // USA
+    if (c === 'usa' || c === 'united states' || c === 'united states of america' || c === 'us') {
+      return { state: d.stateLabel || 'State', postal: d.zipCodeLabel || 'ZIP Code' };
+    }
+    // UK
+    if (c === 'united kingdom' || c === 'uk' || c === 'britain' || c === 'england' || c === 'scotland' || c === 'wales') {
+      return { state: d.countyLabel || 'County', postal: d.postcodeLabel || 'Postcode' };
+    }
+    // Canada
+    if (c === 'canada' || c === 'ca') {
+      return { state: d.provinceLabel || 'Province', postal: d.postalCodeLabel || 'Postal Code' };
+    }
+    // Australia
+    if (c === 'australia' || c === 'au') {
+      return { state: d.stateLabel || 'State', postal: d.postcodeLabel || 'Postcode' };
+    }
+    // Germany
+    if (c === 'germany' || c === 'deutschland' || c === 'de') {
+      return { state: d.bundeslandLabel || 'Bundesland', postal: d.plzLabel || 'Postleitzahl (PLZ)' };
+    }
+    // India
+    if (c === 'india' || c === 'in') {
+      return { state: d.stateLabel || 'State', postal: d.postalCodeLabel || 'PIN Code' };
+    }
+    // France
+    if (c === 'france' || c === 'fr') {
+      return { state: d.stateRegionLabel || 'Région', postal: d.postalCodeLabel || 'Code Postal' };
+    }
+    // Spain
+    if (c === 'spain' || c === 'españa' || c === 'es') {
+      return { state: d.provinceLabel || 'Provincia', postal: d.postalCodeLabel || 'Código Postal' };
+    }
+    // Italy
+    if (c === 'italy' || c === 'italia' || c === 'it') {
+      return { state: d.provinceLabel || 'Provincia', postal: d.postalCodeLabel || 'Codice Postale' };
+    }
+    // Brazil
+    if (c === 'brazil' || c === 'brasil' || c === 'br') {
+      return { state: d.stateLabel || 'Estado', postal: d.postalCodeLabel || 'CEP' };
+    }
+    // Netherlands
+    if (c === 'netherlands' || c === 'nederland' || c === 'nl') {
+      return { state: d.provinceLabel || 'Provincie', postal: d.postalCodeLabel || 'Postcode' };
+    }
+    // Indonesia
+    if (c === 'indonesia' || c === 'id') {
+      return { state: d.provinceLabel || 'Provinsi', postal: d.postalCodeLabel || 'Kode Pos' };
+    }
+    // Japan
+    if (c === 'japan' || c === 'nihon' || c === 'nippon' || c === 'jp') {
+      return { state: d.stateLabel || '都道府県', postal: d.postalCodeLabel || '郵便番号' };
+    }
+    // South Korea
+    if (c === 'south korea' || c === 'korea' || c === 'kr' || c === '대한민국') {
+      return { state: d.stateLabel || '도', postal: d.postalCodeLabel || '우편번호' };
+    }
+    // Turkey
+    if (c === 'turkey' || c === 'türkiye' || c === 'tr') {
+      return { state: d.provinceLabel || 'İl', postal: d.postalCodeLabel || 'Posta Kodu' };
+    }
+
+    return { state: d.stateRegionLabel || 'State / Region', postal: d.postalCodeLabel || 'Postal Code' };
+  };
+
+  const labels = getLocationLabels(localMeta.country);
+  const currentLabels = UI_LABELS[localMeta.language || 'en'] || UI_LABELS.en;
+
   // Use preview or create one
   const imgSrc = useMemo(() => {
     if (!file) return '';
@@ -384,7 +467,7 @@ export default function ImageEditorModal({ file, onClose, onSave, d = {}, global
     cropCanvas.toBlob((blob) => {
       if (blob) {
         const previewUrl = URL.createObjectURL(blob);
-        onSave(blob, previewUrl, localMeta);
+        onSave(blob, previewUrl, localMeta, fileName);
       }
     }, 'image/jpeg', exportQuality);
   };
@@ -470,7 +553,7 @@ export default function ImageEditorModal({ file, onClose, onSave, d = {}, global
                    className="text-[10px] bg-blue-50 text-blue-600 px-2.5 py-1.5 rounded-lg flex items-center gap-1.5 hover:bg-blue-100 transition-colors disabled:opacity-50 font-bold border border-blue-100"
                  >
                    <Wand2 className={`w-3 h-3 ${isGeneratingAi ? 'animate-pulse' : ''}`} />
-                   {isGeneratingAi ? '...' : (d.aiSuggest || 'AI SUGGEST')}
+                   {isGeneratingAi ? '...' : currentLabels.aiSuggest}
                  </button>
                </div>
              </div>
@@ -479,13 +562,51 @@ export default function ImageEditorModal({ file, onClose, onSave, d = {}, global
                  <div className="bg-white p-3 rounded-xl border border-slate-100 shadow-sm space-y-3">
                   <div>
                       <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1.5">
-                        <Tag className="w-3 h-3 text-slate-400" /> {d.businessTypePreset || "Business Type Preset"}
+                        <ImageIcon className="w-3 h-3 text-slate-400" /> {currentLabels.fileName}
+                      </label>
+                      <input 
+                        type="text" 
+                        value={fileName} 
+                        onChange={(e) => setFileName(e.target.value)}
+                       placeholder={currentLabels.fileNamePlaceholder || "image-name.jpg"}
+                        className="w-full text-xs font-medium border border-slate-200 rounded-lg px-2.5 py-2.5 outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-sm"
+                      />
+                  </div>
+
+                  <div>
+                      <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1.5">
+                        {currentLabels.language}
                       </label>
                       <select 
-                        value={localMeta.businessType || 'general'} 
-                        onChange={(e) => handleMetaChange('businessType', e.target.value)}
+                        value={localMeta.language || 'en'} 
+                        onChange={(e) => handleMetaChange('language', e.target.value)}
                         className="w-full text-xs font-medium border border-slate-200 rounded-lg px-2.5 py-2.5 outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50 transition-all cursor-pointer"
                       >
+                        <option value="en">English (US/UK)</option>
+                        <option value="de">Deutsch (German)</option>
+                        <option value="fr">Français (French)</option>
+                        <option value="es">Español (Spanish)</option>
+                        <option value="it">Italiano (Italian)</option>
+                        <option value="pt">Português (Portuguese)</option>
+                        <option value="tr">Türkçe (Turkish)</option>
+                        <option value="ar">العربية (Arabic)</option>
+                        <option value="hi">हिन्दी (Hindi)</option>
+                        <option value="ur">اردو (Urdu)</option>
+                        <option value="bn">বাংলা (Bengali)</option>
+                        <option value="ja">日本語 (Japanese)</option>
+                        <option value="zh">中文 (Chinese)</option>
+                      </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1.5">
+                      {currentLabels.businessType}
+                    </label>
+                    <select 
+                      value={localMeta.businessType || 'general'} 
+                      onChange={(e) => handleMetaChange('businessType', e.target.value)}
+                      className="w-full text-xs font-medium border border-slate-200 rounded-lg px-2.5 py-2.5 outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50 transition-all cursor-pointer"
+                    >
                       <option value="general">General Business</option>
                       <option disabled>--- Rank & Rent / Local SEO ---</option>
                       <option value="tree_service">Tree Service / Arborist</option>
@@ -521,7 +642,6 @@ export default function ImageEditorModal({ file, onClose, onSave, d = {}, global
                       <option value="excavation">Excavation & Grading</option>
                       <option value="handyman">Handyman Services</option>
                       <option value="pressure_washing">Pressure Washing</option>
-                      <option value="pest_control">Pest Control</option>
                       <option value="janitorial">Janitorial Services</option>
                       <option value="security_systems">Security Systems</option>
                       <option disabled>--- Hospitality & Retail ---</option>
@@ -560,7 +680,6 @@ export default function ImageEditorModal({ file, onClose, onSave, d = {}, global
                       <option value="jewelry">Luxury Jewelry</option>
                       <option value="fashion">Fashion Boutique</option>
                       <option value="interior_design">Interior Design</option>
-                      <option value="architect">Architecture Firm</option>
                       <option value="art_gallery">Art Gallery</option>
                       <option value="tatoo_studio">Tattoo Studio</option>
                       <option value="luxury_cars">Exotic Car Rental</option>
@@ -589,44 +708,31 @@ export default function ImageEditorModal({ file, onClose, onSave, d = {}, global
                       <option value="government">Government Office</option>
                       <option value="library">Public Library</option>
                     </select>
-                 </div>
+                  </div>
 
                  <div className="bg-white p-3 rounded-xl border border-slate-100 shadow-sm space-y-3">
                   <div>
                      <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1.5">
-                       <Type className="w-3 h-3 text-slate-400" /> {d.businessNameLabel || "Business Name"}
+                       <Type className="w-3 h-3 text-slate-400" /> {currentLabels.businessName}
                      </label>
                      <input 
                        type="text" 
                        value={localMeta.businessName || ''} 
                        onChange={(e) => handleMetaChange('businessName', e.target.value)}
-                       placeholder={d.businessNamePlaceholder || "Your Company Name"}
+                       placeholder={currentLabels.businessNamePlaceholder}
                        className="w-full text-xs font-medium border border-slate-200 rounded-lg px-2.5 py-2.5 outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50"
                      />
                   </div>
  
                   <div>
                      <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1.5">
-                       <Wand2 className="w-3 h-3 text-slate-400" /> {d.websiteUrl || "Website URL"}
+                       <Wand2 className="w-3 h-3 text-slate-400" /> {currentLabels.websiteUrl}
                      </label>
                      <input 
                        type="text" 
                        value={localMeta.websiteUrl || ''} 
                        onChange={(e) => handleMetaChange('websiteUrl', e.target.value)}
-                       placeholder="https://example.com"
-                       className="w-full text-xs font-medium border border-slate-200 rounded-lg px-2.5 py-2.5 outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50"
-                     />
-                  </div>
- 
-                  <div>
-                     <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1.5">
-                       <Type className="w-3 h-3 text-slate-400" /> {d.serviceCategory || "Service Category"}
-                     </label>
-                     <input 
-                       type="text" 
-                       value={localMeta.serviceCategory || ''} 
-                       onChange={(e) => handleMetaChange('serviceCategory', e.target.value)}
-                       placeholder="e.g. Roofing Contractors"
+                       placeholder={currentLabels.websitePlaceholder}
                        className="w-full text-xs font-medium border border-slate-200 rounded-lg px-2.5 py-2.5 outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50"
                      />
                   </div>
@@ -635,67 +741,68 @@ export default function ImageEditorModal({ file, onClose, onSave, d = {}, global
                  <div className="bg-white p-3 rounded-xl border border-slate-100 shadow-sm space-y-3">
                   <div>
                      <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1.5">
-                       <Type className="w-3 h-3 text-slate-400" /> {d.imageTitle || "Image Title"}
+                       <Type className="w-3 h-3 text-slate-400" /> {currentLabels.imageTitle}
                      </label>
                      <input 
                        type="text" 
                        value={localMeta.title || ''} 
                        onChange={(e) => handleMetaChange('title', e.target.value)}
-                       placeholder="e.g. Roof Repair Service"
+                       placeholder={currentLabels.imageTitlePlaceholder}
                        className="w-full text-xs font-medium border border-slate-200 rounded-lg px-2.5 py-2.5 outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50"
                      />
                   </div>
 
                   <div>
                      <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1.5">
-                       <Tag className="w-3 h-3 text-slate-400" /> {d.serviceDescription || "Service / Description"}
+                       <Tag className="w-3 h-3 text-slate-400" /> {currentLabels.serviceDescription}
                      </label>
                      <textarea 
                        rows={3}
                        value={localMeta.description || ''} 
                        onChange={(e) => handleMetaChange('description', e.target.value)}
-                       placeholder="e.g. Professional roof repair and maintenance..."
+                       placeholder={currentLabels.serviceDescriptionPlaceholder}
                        className="w-full text-xs font-medium border border-slate-200 rounded-lg px-2.5 py-2.5 outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50 resize-none"
                      />
                   </div>
 
                   <div>
                      <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1.5">
-                       <FileText className="w-3 h-3 text-slate-400" /> {d.keywordsTags || "Keywords / Tags"}
+                       <FileText className="w-3 h-3 text-slate-400" /> {currentLabels.keywordsTags}
                      </label>
                      <input 
                        type="text" 
                        value={localMeta.keywords || ''} 
                        onChange={(e) => handleMetaChange('keywords', e.target.value)}
-                       placeholder="roofing, repair, local"
+                       placeholder={currentLabels.keywordsPlaceholder}
                        className="w-full text-xs font-medium border border-slate-200 rounded-lg px-2.5 py-2.5 outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50"
                      />
                   </div>
 
                   <div>
                      <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1.5">
-                       <ImageIcon className="w-3 h-3 text-slate-400" /> {d.altText || "Alt Text"}
+                       <ImageIcon className="w-3 h-3 text-slate-400" /> {currentLabels.altText}
                      </label>
                      <input 
                        type="text" 
                        value={localMeta.suggestedAltText || ''} 
                        onChange={(e) => handleMetaChange('suggestedAltText', e.target.value)}
-                       placeholder={d.altTextPlaceholder || "Image description for accessibility"}
+                       placeholder={currentLabels.altTextPlaceholder}
                        className="w-full text-xs font-medium border border-slate-200 rounded-lg px-2.5 py-2.5 outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50"
                      />
                   </div>
-                 </div>
+
+                  </div>
  
-                 <div className="pt-2 px-1 text-center">
-                   <p className="text-[10px] text-blue-600 font-bold leading-tight uppercase tracking-widest">
-                     {d.priorityNote || "PRIORITY: This meta will override global settings."}
-                   </p>
-                 </div>
-             </div>
+                  <div className="pt-2 px-1 text-center">
+                    <p className="text-[10px] text-blue-600 font-bold leading-tight uppercase tracking-widest">
+                      {currentLabels.priorityNote}
+                    </p>
+                  </div>
+              </div>
           </div>
         </div>
       </div>
-      
+ 
       <div className="p-4 border-t border-slate-200 bg-white flex flex-col items-stretch gap-4 w-full">
           <div className="flex flex-col gap-4">
             {/* View Switcher for Mobile only */}
@@ -919,4 +1026,4 @@ export default function ImageEditorModal({ file, onClose, onSave, d = {}, global
       </div>
     </div>
   );
-};
+}

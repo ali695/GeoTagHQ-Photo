@@ -1,11 +1,19 @@
-import { ShieldCheck, Map, Image as ImageIcon, Search } from 'lucide-react';
+'use client';
+
+import { ShieldCheck, Map, Image as ImageIcon, Search, ChevronDown } from 'lucide-react';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import GeoTaggingTool from '@/components/tool/GeoTaggingTool';
+import { UI_LABELS } from '@/lib/constants';
 
 export default function ToolPageContent({ messages, lang }: { messages: any, lang: string }) {
   const m = messages.tool || {};
   const faqs = messages.faq || [];
+  const currentLabels = UI_LABELS[lang] || UI_LABELS.en;
+  
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
   
   return (
     <>
@@ -83,18 +91,44 @@ export default function ToolPageContent({ messages, lang }: { messages: any, lan
             </div>
           </section>
 
-          <section id="faq" className="py-16 bg-slate-50 border-t border-slate-200">
+          <section id="faq" className="py-20 bg-slate-50 border-t border-slate-200">
             <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-              <h2 className="text-3xl font-bold text-center text-slate-900 mb-12">FAQ</h2>
-              <div className="space-y-6">
-                
+              <div className="text-center mb-12">
+                <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4">{currentLabels.faqTitle}</h2>
+                <p className="text-slate-600">{currentLabels.faqSubtitle}</p>
+              </div>
+              
+              <div className="space-y-4">
                 {faqs.map((faq: any, i: number) => (
-                  <div key={i} className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                    <h3 className="font-bold text-lg text-slate-900 mb-2">{faq.q}</h3>
-                    <p className="text-slate-600">{faq.a}</p>
+                  <div key={i} className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden transition-all hover:border-blue-200">
+                    <button 
+                      onClick={() => setOpenFaqIndex(openFaqIndex === i ? null : i)}
+                      className="w-full text-left px-6 py-5 flex items-center justify-between gap-4 group"
+                    >
+                      <span className="font-bold text-lg text-slate-900 group-hover:text-blue-600 transition-colors">
+                        {faq.q}
+                      </span>
+                      <ChevronDown 
+                        className={`w-5 h-5 text-slate-400 transition-transform duration-300 ${openFaqIndex === i ? 'rotate-180 text-blue-500' : ''}`} 
+                      />
+                    </button>
+                    
+                    <AnimatePresence>
+                      {openFaqIndex === i && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.3, ease: 'easeInOut' }}
+                        >
+                          <div className="px-6 pb-6 text-slate-600 leading-relaxed border-t border-slate-50 pt-4">
+                            {faq.a}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                 ))}
-
               </div>
             </div>
           </section>

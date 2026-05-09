@@ -66,7 +66,32 @@
     "showingMetadataFirstOnly": "Yalnızca ilk fotoğraf için meta verileri gösteriliyor",
     "editCropImage": "Resmi Düzenle ve Kırp",
     "cropFree": "Serbest",
-    "applyEdits": "Düzenlemeleri Uygula"
+    "applyEdits": "Düzenlemeleri Uygula",
+    "priorityNote": "ÖNCELİK: Bu meta veriler genel ayarları geçersiz kılacaktır.",
+    "streetAddressLabel": "Adres",
+    "cityLabel": "Şehir",
+    "stateRegionLabel": "Eyalet / Bölge",
+    "postalCodeLabel": "Posta Kodu",
+    "countryLabel": "Ülke",
+    "countryCodeLabel": "Ülke Kodu (ISO)",
+    "websiteUrl": "Web Sitesi URL",
+    "stateLabel": "Eyalet",
+    "zipCodeLabel": "Posta Kodu",
+    "countyLabel": "İlçe",
+    "postcodeLabel": "Posta Kodu",
+    "provinceLabel": "İl",
+    "bundeslandLabel": "Eyalet / Bölge",
+    "plzLabel": "Posta Kodu",
+    "errors": {
+      "noFiles": "İşlem için dosya seçilmedi.",
+      "invalidFormat": "Desteklenmeyen dosya formatı. Lütfen JPG, PNG, WebP veya HEIC kullanın.",
+      "exifWriteFailed": "EXIF meta verileri yazılamadı. Dosya bozuk veya salt okunur olabilir.",
+      "gpsExtractionFailed": "Seçilen konumdan GPS koordinatları çıkarılamadı.",
+      "networkError": "SEO meta verileri oluşturulurken ağ hatası oluştu. Lütfen bağlantınızı kontrol edin.",
+      "aiQuotaExceeded": "AI nesil sınırına ulaşıldı. Lütfen daha sonra tekrar deneyin veya meta verileri manuel olarak girin.",
+      "browserUnsupported": "Tarayıcınız yerel EXIF düzenlemeyi desteklemiyor. Lütfen modern bir tarayıcıya güncelleyin.",
+      "exportFailed": "Geotag'lı görüntü dışa aktarılamadı. Kaliteyi düşürmeyi veya görüntüyü yeniden boyutlandırmayı deneyin."
+    }
   },
   "faq": [
     {

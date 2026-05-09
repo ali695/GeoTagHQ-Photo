@@ -66,7 +66,32 @@
     "showingMetadataFirstOnly": "Mostrando metadatos solo de la primera foto",
     "editCropImage": "Editar y recortar imagen",
     "cropFree": "Libre",
-    "applyEdits": "Aplicar cambios"
+    "applyEdits": "Aplicar cambios",
+    "priorityNote": "PRIORIDAD: Estos metadatos anularán la configuración global.",
+    "streetAddressLabel": "Dirección",
+    "cityLabel": "Ciudad",
+    "stateRegionLabel": "Estado / Región",
+    "postalCodeLabel": "Código Postal",
+    "countryLabel": "País",
+    "countryCodeLabel": "Código de País (ISO)",
+    "websiteUrl": "URL del sitio web",
+    "stateLabel": "Estado",
+    "zipCodeLabel": "Código ZIP",
+    "countyLabel": "Condado",
+    "postcodeLabel": "Código Postal",
+    "provinceLabel": "Provincia",
+    "bundeslandLabel": "Estado / Región",
+    "plzLabel": "Código Postal",
+    "errors": {
+      "noFiles": "No se han seleccionado archivos para procesar.",
+      "invalidFormat": "Formato de archivo no compatible. Utilice JPG, PNG, WebP o HEIC.",
+      "exifWriteFailed": "Error al escribir metadatos EXIF. El archivo podría estar dañado o ser de solo lectura.",
+      "gpsExtractionFailed": "No se han podido extraer las coordenadas GPS de la ubicación seleccionada.",
+      "networkError": "Error de red al generar los metadatos SEO. Compruebe su conexión.",
+      "aiQuotaExceeded": "Límite de generación de IA alcanzado. Vuelva a intentarlo más tarde o introduzca los metadatos manualmente.",
+      "browserUnsupported": "Su navegador no admite la edición local de EXIF. Actualice a un navegador moderno.",
+      "exportFailed": "Error al exportar la imagen geoetiquetada. Intente reducir la calidad o cambiar el tamaño de la imagen."
+    }
   },
   "faq": [
     {

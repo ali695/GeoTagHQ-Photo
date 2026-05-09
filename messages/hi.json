@@ -66,7 +66,32 @@
     "showingMetadataFirstOnly": "केवल पहली तस्वीर के लिए मेटाडेटा दिखा रहा है",
     "editCropImage": "छवि संपादित और क्रॉप करें",
     "cropFree": "मुक्त",
-    "applyEdits": "संपादनों को लागू करें"
+    "applyEdits": "संपादनों को लागू करें",
+    "priorityNote": "प्राथमिकता: यह मेटा डेटा वैश्विक सेटिंग्स को ओवरराइड कर देगा।",
+    "streetAddressLabel": "गली का पता",
+    "cityLabel": "शहर",
+    "stateRegionLabel": "राज्य / क्षेत्र",
+    "postalCodeLabel": "पिन कोड",
+    "countryLabel": "देश",
+    "countryCodeLabel": "देश कोड (ISO)",
+    "websiteUrl": "वेबसाइट URL",
+    "stateLabel": "राज्य",
+    "zipCodeLabel": "पिन कोड",
+    "countyLabel": "जिला",
+    "postcodeLabel": "पिन कोड",
+    "provinceLabel": "प्रांत",
+    "bundeslandLabel": "राज्य / क्षेत्र",
+    "plzLabel": "पिन कोड",
+    "errors": {
+      "noFiles": "प्रसंस्करण के लिए कोई फ़ाइल चयनित नहीं है।",
+      "invalidFormat": "असमर्थित फ़ाइल प्रारूप। कृपया JPG, PNG, WebP या HEIC का उपयोग करें।",
+      "exifWriteFailed": "EXIF मेटाडेटा लिखने में विफल। फ़ाइल दूषित या केवल-पढ़ने के लिए हो सकती है।",
+      "gpsExtractionFailed": "चयनित स्थान से GPS निर्देशांक निकालने में असमर्थ।",
+      "networkError": "SEO मेटाडेटा उत्पन्न करते समय नेटवर्क त्रुटि। कृपया अपना कनेक्शन जांचें।",
+      "aiQuotaExceeded": "AI पीढ़ी सीमा समाप्त। कृपया बाद में पुनः प्रयास करें या मैन्युअल रूप से मेटाडेटा दर्ज करें।",
+      "browserUnsupported": "आपका ब्राउज़र स्थानीय EXIF संपादन का समर्थन नहीं करता है। कृपया आधुनिक ब्राउज़र पर अपडेट करें।",
+      "exportFailed": "जियोटैग की गई छवि को निर्यात करने में विफल। गुणवत्ता कम करने या छवि का आकार बदलने का प्रयास करें।"
+    }
   },
   "faq": [
     {

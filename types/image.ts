@@ -24,6 +24,7 @@ export interface ImageMetadata {
   country?: string;
   suggestedAltText?: string;
   businessType?: string;
+  language?: string;
 
   // Advanced Metadata
   streetAddress?: string;

@@ -35,7 +35,11 @@ export default function GeoTaggingTool({ messages }: { messages?: any }) {
   const [compressionMode, setCompressionMode] = useState<'none' | 'low' | 'medium' | 'high'>('none');
   
   const [editingFileIndex, setEditingFileIndex] = useState<number | null>(null);
-  const [globalMetadataEdits, setGlobalMetadataEdits] = useState<Partial<ImageMetadata>>({});
+  const [globalMetadataEdits, setGlobalMetadataEdits] = useState<Partial<ImageMetadata>>({
+    language: lang || 'en'
+  });
+  const [seoLang, setSeoLang] = useState(lang || 'en');
+  const [businessType, setBusinessType] = useState('general');
 
   const handleLocationChange = useCallback((newCoords: GeoCoordinates, source: import('@/lib/location').SelectedLocation['source'], displayName?: string, provider?: string, fullSuggestion?: import('@/lib/location').LocationSuggestion) => {
     setCoords(newCoords);
@@ -58,14 +62,30 @@ export default function GeoTaggingTool({ messages }: { messages?: any }) {
     setZoomLevel(zoom);
 
     if (displayName) {
-      setSelectedLoc({ 
+      const locData = { 
           displayName, 
           lat: newCoords.lat, 
           lon: newCoords.lng, 
           source, 
           provider,
           ...fullSuggestion
-      });
+      };
+      setSelectedLoc(locData);
+
+      // Auto-fill metadata
+      const newEdits: Partial<ImageMetadata> = {};
+      const addr = locData.houseNumber ? `${locData.street} ${locData.houseNumber}` : locData.street;
+      if (addr) newEdits.streetAddress = addr;
+      if (locData.city) newEdits.city = locData.city;
+      if (locData.district) newEdits.district = locData.district;
+      if (locData.country) newEdits.country = locData.country;
+      if (locData.countryCode) newEdits.countryCode = locData.countryCode;
+      if (locData.postcode) newEdits.postalCode = locData.postcode;
+      if (locData.state) newEdits.stateRegion = locData.state;
+      
+      if (Object.keys(newEdits).length > 0) {
+         setGlobalMetadataEdits(prev => ({ ...prev, ...newEdits }));
+      }
     } else {
       setSelectedLoc(prev => prev ? { ...prev, lat: newCoords.lat, lon: newCoords.lng, source, provider } : {
         displayName: "Loading location...",
@@ -86,14 +106,30 @@ export default function GeoTaggingTool({ messages }: { messages?: any }) {
         })
         .then(({ res, data }) => {
           if (res.ok && data.result) {
-            setSelectedLoc({ 
+            const locData = { 
                 displayName: data.result.displayName, 
                 lat: newCoords.lat, 
                 lon: newCoords.lng, 
                 source, 
                 provider: data.result.provider,
                 ...data.result 
-            });
+            };
+            setSelectedLoc(locData);
+
+            // Auto-fill metadata
+            const newEdits: Partial<ImageMetadata> = {};
+            const addr = locData.houseNumber ? `${locData.street} ${locData.houseNumber}` : locData.street;
+            if (addr) newEdits.streetAddress = addr;
+            if (locData.city) newEdits.city = locData.city;
+            if (locData.district) newEdits.district = locData.district;
+            if (locData.country) newEdits.country = locData.country;
+            if (locData.countryCode) newEdits.countryCode = locData.countryCode;
+            if (locData.postcode) newEdits.postalCode = locData.postcode;
+            if (locData.state) newEdits.stateRegion = locData.state;
+            
+            if (Object.keys(newEdits).length > 0) {
+               setGlobalMetadataEdits(prev => ({ ...prev, ...newEdits }));
+            }
           } else {
             setSelectedLoc({ displayName: "Custom coordinates selected", lat: newCoords.lat, lon: newCoords.lng, source, provider });
           }
@@ -190,7 +226,7 @@ export default function GeoTaggingTool({ messages }: { messages?: any }) {
             'title', 'description', 'keywords', 'businessName', 'serviceCategory', 
             'city', 'district', 'country', 'streetAddress', 'postalCode', 
             'stateRegion', 'countryCode', 'websiteUrl', 'schemaMarkup', 
-            'ogTags', 'hreflang', 'semanticClusters'
+            'ogTags', 'hreflang', 'semanticClusters', 'language'
           ] as const;
           seoFields.forEach(field => {
             // Priority Check: Individual Edit exists and is NOT undefined
@@ -316,7 +352,12 @@ export default function GeoTaggingTool({ messages }: { messages?: any }) {
                }} 
             />
             <div className="flex-grow min-h-[500px] border border-slate-200 rounded-lg overflow-hidden relative shadow-inner flex flex-col">
-               <MapPicker initialCoords={coords} zoomLevel={zoomLevel} onChange={(c) => handleLocationChange(c, 'map')} />
+                <MapPicker 
+                  initialCoords={coords} 
+                  zoomLevel={zoomLevel} 
+                  language={seoLang}
+                  onChange={(c, source, displayName, provider, fullSuggestion) => handleLocationChange(c, source || 'map', displayName, provider, fullSuggestion)} 
+                />
             </div>
             <CoordinateInput coords={coords} onChange={(c) => handleLocationChange(c, 'manual')} />
             <div className="flex justify-end pt-2">
@@ -367,6 +408,7 @@ export default function GeoTaggingTool({ messages }: { messages?: any }) {
                metadata={(files[0] || Object.keys(globalMetadataEdits).length > 0 || coords) ? { ...(files[0]?.metadata || { format: 'image/jpeg', fileSize: 0 } as any), ...globalMetadataEdits, gps: coords || files[0]?.metadata?.gps } as ImageMetadata : undefined} 
                onMetadataChange={(changes) => {
                  setGlobalMetadataEdits(prev => ({ ...prev, ...changes }));
+                 if (changes.language) setSeoLang(changes.language);
                }}
              />
           </div>
@@ -462,17 +504,19 @@ export default function GeoTaggingTool({ messages }: { messages?: any }) {
 
       {editingFileIndex !== null && files[editingFileIndex] && (
         <ImageEditorModal
+          key={files[editingFileIndex].id}
           file={files[editingFileIndex]}
           d={d}
           globalMetadata={globalMetadataEdits}
           onClose={() => setEditingFileIndex(null)}
-          onSave={(editedBlob, previewUrl, metadata) => {
+          onSave={(editedBlob, previewUrl, metadata, fileName) => {
             const newFiles = [...files];
             if (newFiles[editingFileIndex].preview && newFiles[editingFileIndex].preview?.startsWith('blob:')) {
                URL.revokeObjectURL(newFiles[editingFileIndex].preview as string);
             }
             newFiles[editingFileIndex] = {
               ...newFiles[editingFileIndex],
+              name: fileName || newFiles[editingFileIndex].name,
               editedBlob,
               preview: previewUrl,
               editedMetadata: metadata ? { ...newFiles[editingFileIndex].editedMetadata, ...metadata } : newFiles[editingFileIndex].editedMetadata,

@@ -66,7 +66,32 @@
     "showingMetadataFirstOnly": "إظهار البيانات الوصفية للصورة الأولى فقط",
     "editCropImage": "تعديل وقص الصورة",
     "cropFree": "حر",
-    "applyEdits": "تطبيق التعديلات"
+    "applyEdits": "تطبيق التعديلات",
+    "priorityNote": "أولوية: ستتجاوز هذه البيانات الوصفية الإعدادات العالمية.",
+    "streetAddressLabel": "عنوان الشارع",
+    "cityLabel": "المدينة",
+    "stateRegionLabel": "الولاية / المنطقة",
+    "postalCodeLabel": "الرمز البريدي",
+    "countryLabel": "البلد",
+    "countryCodeLabel": "رمز البلد (ISO)",
+    "websiteUrl": "رابط الموقع الإلكتروني",
+    "stateLabel": "الولاية",
+    "zipCodeLabel": "الرمز البريدي",
+    "countyLabel": "المقاطعة",
+    "postcodeLabel": "الرمز البريدي",
+    "provinceLabel": "المقاطعة",
+    "bundeslandLabel": "الولاية / المنطقة",
+    "plzLabel": "الرمز البريدي",
+    "errors": {
+      "noFiles": "لم يتم اختيار ملفات لمعالجتها.",
+      "invalidFormat": "صيغة الملف غير مدعومة. يرجى استخدام JPG أو PNG أو WebP أو HEIC.",
+      "exifWriteFailed": "فشل في كتابة بيانات EXIF الوصفية. قد يكون الملف تالفا أو للقراءة فقط.",
+      "gpsExtractionFailed": "تعذر استخراج إحداثيات GPS من الموقع المختار.",
+      "networkError": "خطأ في الشبكة أثناء إنشاء بيانات SEO الوصفية. يرجى التحقق من اتصالك.",
+      "aiQuotaExceeded": "تم الوصول إلى الحد الأقصى لجيل الذكاء الاصطناعي. يرجى المحاولة مرة أخرى لاحقًا أو إدخال البيانات يدويًا.",
+      "browserUnsupported": "متصفحك لا يدعم تعديل EXIF المحلي. يرجى الترقية إلى متصفح حديث.",
+      "exportFailed": "فشل في تصدير الصورة ذات العلامات الجغرافية. حاول تقليل الجودة أو تغيير حجم الصورة."
+    }
   },
   "faq": [
     {

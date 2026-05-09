@@ -17,7 +17,8 @@ L.Icon.Default.mergeOptions({
 interface MapPickerClientProps {
   initialCoords?: GeoCoordinates;
   zoomLevel?: number;
-  onChange: (coords: GeoCoordinates) => void;
+  language?: string;
+  onChange: (coords: GeoCoordinates, source: any, displayName?: string, provider?: string, fullSuggestion?: any) => void;
 }
 
 function LocationMarker({ position, onChange }: { position: L.LatLng; onChange: (pos: L.LatLng) => void }) {
@@ -48,7 +49,7 @@ function LocationMarker({ position, onChange }: { position: L.LatLng; onChange: 
   );
 }
 
-export default function MapPickerClient({ initialCoords, zoomLevel, onChange }: MapPickerClientProps) {
+export default function MapPickerClient({ initialCoords, zoomLevel, onChange, language = 'en' }: MapPickerClientProps) {
   // Default to a central location (e.g., somewhere neutral or geographically central) if no location is provided
   const defaultPos = new L.LatLng(51.505, -0.09);
   
@@ -83,19 +84,22 @@ export default function MapPickerClient({ initialCoords, zoomLevel, onChange }: 
       if (searchQuery.length > 2 && !isSearching) {
         try {
           // fetch with explicit address details, namedetails and extratags for full visibility
-          const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&addressdetails=1&namedetails=1&extratags=1&limit=12&countrycodes=&dedupe=1`);
+          const lang = language || 'en';
+          const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&addressdetails=1&namedetails=1&extratags=1&limit=12&countrycodes=&dedupe=1&accept-language=${lang}`);
           const data = await response.json();
           
           // Sort results: prioritize specific addresses (house numbers), then roads, then specific points of interest
           const sorted = [...data].sort((a, b) => {
             const getScore = (item: any) => {
               let score = 0;
-              if (item.address?.house_number) score += 120;
-              if (item.address?.road) score += 60;
-              if (item.class === 'place' && item.type === 'house') score += 100;
-              if (item.extratags?.amenity || item.extratags?.tourism || item.extratags?.shop) score += 40;
+              if (item.address?.house_number) score += 150;
+              if (item.address?.building) score += 130;
+              if (item.address?.office || item.address?.shop || item.address?.amenity) score += 100;
+              if (item.address?.road) score += 70;
+              if (item.class === 'place' && item.type === 'house') score += 120;
+              if (item.extratags?.amenity || item.extratags?.tourism || item.extratags?.shop) score += 60;
               if (item.type === 'street') score += 50;
-              if (item.importance) score += item.importance * 10;
+              if (item.importance) score += item.importance * 20;
               return score;
             };
             return getScore(b) - getScore(a);
@@ -111,15 +115,15 @@ export default function MapPickerClient({ initialCoords, zoomLevel, onChange }: 
       }
     }, 400); // slightly faster debounce
     return () => clearTimeout(timer);
-  }, [searchQuery, isSearching]);
+  }, [searchQuery, isSearching, language]);
 
   const handlePositionChange = (pos: L.LatLng) => {
     setPosition(pos);
-    onChange({ lat: pos.lat, lng: pos.lng });
+    onChange({ lat: pos.lat, lng: pos.lng }, 'map');
   };
 
   const handleSelectSuggestion = (suggestion: any) => {
-    const { lat, lon, display_name, address, namedetails } = suggestion;
+    const { lat, lon, display_name, address, namedetails, type, extratags, importance } = suggestion;
     const newPos = new L.LatLng(parseFloat(lat), parseFloat(lon));
     
     // Create a much cleaner display name for the input
@@ -140,7 +144,29 @@ export default function MapPickerClient({ initialCoords, zoomLevel, onChange }: 
     const context = contextArr.slice(0, 2).join(', ');
     
     setSearchQuery(context ? `${label}, ${context}` : label);
-    handlePositionChange(newPos);
+    
+    // Pass full suggestion info back for better precision
+    const fullSuggestion = {
+      id: suggestion.place_id,
+      displayName: display_name,
+      street,
+      houseNumber: houseNum,
+      district: local,
+      city,
+      state,
+      country,
+      countryCode: address?.country_code,
+      postcode: address?.postcode,
+      lat: parseFloat(lat),
+      lon: parseFloat(lon),
+      provider: 'OpenStreetMap',
+      type: type || suggestion.class,
+      exactMatch: !!houseNum,
+      importance
+    };
+
+    setPosition(newPos);
+    onChange({ lat: newPos.lat, lng: newPos.lng }, 'search', display_name, 'OpenStreetMap', fullSuggestion as any);
     setShowSuggestions(false);
   };
 
@@ -151,7 +177,8 @@ export default function MapPickerClient({ initialCoords, zoomLevel, onChange }: 
     setIsSearching(true);
     setShowSuggestions(false);
     try {
-      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&addressdetails=1&limit=5`);
+      const lang = language || 'en';
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&addressdetails=1&limit=5&accept-language=${lang}`);
       const data = await response.json();
       
       if (data && data.length > 0) {

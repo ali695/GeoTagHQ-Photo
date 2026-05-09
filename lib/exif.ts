@@ -19,7 +19,11 @@ function degToDmsRational(degrees: number): [[number, number], [number, number],
 
 export async function readImageMetadata(file: File): Promise<ImageMetadata> {
   try {
-    const data = await exifr.parse(file, { tiff: true, exif: true, gps: true });
+    const data = await exifr.parse(file, { tiff: true, exif: true, gps: true }).catch(err => {
+      // Suppress "Unknown file format" error as it just means exifr doesn't support this specific file's signature
+      if (err?.message?.includes('Unknown file format')) return undefined;
+      throw err;
+    });
     
     // Fallbacks
     let width, height;

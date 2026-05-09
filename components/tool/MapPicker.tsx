@@ -12,6 +12,6 @@ const MapPickerClient = dynamic(() => import('./MapPickerClient'), {
   ),
 });
 
-export default function MapPicker({ initialCoords, zoomLevel, onChange }: { initialCoords?: GeoCoordinates, zoomLevel?: number, onChange: (coords: GeoCoordinates) => void }) {
-  return <MapPickerClient initialCoords={initialCoords} zoomLevel={zoomLevel} onChange={onChange} />;
+export default function MapPicker({ initialCoords, zoomLevel, onChange, language }: { initialCoords?: GeoCoordinates, zoomLevel?: number, language?: string, onChange: (coords: GeoCoordinates, source: any, displayName?: string, provider?: string, fullSuggestion?: any) => void }) {
+  return <MapPickerClient initialCoords={initialCoords} zoomLevel={zoomLevel} onChange={onChange} language={language} />;
 }

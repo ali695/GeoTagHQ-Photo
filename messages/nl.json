@@ -66,7 +66,32 @@
     "showingMetadataFirstOnly": "Toont metagegevens alleen voor de eerste foto",
     "editCropImage": "Afbeelding bewerken en bijsnijden",
     "cropFree": "Vrij",
-    "applyEdits": "Bewerkingen toepassen"
+    "applyEdits": "Bewerkingen toepassen",
+    "priorityNote": "PRIORITEIT: Deze metagegevens overschrijven de globale instellingen.",
+    "streetAddressLabel": "Adres",
+    "cityLabel": "Stad",
+    "stateRegionLabel": "Provincie / Regio",
+    "postalCodeLabel": "Postcode",
+    "countryLabel": "Land",
+    "countryCodeLabel": "Landcode (ISO)",
+    "websiteUrl": "Website URL",
+    "stateLabel": "Provincie",
+    "zipCodeLabel": "Postcode",
+    "countyLabel": "Gemeente",
+    "postcodeLabel": "Postcode",
+    "provinceLabel": "Provincie",
+    "bundeslandLabel": "Deelstaat",
+    "plzLabel": "Postcode",
+    "errors": {
+      "noFiles": "Geen bestanden geselecteerd voor verwerking.",
+      "invalidFormat": "Niet-ondersteund bestandsformaat. Gebruik JPG, PNG, WebP of HEIC.",
+      "exifWriteFailed": "Fout bij het schrijven van EXIF-metagegevens. Het bestand is mogelijk beschadigd of alleen-lezen.",
+      "gpsExtractionFailed": "Kon geen GPS-coördinaten extraheren uit de geselecteerde locatie.",
+      "networkError": "Netwerkfout bij het genereren van SEO-metagegevens. Controleer je verbinding.",
+      "aiQuotaExceeded": "AI-generatielimiet bereikt. Probeer het later opnieuw of voer metagegevens handmatig in.",
+      "browserUnsupported": "Je browser ondersteunt geen lokale EXIF-bewerking. Update naar een moderne browser.",
+      "exportFailed": "Fout bij het exporteren van de afbeelding met geostempel. Probeer de kwaliteit te verlagen of de afbeelding te verkleinen."
+    }
   },
   "faq": [
     {

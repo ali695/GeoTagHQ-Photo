@@ -66,7 +66,32 @@
     "showingMetadataFirstOnly": "Mostra i metadati solo della prima foto",
     "editCropImage": "Modifica e ritaglia",
     "cropFree": "Libero",
-    "applyEdits": "Applica modifiche"
+    "applyEdits": "Applica modifiche",
+    "priorityNote": "PRIORITÀ: Questi dati meta sovrascriveranno le impostazioni globali.",
+    "streetAddressLabel": "Indirizzo",
+    "cityLabel": "Città",
+    "stateRegionLabel": "Stato / Regione",
+    "postalCodeLabel": "Codice Postale",
+    "countryLabel": "Paese",
+    "countryCodeLabel": "Codice Paese (ISO)",
+    "websiteUrl": "URL del sito Web",
+    "stateLabel": "Stato",
+    "zipCodeLabel": "Codice ZIP",
+    "countyLabel": "Contea",
+    "postcodeLabel": "Codice Postale",
+    "provinceLabel": "Provincia",
+    "bundeslandLabel": "Stato / Regione",
+    "plzLabel": "Codice Postale",
+    "errors": {
+      "noFiles": "Nessun file selezionato per l'elaborazione.",
+      "invalidFormat": "Formato file non supportato. Utilizzare JPG, PNG, WebP o HEIC.",
+      "exifWriteFailed": "Impossibile scrivere i metadati EXIF. Il file potrebbe essere danneggiato o in sola lettura.",
+      "gpsExtractionFailed": "Impossibile estrarre le coordinate GPS dalla posizione selezionata.",
+      "networkError": "Errore di rete durante la generazione dei metadati SEO. Controlla la tua connessione.",
+      "aiQuotaExceeded": "Limite di generazione AI raggiunto. Riprova più tardi o inserisci i metadati manualmente.",
+      "browserUnsupported": "Il tuo browser non supporta la modifica EXIF locale. Aggiorna a un browser moderno.",
+      "exportFailed": "Impossibile esportare l'immagine georeferenziata. Prova a ridurre la qualità o a ridimensionare l'immagine."
+    }
   },
   "faq": [
     {

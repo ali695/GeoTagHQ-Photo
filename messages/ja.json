@@ -66,7 +66,32 @@
     "showingMetadataFirstOnly": "最初の写真のメタデータのみ表示",
     "editCropImage": "画像を編集してトリミング",
     "cropFree": "フリー",
-    "applyEdits": "編集を適用"
+    "applyEdits": "編集を適用",
+    "priorityNote": "優先事項: このメタデータはグローバル設定を上書きします。",
+    "streetAddressLabel": "住所",
+    "cityLabel": "市区町村",
+    "stateRegionLabel": "都道府県 / 地域",
+    "postalCodeLabel": "郵便番号",
+    "countryLabel": "国",
+    "countryCodeLabel": "国コード (ISO)",
+    "websiteUrl": "公式サイトURL",
+    "stateLabel": "都道府県",
+    "zipCodeLabel": "郵便番号",
+    "countyLabel": "郡",
+    "postcodeLabel": "郵便番号",
+    "provinceLabel": "州",
+    "bundeslandLabel": "都道府県",
+    "plzLabel": "郵便番号",
+    "errors": {
+      "noFiles": "処理するファイルが選択されていません。",
+      "invalidFormat": "サポートされていないファイル形式です。JPG、PNG、WebP、またはHEICを使用してください。",
+      "exifWriteFailed": "EXIFメタデータの書き込みに失敗しました。ファイルが破損しているか、読み取り専用の可能性があります。",
+      "gpsExtractionFailed": "選択した場所からGPS座標を抽出できませんでした。",
+      "networkError": "SEOメタデータの生成中にネットワークエラーが発生しました。接続を確認してください。",
+      "aiQuotaExceeded": "AI生成制限に達しました。後でもう一度お試しいただくか、メタデータを手動で入力してください。",
+      "browserUnsupported": "お使いのブラウザはローカルEXIF編集をサポートしていません。最新のブラウザに更新してください。",
+      "exportFailed": "ジオタグ付き画像の書き出しに失敗しました。品質を下げるか、画像のサイズを変更してみてください。"
+    }
   },
   "faq": [
     {

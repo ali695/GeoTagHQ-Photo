@@ -66,7 +66,32 @@
     "showingMetadataFirstOnly": "Menampilkan metadata untuk foto pertama saja",
     "editCropImage": "Sunting & Pangkas Gambar",
     "cropFree": "Bebas",
-    "applyEdits": "Terapkan Editan"
+    "applyEdits": "Terapkan Editan",
+    "priorityNote": "PRIORITAS: Meta ini akan menimpa pengaturan global.",
+    "streetAddressLabel": "Alamat Jalan",
+    "cityLabel": "Kota",
+    "stateRegionLabel": "Provinsi / Wilayah",
+    "postalCodeLabel": "Kode Pos",
+    "countryLabel": "Negara",
+    "countryCodeLabel": "Kode Negara (ISO)",
+    "websiteUrl": "URL Situs Web",
+    "stateLabel": "Provinsi",
+    "zipCodeLabel": "Kode Pos",
+    "countyLabel": "Kabupaten",
+    "postcodeLabel": "Kode Pos",
+    "provinceLabel": "Provinsi",
+    "bundeslandLabel": "Provinsi / Wilayah",
+    "plzLabel": "Kode Pos",
+    "errors": {
+      "noFiles": "Tidak ada file yang dipilih untuk diproses.",
+      "invalidFormat": "Format file tidak didukung. Silakan gunakan JPG, PNG, WebP, atau HEIC.",
+      "exifWriteFailed": "Gagal menulis metadata EXIF. File mungkin rusak atau hanya baca.",
+      "gpsExtractionFailed": "Tidak dapat mengekstrak koordinat GPS dari lokasi yang dipilih.",
+      "networkError": "Kesalahan jaringan saat membuat metadata SEO. Silakan periksa koneksi Anda.",
+      "aiQuotaExceeded": "Batas pembuatan AI tercapai. Silakan coba lagi nanti atau masukkan metadata secara manual.",
+      "browserUnsupported": "Browser Anda tidak mendukung pengeditan EXIF lokal. Silakan perbarui ke browser modern.",
+      "exportFailed": "Gagal mengekspor gambar ber-geotag. Coba kurangi kualitas atau ubah ukuran gambar."
+    }
   },
   "faq": [
     {

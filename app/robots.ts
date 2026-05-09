@@ -23,6 +23,15 @@ export default function robots(): MetadataRoute.Robots {
           '/debug/',
           '/*/_next/',
           '/*.json$',
+          '/wp-admin/',
+          '/cart/',
+          '/checkout/',
+          '/account/',
+          '/login/',
+          '/search/',
+          '/tag/',
+          '/?s=',
+          '/cdn-cgi/'
         ],
       },
       {

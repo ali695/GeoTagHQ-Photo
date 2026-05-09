@@ -5,10 +5,12 @@ import { ImageMetadata } from '@/types/image';
 import { Camera, Calendar, HardDrive, FileType, Map, Wand2, Copy, CheckCircle2 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { generateSeoMetadata } from '@/lib/gemini';
+import { UI_LABELS } from '@/lib/constants';
 
 interface MetadataPanelProps {
   metadata?: ImageMetadata;
   onMetadataChange?: (changes: Partial<ImageMetadata>) => void;
+  d?: any;
 }
 
 function formatBytes(bytes: number, decimals = 2) {
@@ -20,7 +22,7 @@ function formatBytes(bytes: number, decimals = 2) {
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 }
 
-export default function MetadataPanel({ metadata, onMetadataChange }: MetadataPanelProps) {
+export default function MetadataPanel({ metadata, onMetadataChange, d = {} }: MetadataPanelProps) {
   const [copied, setCopied] = useState(false);
   const [editState, setEditState] = useState<Partial<ImageMetadata>>({});
   const [isGenerating, setIsGenerating] = useState(false);
@@ -29,33 +31,44 @@ export default function MetadataPanel({ metadata, onMetadataChange }: MetadataPa
 
   const getLocationLabels = (country?: string) => {
     const c = country?.toLowerCase().trim() || '';
+    
+    // USA
     if (c === 'usa' || c === 'united states' || c === 'united states of america' || c === 'us') {
-      return { state: 'State', postal: 'ZIP Code', district: 'Neighborhood / Area' };
+      return { state: d.stateLabel || 'State', postal: d.zipCodeLabel || 'ZIP Code', district: 'Neighborhood / Area' };
     }
+    // UK
     if (c === 'united kingdom' || c === 'uk' || c === 'britain' || c === 'england' || c === 'scotland' || c === 'wales') {
-      return { state: 'County', postal: 'Postcode', district: 'Borough' };
+      return { state: d.countyLabel || 'County', postal: d.postcodeLabel || 'Postcode', district: 'Borough' };
     }
+    // Canada
     if (c === 'canada' || c === 'ca') {
-      return { state: 'Province', postal: 'Postal Code', district: 'Neighborhood' };
+      return { state: d.provinceLabel || 'Province', postal: d.postalCodeLabel || 'Postal Code', district: 'Neighborhood' };
     }
+    // Australia
     if (c === 'australia' || c === 'au') {
-      return { state: 'State', postal: 'Postcode', district: 'Suburb' };
+      return { state: d.stateLabel || 'State', postal: d.postcodeLabel || 'Postcode', district: 'Suburb' };
     }
+    // Germany
     if (c === 'germany' || c === 'deutschland' || c === 'de') {
-      return { state: 'State / Bundesland', postal: 'Postleitzahl (PLZ)', district: 'Bezirk' };
+      return { state: d.bundeslandLabel || 'State / Bundesland', postal: d.plzLabel || 'Postleitzahl (PLZ)', district: 'Bezirk' };
     }
+    // France
     if (c === 'france' || c === 'fr') {
-      return { state: 'Region / Department', postal: 'Code Postal', district: 'Arrondissement' };
+      return { state: d.stateRegionLabel || 'Region / Department', postal: d.postalCodeLabel || 'Code Postal', district: 'Arrondissement' };
     }
+    // India
     if (c === 'india' || c === 'in') {
-      return { state: 'State', postal: 'PIN Code', district: 'Locality / Area' };
+      return { state: d.stateLabel || 'State', postal: d.postalCodeLabel || 'PIN Code', district: 'Locality / Area' };
     }
+    // Pakistan
     if (c === 'pakistan' || c === 'pk') {
-      return { state: 'Province / State', postal: 'Zip / Postal Code', district: 'Area / Sector' };
+      return { state: d.stateLabel || 'Province / State', postal: d.postalCodeLabel || 'Zip / Postal Code', district: 'Area / Sector' };
     }
-    return { state: 'State / Region', postal: 'Postal Code', district: 'District / Area' };
+
+    return { state: d.stateRegionLabel || 'State / Region', postal: d.postalCodeLabel || 'Postal Code', district: 'District / Area' };
   };
 
+  const currentLabels = UI_LABELS[seoLang] || UI_LABELS.en;
   const labels = getLocationLabels(editState.country);
 
   useEffect(() => {
@@ -76,7 +89,9 @@ export default function MetadataPanel({ metadata, onMetadataChange }: MetadataPa
         stateRegion: metadata.stateRegion || '',
         countryCode: metadata.countryCode || '',
         websiteUrl: metadata.websiteUrl || '',
+        language: metadata.language || 'en',
       });
+      setSeoLang(metadata.language || 'en');
     }
   }, [metadata]);
 
@@ -116,6 +131,77 @@ export default function MetadataPanel({ metadata, onMetadataChange }: MetadataPa
     }
   };
 
+  const handlePresetChange = (type: string) => {
+    setBusinessType(type);
+    const presetToCategory: Record<string, string> = {
+      'tree_service': 'Tree Service & Arborist',
+      'towing': 'Towing & Roadside Assistance',
+      'pest_control': 'Pest Control Services',
+      'concrete': 'Concrete & Epoxy Contractors',
+      'fencing': 'Fencing Installation',
+      'locksmith': 'Professional Locksmith',
+      'junk_removal': 'Junk Removal & Hauling',
+      'remediation': 'Water Damage & Mold Remediation',
+      'painting': 'Painting Contractors',
+      'electrician': 'Electrical Services',
+      'hotel': 'Hotel & Accommodation',
+      'restaurant': 'Restaurant & Dining',
+      'plumber': 'Plumbing Services',
+      'real_estate': 'Real Estate Agency',
+      'ecommerce': 'E-Commerce Store',
+      'automotive': 'Automotive & Car Repair',
+      'healthcare': 'Healthcare & Medical Clinic',
+      'legal': 'Legal Services & Law Firm',
+      'fitness': 'Gym & Fitness Center',
+      'salon': 'Hair Salon & Beauty Spa',
+      'cleaning': 'Professional Cleaning Services',
+      'landscaping': 'Landscaping & Gardening',
+      'hvac': 'HVAC Services',
+      'roofing': 'Roofing Contractors',
+      'dentist': 'Dental Care Clinic',
+      'photographer': 'Professional Photography',
+      'event_planning': 'Event Planning & Catering',
+      'tech_support': 'IT & Tech Support',
+      'accounting': 'Accounting & Tax Services',
+      'marketing': 'Digital Marketing Agency',
+      'jewelry': 'Luxury Jewelry',
+      'fashion': 'High-end Fashion Boutique',
+      'foundation_repair': 'Foundation Repair Specialist',
+      'duct_cleaning': 'Air Duct Cleaning Service',
+      'window_cleaning': 'Professional Window Cleaning',
+      'siding': 'Siding & Gutter Installation',
+      'flooring': 'Flooring Contractor',
+      'garage_door': 'Garage Door Repair Service',
+      'solar': 'Solar Power System Installer',
+      'appliance_repair': 'Home Appliance Repair',
+      'pool_service': 'Pool Cleaning & Maintenance',
+      'masonry': 'Masonry & Stone Work',
+      'carpentry': 'Carpentry & Custom Woodworking',
+      'welding': 'Welding & Metal Fabrication',
+      'architect': 'Professional Architecture Firm',
+      'interior_design': 'Interior Design Studio',
+      'vet': 'Veterinary Clinic',
+      'pet_grooming': 'Pet Grooming & Spa',
+      'construction': 'General Contractor & Construction',
+      'logistics': 'Logistics & Freight Services',
+      'security': 'Private Security & Guard Services',
+      'tax_service': 'Tax Preparation & Strategy',
+      'chiropractor': 'Chiropractic Health Center',
+      'pharmacy': 'Local Pharmacy',
+      'insurance': 'Insurance Agency',
+      'travel_agency': 'Travel & Vacation Agency',
+      'car_wash': 'Full Service Car Wash',
+      'trucking': 'Trucking & Haulage',
+      'moving_company': 'Local & Long Distance Moving',
+      'auto_glass': 'Auto Glass Repair & Replace',
+      'boat_repair': 'Marine & Boat Repair'
+    };
+
+    if (type !== 'general' && presetToCategory[type]) {
+      handleChange('serviceCategory', presetToCategory[type]);
+    }
+  };
+
   const handleGenerateSEO = async () => {
     setIsGenerating(true);
     try {
@@ -126,7 +212,11 @@ export default function MetadataPanel({ metadata, onMetadataChange }: MetadataPa
         district: editState.district,
         country: editState.country,
         businessType: businessType,
-        language: seoLang
+        language: seoLang,
+        streetAddress: editState.streetAddress,
+        postalCode: editState.postalCode,
+        stateRegion: editState.stateRegion,
+        countryCode: editState.countryCode
       });
 
       if (data) {
@@ -258,341 +348,335 @@ export default function MetadataPanel({ metadata, onMetadataChange }: MetadataPa
         </div>
       </details>
 
-      <div className="w-full flex flex-wrap items-center justify-between gap-4">
-        <h4 className="font-bold text-slate-900 text-sm">
-          Basic Local SEO Metadata
-        </h4>
-        <div className="flex flex-wrap items-center gap-2">
-          <select 
-            value={businessType} 
-            onChange={(e) => {
-               setBusinessType(e.target.value);
-               if (e.target.value !== 'general') {
-                 // Auto-fill service category based on preset
-                 const presetToCategory: Record<string, string> = {
-                   'tree_service': 'Tree Service & Arborist',
-                   'towing': 'Towing & Roadside Assistance',
-                   'pest_control': 'Pest Control Services',
-                   'concrete': 'Concrete & Epoxy Contractors',
-                   'fencing': 'Fencing Installation',
-                   'locksmith': 'Professional Locksmith',
-                   'junk_removal': 'Junk Removal & Hauling',
-                   'remediation': 'Water Damage & Mold Remediation',
-                   'painting': 'Painting Contractors',
-                   'electrician': 'Electrical Services',
-                   'hotel': 'Hotel & Accommodation',
-                   'restaurant': 'Restaurant & Dining',
-                   'plumber': 'Plumbing Services',
-                   'real_estate': 'Real Estate Agency',
-                   'ecommerce': 'E-Commerce Store',
-                   'automotive': 'Automotive & Car Repair',
-                   'healthcare': 'Healthcare & Medical Clinic',
-                   'legal': 'Legal Services & Law Firm',
-                   'fitness': 'Gym & Fitness Center',
-                   'salon': 'Hair Salon & Beauty Spa',
-                   'cleaning': 'Professional Cleaning Services',
-                   'landscaping': 'Landscaping & Gardening',
-                   'hvac': 'HVAC Services',
-                   'roofing': 'Roofing Contractors',
-                   'dentist': 'Dental Care Clinic',
-                   'photographer': 'Professional Photography',
-                   'event_planning': 'Event Planning & Catering',
-                   'tech_support': 'IT & Tech Support',
-                   'accounting': 'Accounting & Tax Services',
-                   'marketing': 'Digital Marketing Agency',
-                   'jewelry': 'Luxury Jewelry',
-                   'fashion': 'High-end Fashion Boutique',
-                   'foundation_repair': 'Foundation Repair Specialist',
-                   'duct_cleaning': 'Air Duct Cleaning Service',
-                   'window_cleaning': 'Professional Window Cleaning',
-                   'siding': 'Siding & Gutter Installation',
-                   'flooring': 'Flooring Contractor',
-                   'garage_door': 'Garage Door Repair Service',
-                   'solar': 'Solar Power System Installer',
-                   'appliance_repair': 'Home Appliance Repair',
-                   'pool_service': 'Pool Cleaning & Maintenance',
-                   'masonry': 'Masonry & Stone Work',
-                   'carpentry': 'Carpentry & Custom Woodworking',
-                   'welding': 'Welding & Metal Fabrication',
-                   'architect': 'Professional Architecture Firm',
-                   'interior_design': 'Interior Design Studio',
-                   'vet': 'Veterinary Clinic',
-                   'pet_grooming': 'Pet Grooming & Spa',
-                   'construction': 'General Contractor & Construction',
-                   'logistics': 'Logistics & Freight Services',
-                   'security': 'Private Security & Guard Services',
-                   'tax_service': 'Tax Preparation & Strategy',
-                   'chiropractor': 'Chiropractic Health Center',
-                   'pharmacy': 'Local Pharmacy',
-                   'insurance': 'Insurance Agency',
-                   'travel_agency': 'Travel & Vacation Agency',
-                   'car_wash': 'Full Service Car Wash',
-                   'trucking': 'Trucking & Haulage',
-                   'moving_company': 'Local & Long Distance Moving',
-                   'auto_glass': 'Auto Glass Repair & Replace',
-                   'boat_repair': 'Marine & Boat Repair'
-                 };
-                 if (presetToCategory[e.target.value]) {
-                   handleChange('serviceCategory', presetToCategory[e.target.value]);
-                 }
-               }
-            }}
-            className="text-xs border border-slate-300 rounded-md px-2 py-1 outline-none bg-white max-w-[150px] truncate"
-            title="Business Type Preset"
-          >
-            <option value="general">General Business</option>
-            <option disabled>--- Rank & Rent / Local SEO ---</option>
-            <option value="tree_service">Tree Service / Arborist</option>
-            <option value="towing">Towing Service</option>
-            <option value="pest_control">Pest Control</option>
-            <option value="concrete">Concrete & Epoxy</option>
-            <option value="fencing">Fencing Contractors</option>
-            <option value="locksmith">Locksmith</option>
-            <option value="junk_removal">Junk Removal</option>
-            <option value="remediation">Water Damage / Mold</option>
-            <option value="painting">Painting Services</option>
-            <option value="electrician">Electrician</option>
-            <option value="roofing">Roofing Contractors</option>
-            <option value="hvac">HVAC / Air Conditioning</option>
-            <option value="plumber">Plumber</option>
-            <option value="flooring">Flooring Contractor</option>
-            <option value="siding">Siding & Gutters</option>
-            <option value="pool_service">Pool Cleaning & Service</option>
-            <option value="garage_door">Garage Door Repair</option>
-            <option value="solar">Solar Energy Installer</option>
-            <option value="appliance_repair">Appliance Repair</option>
-            <option value="window_cleaning">Window Cleaning</option>
-            <option value="foundation_repair">Foundation Repair</option>
-            <option value="duct_cleaning">Air Duct Cleaning</option>
-            <option value="landscaping">Landscaping & Lawn Care</option>
-            <option disabled>--- Local Trades & Services ---</option>
-            <option value="automotive">Automotive Repair</option>
-            <option value="welding">Welding & Metal Fab</option>
-            <option value="carpentry">Carpentry & Woodwork</option>
-            <option value="masonry">Masonry & Brickwork</option>
-            <option value="insulation">Insulation Contractor</option>
-            <option value="drywall">Drywall & Plastering</option>
-            <option value="excavation">Excavation & Grading</option>
-            <option value="handyman">Handyman Services</option>
-            <option value="pressure_washing">Pressure Washing</option>
-            <option value="pest_control">Pest Control</option>
-            <option value="janitorial">Janitorial Services</option>
-            <option value="security_systems">Security Systems</option>
-            <option disabled>--- Hospitality & Retail ---</option>
-            <option value="hotel">Hotel / Stays</option>
-            <option value="restaurant">Restaurant / Cafe</option>
-            <option value="bar">Bar / Pub</option>
-            <option value="salon">Salon & Spa</option>
-            <option value="fitness">Gym & Fitness</option>
-            <option value="ecommerce">E-Commerce</option>
-            <option value="coffee_shop">Coffee Shop</option>
-            <option value="bakery">Bakery</option>
-            <option value="retail_clothing">Clothing Store</option>
-            <option value="grocery">Grocery Store</option>
-            <option value="pet_grooming">Pet Grooming</option>
-            <option value="veterinary">Veterinary Clinic</option>
-            <option value="flower_shop">Florist</option>
-            <option value="boutique">Boutique Store</option>
-            <option disabled>--- Professional & Medical ---</option>
-            <option value="real_estate">Real Estate</option>
-            <option value="healthcare">Medical Clinic</option>
-            <option value="dentist">Dental Clinic</option>
-            <option value="legal">Law Firm</option>
-            <option value="accounting">Accounting Services</option>
-            <option value="marketing">Digital Marketing</option>
-            <option value="tech_support">IT Support</option>
-            <option value="chiropractor">Chiropractor</option>
-            <option value="optometry">Optometry / Eyewear</option>
-            <option value="pharmacy">Pharmacy</option>
-            <option value="insurance">Insurance Agency</option>
-            <option value="travel_agency">Travel Agency</option>
-            <option value="architecture">Architect</option>
-            <option value="engineering">Engineering Firm</option>
-            <option disabled>--- Creative & Luxury ---</option>
-            <option value="photographer">Photography</option>
-            <option value="event_planning">Event Planning</option>
-            <option value="jewelry">Luxury Jewelry</option>
-            <option value="fashion">Fashion Boutique</option>
-            <option value="interior_design">Interior Design</option>
-            <option value="architect">Architecture Firm</option>
-            <option value="art_gallery">Art Gallery</option>
-            <option value="tatoo_studio">Tattoo Studio</option>
-            <option value="luxury_cars">Exotic Car Rental</option>
-            <option disabled>--- Automotive & Transport ---</option>
-            <option value="car_wash">Car Wash & Detailing</option>
-            <option value="car_rental">Car Rental</option>
-            <option value="tire_shop">Tire & Wheel Shop</option>
-            <option value="trucking">Trucking & Logistics</option>
-            <option value="moving_company">Moving Company</option>
-            <option value="auto_glass">Auto Glass Repair</option>
-            <option value="boat_repair">Boat & Marine Repair</option>
-            <option value="taxi_service">Taxi & Limo Service</option>
-            <option disabled>--- Industrial & Logistics ---</option>
-            <option value="construction">General Construction</option>
-            <option value="manufacturing">Manufacturing Plant</option>
-            <option value="logistics">Logistics & Freight</option>
-            <option value="warehouse">Warehousing Facility</option>
-            <option value="waste_management">Waste & Recycling</option>
-            <option value="security">Security Services</option>
-            <option value="oil_gas">Oil & Gas Services</option>
-            <option disabled>--- Social & Public ---</option>
-            <option value="education">School / University</option>
-            <option value="church">Place of Worship</option>
-            <option value="community_center">Community Center</option>
-            <option value="charity">Non-profit / Charity</option>
-            <option value="government">Government Office</option>
-            <option value="library">Public Library</option>
-          </select>
-          <select 
-            value={seoLang} 
-            onChange={(e) => setSeoLang(e.target.value)}
-            className="text-xs border border-slate-300 rounded-md px-2 py-1 outline-none bg-white"
-            title="SEO Output Language"
-          >
-            <option value="en">English (EN)</option>
-            <option value="de">Deutsch (DE)</option>
-            <option value="es">Español (ES)</option>
-            <option value="fr">Français (FR)</option>
-            <option value="it">Italiano (IT)</option>
-            <option value="pt">Português (PT)</option>
-            <option value="nl">Nederlands (NL)</option>
-            <option value="tr">Türkçe (TR)</option>
-            <option value="hi">Hindi (HI)</option>
-            <option value="ar">Arabic (AR)</option>
-            <option value="id">Indonesian (ID)</option>
-            <option value="ja">Japanese (JA)</option>
-            <option value="ko">Korean (KO)</option>
-          </select>
-          <button 
-            onClick={handleGenerateSEO}
-            disabled={isGenerating}
-            className="text-xs flex items-center gap-1.5 bg-blue-50 text-blue-700 px-3 py-1.5 rounded-md hover:bg-blue-100 transition-colors font-medium border border-blue-200 disabled:opacity-50"
-          >
-            <Wand2 className={`w-3.5 h-3.5 ${isGenerating ? 'animate-pulse' : ''}`} />
-            {isGenerating ? 'Generating...' : 'Generate SEO'}
-          </button>
-        </div>
+      <div className="w-full">
+        <section className="bg-white border-2 border-blue-100 rounded-2xl p-6 shadow-sm">
+          <div className="flex items-center gap-3 mb-6 border-b border-blue-50 pb-4">
+            <div className="bg-blue-100 p-2 rounded-lg">
+              <Map className="w-5 h-5 text-blue-600" />
+            </div>
+            <div>
+              <h3 className="text-lg font-extrabold text-slate-900 leading-none">Address & Local Info</h3>
+              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-1">Global settings for all images</p>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1.5 flex items-center gap-2">
+                  {currentLabels.language}
+                </label>
+                <select 
+                  value={seoLang} 
+                  onChange={(e) => {
+                    setSeoLang(e.target.value);
+                    handleChange('language', e.target.value);
+                  }}
+                  className="w-full text-sm font-medium border border-slate-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50 focus:bg-white transition-all shadow-inner cursor-pointer"
+                >
+                  <option value="en">English (US/UK)</option>
+                  <option value="de">German (Deutsch)</option>
+                  <option value="fr">French (Français)</option>
+                  <option value="es">Spanish (Español)</option>
+                  <option value="it">Italian (Italiano)</option>
+                  <option value="pt">Portuguese (Português)</option>
+                  <option value="tr">Turkish (Türkçe)</option>
+                  <option value="ar">Arabic (العربية)</option>
+                  <option value="hi">Hindi (हिन्दी)</option>
+                  <option value="ur">Urdu (اردو)</option>
+                  <option value="bn">Bengali (বাংলা)</option>
+                  <option value="ja">Japanese (日本語)</option>
+                  <option value="zh">Chinese (中文)</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1.5 flex items-center gap-2">
+                  {currentLabels.businessType}
+                </label>
+                <select 
+                  value={businessType} 
+                  onChange={(e) => handlePresetChange(e.target.value)}
+                  className="w-full text-sm font-medium border border-slate-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50 focus:bg-white transition-all shadow-inner cursor-pointer"
+                >
+                  <option value="general">General Business</option>
+                  <option disabled>--- Rank & Rent / Local SEO ---</option>
+                  <option value="tree_service">Tree Service / Arborist</option>
+                  <option value="towing">Towing Service</option>
+                  <option value="pest_control">Pest Control</option>
+                  <option value="concrete">Concrete & Epoxy</option>
+                  <option value="fencing">Fencing Contractors</option>
+                  <option value="locksmith">Locksmith</option>
+                  <option value="junk_removal">Junk Removal</option>
+                  <option value="remediation">Water Damage / Mold</option>
+                  <option value="painting">Painting Services</option>
+                  <option value="electrician">Electrician</option>
+                  <option value="roofing">Roofing Contractors</option>
+                  <option value="hvac">HVAC / Air Conditioning</option>
+                  <option value="plumber">Plumber</option>
+                  <option value="flooring">Flooring Contractor</option>
+                  <option value="siding">Siding & Gutters</option>
+                  <option value="pool_service">Pool Cleaning & Service</option>
+                  <option value="garage_door">Garage Door Repair</option>
+                  <option value="solar">Solar Energy Installer</option>
+                  <option value="appliance_repair">Appliance Repair</option>
+                  <option value="window_cleaning">Window Cleaning</option>
+                  <option value="foundation_repair">Foundation Repair</option>
+                  <option value="duct_cleaning">Air Duct Cleaning</option>
+                  <option value="landscaping">Landscaping & Lawn Care</option>
+                  <option disabled>--- Local Trades & Services ---</option>
+                  <option value="automotive">Automotive Repair</option>
+                  <option value="welding">Welding & Metal Fab</option>
+                  <option value="carpentry">Carpentry & Woodwork</option>
+                  <option value="masonry">Masonry & Brickwork</option>
+                  <option value="insulation">Insulation Contractor</option>
+                  <option value="drywall">Drywall & Plastering</option>
+                  <option value="excavation">Excavation & Grading</option>
+                  <option value="handyman">Handyman Services</option>
+                  <option value="pressure_washing">Pressure Washing</option>
+                  <option value="janitorial">Janitorial Services</option>
+                  <option value="security_systems">Security Systems</option>
+                  <option disabled>--- Hospitality & Retail ---</option>
+                  <option value="hotel">Hotel / Stays</option>
+                  <option value="restaurant">Restaurant / Cafe</option>
+                  <option value="bar">Bar / Pub</option>
+                  <option value="salon">Salon & Spa</option>
+                  <option value="fitness">Gym & Fitness</option>
+                  <option value="ecommerce">E-Commerce</option>
+                  <option value="coffee_shop">Coffee Shop</option>
+                  <option value="bakery">Bakery</option>
+                  <option value="retail_clothing">Clothing Store</option>
+                  <option value="grocery">Grocery Store</option>
+                  <option value="pet_grooming">Pet Grooming</option>
+                  <option value="veterinary">Veterinary Clinic</option>
+                  <option value="flower_shop">Florist</option>
+                  <option value="boutique">Boutique Store</option>
+                  <option disabled>--- Professional & Medical ---</option>
+                  <option value="real_estate">Real Estate</option>
+                  <option value="healthcare">Medical Clinic</option>
+                  <option value="dentist">Dental Clinic</option>
+                  <option value="legal">Law Firm</option>
+                  <option value="accounting">Accounting Services</option>
+                  <option value="marketing">Digital Marketing</option>
+                  <option value="tech_support">IT Support</option>
+                  <option value="chiropractor">Chiropractor</option>
+                  <option value="optometry">Optometry / Eyewear</option>
+                  <option value="pharmacy">Pharmacy</option>
+                  <option value="insurance">Insurance Agency</option>
+                  <option value="travel_agency">Travel Agency</option>
+                  <option value="architecture">Architect</option>
+                  <option value="engineering">Engineering Firm</option>
+                  <option disabled>--- Creative & Luxury ---</option>
+                  <option value="photographer">Photography</option>
+                  <option value="event_planning">Event Planning</option>
+                  <option value="jewelry">Luxury Jewelry</option>
+                  <option value="fashion">Fashion Boutique</option>
+                  <option value="interior_design">Interior Design</option>
+                  <option value="art_gallery">Art Gallery</option>
+                  <option value="tatoo_studio">Tattoo Studio</option>
+                  <option value="luxury_cars">Exotic Car Rental</option>
+                  <option disabled>--- Automotive & Transport ---</option>
+                  <option value="car_wash">Car Wash & Detailing</option>
+                  <option value="car_rental">Car Rental</option>
+                  <option value="tire_shop">Tire & Wheel Shop</option>
+                  <option value="trucking">Trucking & Logistics</option>
+                  <option value="moving_company">Moving Company</option>
+                  <option value="auto_glass">Auto Glass Repair</option>
+                  <option value="boat_repair">Boat & Marine Repair</option>
+                  <option value="taxi_service">Taxi & Limo Service</option>
+                  <option disabled>--- Industrial & Logistics ---</option>
+                  <option value="construction">General Construction</option>
+                  <option value="manufacturing">Manufacturing Plant</option>
+                  <option value="logistics">Logistics & Freight</option>
+                  <option value="warehouse">Warehousing Facility</option>
+                  <option value="waste_management">Waste & Recycling</option>
+                  <option value="security">Security Services</option>
+                  <option value="oil_gas">Oil & Gas Services</option>
+                  <option disabled>--- Social & Public ---</option>
+                  <option value="education">School / University</option>
+                  <option value="church">Place of Worship</option>
+                  <option value="community_center">Community Center</option>
+                  <option value="charity">Non-profit / Charity</option>
+                  <option value="government">Government Office</option>
+                  <option value="library">Public Library</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                 <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1.5 flex items-center gap-2">
+                   {currentLabels.businessName}
+                 </label>
+                 <input 
+                   type="text" 
+                   value={editState.businessName || ''} 
+                   onChange={(e) => handleChange('businessName', e.target.value)} 
+                   placeholder={currentLabels.businessNamePlaceholder} 
+                   className="w-full text-sm font-medium border border-slate-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50 focus:bg-white transition-all shadow-inner" 
+                 />
+              </div>
+              <div>
+                 <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1.5 flex items-center gap-2">
+                   {currentLabels.serviceCategory}
+                 </label>
+                 <input 
+                   type="text" 
+                   value={editState.serviceCategory || ''} 
+                   onChange={(e) => handleChange('serviceCategory', e.target.value)} 
+                   placeholder={currentLabels.serviceCategoryPlaceholder} 
+                   className="w-full text-sm font-medium border border-slate-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50 focus:bg-white transition-all shadow-inner" 
+                 />
+              </div>
+            </div>
+
+            <div>
+               <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1.5">{currentLabels.streetAddress}</label>
+               <input 
+                 type="text" 
+                 maxLength={120} 
+                 value={editState.streetAddress || ''} 
+                 onChange={(e) => handleChange('streetAddress', e.target.value)} 
+                 placeholder={currentLabels.streetPlaceholder} 
+                 className="w-full text-sm font-medium border border-slate-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50 focus:bg-white transition-all shadow-inner" 
+               />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                 <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1.5">{currentLabels.city}</label>
+                 <input 
+                   type="text" 
+                   value={editState.city || ''} 
+                   onChange={(e) => handleChange('city', e.target.value)} 
+                   placeholder={currentLabels.cityPlaceholder} 
+                   className="w-full text-sm font-medium border border-slate-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50 focus:bg-white transition-all shadow-inner" 
+                 />
+              </div>
+              <div>
+                 <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1.5">{seoLang !== 'en' ? currentLabels.district : (labels.district || "District")}</label>
+                 <input 
+                   type="text" 
+                   value={editState.district || ''} 
+                   onChange={(e) => handleChange('district', e.target.value)} 
+                   placeholder={currentLabels.districtPlaceholder} 
+                   className="w-full text-sm font-medium border border-slate-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50 focus:bg-white transition-all shadow-inner" 
+                 />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                 <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1.5">{seoLang !== 'en' ? currentLabels.stateRegion : labels.state}</label>
+                 <input 
+                   type="text" 
+                   maxLength={80} 
+                   value={editState.stateRegion || ''} 
+                   onChange={(e) => handleChange('stateRegion', e.target.value)} 
+                   placeholder={currentLabels.statePlaceholder} 
+                   className="w-full text-sm font-medium border border-slate-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50 focus:bg-white transition-all shadow-inner" 
+                 />
+              </div>
+              <div>
+                 <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1.5">{seoLang !== 'en' ? currentLabels.postalCode : labels.postal}</label>
+                 <input 
+                   type="text" 
+                   maxLength={20} 
+                   value={editState.postalCode || ''} 
+                   onChange={(e) => handleChange('postalCode', e.target.value)} 
+                   placeholder={currentLabels.postalPlaceholder} 
+                   className="w-full text-sm font-medium border border-slate-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50 focus:bg-white transition-all shadow-inner" 
+                 />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                 <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1.5">{currentLabels.country}</label>
+                 <input 
+                   type="text" 
+                   value={editState.country || ''} 
+                   onChange={(e) => handleChange('country', e.target.value)} 
+                   placeholder={currentLabels.countryPlaceholder} 
+                   className="w-full text-sm font-medium border border-slate-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50 focus:bg-white transition-all shadow-inner" 
+                 />
+              </div>
+              <div>
+                 <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1.5">{currentLabels.countryCode}</label>
+                 <input 
+                   type="text" 
+                   maxLength={2} 
+                   value={editState.countryCode || ''} 
+                   onChange={(e) => handleChange('countryCode', e.target.value)} 
+                   placeholder={currentLabels.countryCodePlaceholder} 
+                   className="w-full text-sm font-medium border border-slate-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50 focus:bg-white transition-all shadow-inner uppercase" 
+                 />
+              </div>
+            </div>
+
+            <div>
+               <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1.5">{currentLabels.websiteUrl}</label>
+               <input 
+                 type="url" 
+                 value={editState.websiteUrl || ''} 
+                 onChange={(e) => handleChange('websiteUrl', e.target.value)} 
+                 placeholder={currentLabels.websitePlaceholder} 
+                 className="w-full text-sm font-medium border border-slate-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50 focus:bg-white transition-all shadow-inner" 
+               />
+            </div>
+
+            <div className="pt-2">
+              <p className="text-[10px] text-blue-600 font-bold bg-blue-50 p-3 rounded-lg border border-blue-100 uppercase tracking-tight text-center">
+                {currentLabels.addressNote}
+              </p>
+            </div>
+          </div>
+        </section>
       </div>
 
-      <div className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
-           <div>
-             <label className="block text-xs font-semibold text-slate-700 mb-1">Business Name</label>
-             <input type="text" maxLength={80} value={editState.businessName || ''} onChange={(e) => handleChange('businessName', e.target.value)} placeholder="e.g. Flexofon" className="w-full text-sm border border-slate-300 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500" />
-           </div>
-           <div>
-             <label className="block text-xs font-semibold text-slate-700 mb-1">Service / Category</label>
-             <input type="text" maxLength={80} value={editState.serviceCategory || ''} onChange={(e) => handleChange('serviceCategory', e.target.value)} placeholder="e.g. Handy Reparatur" className="w-full text-sm border border-slate-300 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500" />
-           </div>
-        </div>
-
-        <div className="grid grid-cols-3 gap-4">
-           <div>
-             <label className="block text-xs font-semibold text-slate-700 mb-1">City</label>
-             <input type="text" maxLength={80} value={editState.city || ''} onChange={(e) => handleChange('city', e.target.value)} placeholder="e.g. Hamburg" className="w-full text-sm border border-slate-300 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500" />
-           </div>
-           <div>
-             <label className="block text-xs font-semibold text-slate-700 mb-1">{labels.district}</label>
-             <input type="text" maxLength={80} value={editState.district || ''} onChange={(e) => handleChange('district', e.target.value)} placeholder="e.g. Wilhelmsburg" className="w-full text-sm border border-slate-300 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500" />
-           </div>
-           <div>
-             <label className="block text-xs font-semibold text-slate-700 mb-1">Country</label>
-             <input type="text" maxLength={80} value={editState.country || ''} onChange={(e) => handleChange('country', e.target.value)} placeholder="e.g. Germany" className="w-full text-sm border border-slate-300 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500" />
-           </div>
-        </div>
-
-        <div>
-           <label className="block text-xs font-semibold text-slate-700 mb-1">Title</label>
-           <input type="text" maxLength={120} value={editState.title || ''} onChange={(e) => handleChange('title', e.target.value)} placeholder="e.g. Handy Reparatur in Hamburg Wilhelmsburg" className="w-full text-sm border border-slate-300 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500" />
-        </div>
-
-        <div>
-           <label className="block text-xs font-semibold text-slate-700 mb-1">Description</label>
-           <textarea rows={2} maxLength={300} value={editState.description || ''} onChange={(e) => handleChange('description', e.target.value)} placeholder="e.g. Professionelle Handy Reparatur in Hamburg Wilhelmsburg bei Flexofon." className="w-full text-sm border border-slate-300 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500 resize-none" />
-        </div>
-
-        <div>
-           <label className="block text-xs font-semibold text-slate-700 mb-1">Keywords</label>
-           <input type="text" value={editState.keywords || ''} onChange={(e) => handleChange('keywords', e.target.value)} placeholder="e.g. Handy Reparatur, Hamburg, Wilhelmsburg, iPhone Reparatur" className="w-full text-sm border border-slate-300 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500" />
-        </div>
-
-        <div className="bg-blue-50/50 border border-blue-100 rounded-lg p-4">
-           <div className="flex justify-between items-start mb-2">
-             <label className="block text-xs font-semibold text-blue-900">Suggested Alt Text</label>
-             <button onClick={copyAltText} className="flex items-center gap-1 text-[11px] font-medium text-blue-600 hover:text-blue-800 transition-colors bg-white px-2 py-1 rounded shadow-sm border border-blue-200">
-               {copied ? <CheckCircle2 className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
-               {copied ? 'Copied' : 'Copy Alt Text'}
-             </button>
-           </div>
-           <input type="text" value={editState.suggestedAltText || ''} onChange={(e) => handleChange('suggestedAltText', e.target.value)} placeholder="e.g. Handy Reparatur Service in Hamburg Wilhelmsburg bei Flexofon" className="w-full text-sm border border-blue-200 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500 shadow-sm" />
-           <p className="text-[10px] text-blue-700 mt-2 leading-tight">Alt text should be added directly in your website, CMS, Shopify, WordPress, or HTML image tag. Copy this suggestion when uploading the image.</p>
-        </div>
-      </div>
-
-      <details className="mt-6 border-t border-slate-200 pt-6 group">
+      <details className="mt-2 border-t border-slate-200 pt-6 group">
         <summary className="font-bold text-slate-900 text-sm mb-4 cursor-pointer flex items-center justify-between list-none [&::-webkit-details-marker]:hidden">
-          Advanced Metadata
+          {currentLabels.aiSeoTitle}
           <svg className="w-4 h-4 text-slate-500 group-open:rotate-180 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
         </summary>
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
-            <div className="col-span-2">
-               <label className="block text-xs font-semibold text-slate-700 mb-1">Street Address</label>
-               <input type="text" maxLength={120} value={editState.streetAddress || ''} onChange={(e) => handleChange('streetAddress', e.target.value)} placeholder="e.g. Musterstraße 12" className="w-full text-sm border border-slate-300 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500" />
-            </div>
-            <div>
-               <label className="block text-xs font-semibold text-slate-700 mb-1">{labels.postal}</label>
-               <input type="text" maxLength={20} value={editState.postalCode || ''} onChange={(e) => handleChange('postalCode', e.target.value)} placeholder="e.g. 21107" className="w-full text-sm border border-slate-300 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500" />
-            </div>
-            <div>
-               <label className="block text-xs font-semibold text-slate-700 mb-1">{labels.state}</label>
-               <input type="text" maxLength={80} value={editState.stateRegion || ''} onChange={(e) => handleChange('stateRegion', e.target.value)} placeholder="e.g. Hamburg" className="w-full text-sm border border-slate-300 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500" />
-            </div>
-            <div>
-               <label className="block text-xs font-semibold text-slate-700 mb-1">Country Code</label>
-               <input type="text" maxLength={2} value={editState.countryCode || ''} onChange={(e) => handleChange('countryCode', e.target.value)} placeholder="e.g. DE" className="w-full text-sm border border-slate-300 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500 uppercase" />
-            </div>
-            <div className="col-span-2">
-               <label className="block text-xs font-semibold text-slate-700 mb-1">Website URL</label>
-               <input type="url" value={editState.websiteUrl || ''} onChange={(e) => handleChange('websiteUrl', e.target.value)} placeholder="e.g. https://example.com" className="w-full text-sm border border-slate-300 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500" />
-            </div>
 
             {/* AI Generated Advanced SEO */}
             {editState.schemaMarkup && (
               <div className="col-span-2 mt-4 space-y-4">
                 <div className="bg-slate-900 rounded-lg p-4 relative group">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">JSON-LD Schema Markup</span>
+                   <div className="flex justify-between items-center mb-2">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{currentLabels.schemaLabel}</span>
                     <button 
                       onClick={() => {
                         navigator.clipboard.writeText(editState.schemaMarkup || '');
-                        alert('Schema copied to clipboard');
+                        alert(currentLabels.copySchema);
                       }}
                       className="text-xs bg-slate-800 text-slate-300 hover:text-white px-2 py-1 rounded transition-colors"
                     >
-                      Copy Schema
+                      {currentLabels.copySchema}
                     </button>
-                  </div>
-                  <pre className="text-[11px] text-emerald-400 font-mono overflow-x-auto whitespace-pre-wrap max-h-40">
+                   </div>
+                   <pre className="text-[11px] text-emerald-400 font-mono overflow-x-auto whitespace-pre-wrap max-h-40">
                     {editState.schemaMarkup}
-                  </pre>
+                   </pre>
                 </div>
 
                 <div className="bg-slate-50 border border-slate-200 rounded-lg p-4">
                   <div className="flex justify-between items-center mb-3">
-                    <h6 className="text-xs font-bold text-slate-900">OpenGraph & Social Meta</h6>
+                    <h6 className="text-xs font-bold text-slate-900">{currentLabels.ogLabel}</h6>
                     <button 
                       onClick={() => {
                         const tags = JSON.parse(editState.ogTags || '{}');
                         const metaStr = Object.entries(tags).map(([k, v]) => `<meta property="${k}" content="${v}" />`).join('\n');
                         navigator.clipboard.writeText(metaStr);
-                        alert('OG Tags copied as HTML meta tags');
+                        alert(currentLabels.copyOg);
                       }}
                       className="text-[10px] bg-blue-50 text-blue-600 px-2 py-1 rounded font-bold hover:bg-blue-100 transition-colors"
                     >
-                      Copy OG Tags
+                      {currentLabels.copyOg}
                     </button>
                   </div>
                   <div className="grid grid-cols-1 gap-2">
@@ -607,7 +691,7 @@ export default function MetadataPanel({ metadata, onMetadataChange }: MetadataPa
 
                 {editState.semanticClusters && (
                   <div className="bg-purple-50 border border-purple-100 rounded-lg p-4">
-                    <h6 className="text-xs font-bold text-purple-900 mb-2">Semantic Keywords Clusters</h6>
+                    <h6 className="text-xs font-bold text-purple-900 mb-2">{currentLabels.semanticLabel}</h6>
                     <p className="text-[11px] text-purple-800 leading-relaxed italic">
                       {editState.semanticClusters}
                     </p>

@@ -44,8 +44,15 @@ export default function SelectedLocationCard({ location, onAutoFillMetadata }: S
             <div className="flex flex-col gap-0.5 text-xs text-slate-600 mb-2">
               <span className="truncate">Latitude: {location.lat}</span>
               <span className="truncate">Longitude: {location.lon}</span>
-              <span className="truncate">Source: {getSourceLabel(location.source)}</span>
-              {location.provider && <span className="truncate">Provider: OpenStreetMap</span>}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-0.5 mt-1 border-t border-blue-100 pt-1">
+                {location.street && <span className="truncate">Street: <span className="text-slate-900 font-medium">{location.street} {location.houseNumber}</span></span>}
+                {location.district && <span className="truncate">District: <span className="text-slate-900 font-medium">{location.district}</span></span>}
+                {location.city && <span className="truncate">City: <span className="text-slate-900 font-medium">{location.city}</span></span>}
+                {location.state && <span className="truncate">State: <span className="text-slate-900 font-medium">{location.state}</span></span>}
+                {location.postcode && <span className="truncate">Postal: <span className="text-slate-900 font-medium">{location.postcode}</span></span>}
+                {location.country && <span className="truncate">Country: <span className="text-slate-900 font-medium">{location.country}</span></span>}
+              </div>
+              <span className="truncate mt-1 opacity-70 italic text-[10px]">Source: {getSourceLabel(location.source)} {location.provider && ` via ${location.provider}`}</span>
             </div>
 
             {location.source === 'search' && (
