@@ -90,9 +90,11 @@ export default function ImageEditorModal({ file, onClose, onSave, d = {}, global
 
   useEffect(() => {
     if (file && file.editedMetadata) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLocalMeta(file.editedMetadata);
     } else if (file && file.metadata) {
       // Initialize with existing if any, or empty
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLocalMeta({
         title: file.metadata.title || '',
         description: file.metadata.description || '',
