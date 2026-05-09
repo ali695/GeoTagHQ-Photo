@@ -44,7 +44,7 @@ export default function BatchImageList({ files, onRemove, onClearAll, onEdit, me
         <TooltipProvider>
           {files.map((file, index) => (
             <div key={`${file.name}-${index}`} className="relative border border-slate-200 rounded-lg p-3 bg-white shadow-sm flex items-center gap-3 group">
-              <div className="absolute -top-2 -end-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+              <div className="absolute -top-2 -end-2 flex gap-1 z-10">
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <button 

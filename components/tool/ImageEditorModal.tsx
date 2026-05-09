@@ -36,6 +36,20 @@ export default function ImageEditorModal({ file, onClose, onSave, d = {}, global
   const [crop, setCrop] = useState<Crop>();
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
   const [rotation, setRotation] = useState(0);
+  const [brightness, setBrightness] = useState(100);
+  const [contrast, setContrast] = useState(100);
+  const [saturation, setSaturation] = useState(100);
+  const [grayscale, setGrayscale] = useState(0);
+  const [sepia, setSepia] = useState(0);
+  const [blur, setBlur] = useState(0);
+  const [hueRotate, setHueRotate] = useState(0);
+  const [textOverlay, setTextOverlay] = useState('');
+  const [textColor, setTextColor] = useState('#ffffff');
+  const [fontSize, setFontSize] = useState(24);
+  const [textX, setTextX] = useState(50); // percentage
+  const [textY, setTextY] = useState(80); // percentage
+  const [activeTab, setActiveTab] = useState<'transform' | 'filters' | 'text'>('transform');
+  const [mobileTab, setMobileTab] = useState<'edit' | 'seo'>('edit');
   const imgRef = useRef<HTMLImageElement>(null);
 
   // Metadata overrides state
@@ -76,11 +90,9 @@ export default function ImageEditorModal({ file, onClose, onSave, d = {}, global
 
   useEffect(() => {
     if (file && file.editedMetadata) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLocalMeta(file.editedMetadata);
     } else if (file && file.metadata) {
       // Initialize with existing if any, or empty
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLocalMeta({
         title: file.metadata.title || '',
         description: file.metadata.description || '',
@@ -262,7 +274,9 @@ export default function ImageEditorModal({ file, onClose, onSave, d = {}, global
     if (enhanceQuality) {
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
-      ctx.filter = 'contrast(1.05) saturate(1.05) sharpen(1)'; // Basic enhancement
+      ctx.filter = `brightness(${brightness * 1.05}%) contrast(${contrast * 1.15}%) saturate(${saturation * 1.15}%) grayscale(${grayscale}%) sepia(${sepia}%) blur(${blur}px) hue-rotate(${hueRotate}deg)`;
+    } else {
+      ctx.filter = `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%) grayscale(${grayscale}%) sepia(${sepia}%) blur(${blur}px) hue-rotate(${hueRotate}deg)`;
     }
 
     ctx.scale(enhanceScale, enhanceScale);
@@ -277,6 +291,29 @@ export default function ImageEditorModal({ file, onClose, onSave, d = {}, global
       image.naturalWidth,
       image.naturalHeight
     );
+
+    // Draw text overlay if present
+    if (textOverlay) {
+      ctx.setTransform(1, 0, 0, 1, 0, 0); // reset transform for text
+      ctx.scale(enhanceScale, enhanceScale);
+      ctx.font = `bold ${fontSize}px sans-serif`;
+      ctx.fillStyle = textColor;
+      ctx.textAlign = 'center';
+      const tx = (baseW * textX) / 100;
+      const ty = (baseH * textY) / 100;
+      
+      // Shadow for readability
+      ctx.shadowColor = 'rgba(0,0,0,0.5)';
+      ctx.shadowBlur = 4;
+      ctx.shadowOffsetX = 2;
+      ctx.shadowOffsetY = 2;
+      
+      ctx.fillText(textOverlay, tx, ty);
+      
+      // Reset shadow
+      ctx.shadowColor = 'transparent';
+      ctx.shadowBlur = 0;
+    }
 
     // Now slice out the cropped area using a second canvas
     const cropCanvas = document.createElement('canvas');
@@ -299,7 +336,9 @@ export default function ImageEditorModal({ file, onClose, onSave, d = {}, global
     if (enhanceQuality) {
       fullCtx.imageSmoothingEnabled = true;
       fullCtx.imageSmoothingQuality = 'high';
-      fullCtx.filter = 'contrast(1.05) saturate(1.1) brightness(1.02)';
+      fullCtx.filter = `brightness(${brightness * 1.05}%) contrast(${contrast * 1.15}%) saturate(${saturation * 1.15}%) grayscale(${grayscale}%) sepia(${sepia}%) blur(${blur}px) hue-rotate(${hueRotate}deg)`;
+    } else {
+      fullCtx.filter = `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%) grayscale(${grayscale}%) sepia(${sepia}%) blur(${blur}px) hue-rotate(${hueRotate}deg)`;
     }
 
     fullCtx.scale(enhanceScale, enhanceScale);
@@ -307,6 +346,21 @@ export default function ImageEditorModal({ file, onClose, onSave, d = {}, global
     fullCtx.rotate((rotation * Math.PI) / 180);
     fullCtx.translate(-image.naturalWidth / 2, -image.naturalHeight / 2);
     fullCtx.drawImage(image, 0, 0);
+
+    if (textOverlay) {
+      fullCtx.setTransform(1, 0, 0, 1, 0, 0);
+      fullCtx.scale(enhanceScale, enhanceScale);
+      fullCtx.font = `bold ${fontSize}px sans-serif`;
+      fullCtx.fillStyle = textColor;
+      fullCtx.textAlign = 'center';
+      const tx = (bBoxWidth * textX) / 100;
+      const ty = (bBoxHeight * textY) / 100;
+      fullCtx.shadowColor = 'rgba(0,0,0,0.5)';
+      fullCtx.shadowBlur = 4;
+      fullCtx.shadowOffsetX = 2;
+      fullCtx.shadowOffsetY = 2;
+      fullCtx.fillText(textOverlay, tx, ty);
+    }
 
     // 2. Crop from the full unscaled canvas using scaled crop coordinates
     cropCanvas.width = cropWidth * scaleX * enhanceScale;
@@ -334,63 +388,102 @@ export default function ImageEditorModal({ file, onClose, onSave, d = {}, global
   };
 
   if (!file) return null;
+  
+  const resetFilters = () => {
+    setBrightness(100);
+    setContrast(100);
+    setSaturation(100);
+    setGrayscale(0);
+    setSepia(0);
+    setBlur(0);
+    setHueRotate(0);
+  };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl w-full max-w-4xl flex flex-col max-h-[90vh] overflow-hidden">
-        <div className="p-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
-          <h3 className="text-xl font-semibold text-slate-800">{d.editCropImage || "Edit & Crop Image"}</h3>
+    <div className="fixed inset-0 z-[9999] bg-black/80 flex items-center justify-center p-0 sm:p-4">
+      <div className="bg-white rounded-none sm:rounded-2xl w-full max-w-7xl flex flex-col h-full sm:h-auto sm:max-h-[95vh] overflow-hidden shadow-2xl">
+        <div className="p-4 border-b border-slate-200 flex justify-between items-center bg-slate-50 shrink-0">
+          <h3 className="text-xl font-bold text-slate-800">{d.editCropImage || "Edit & Crop Image"}</h3>
           <button onClick={onClose} className="p-2 text-slate-500 hover:text-slate-800 rounded-full hover:bg-slate-200 transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
         
-        <div className="flex-grow p-6 flex flex-col md:flex-row items-center md:items-stretch justify-center overflow-auto bg-slate-100 gap-6">
-          <div className="flex-grow flex items-center justify-center min-h-[300px]">
+        <div className="flex-grow flex flex-col md:flex-row overflow-hidden bg-slate-100">
+          <div className={`flex-grow p-4 md:p-6 flex items-center justify-center relative overflow-hidden ${mobileTab === 'seo' ? 'hidden md:flex' : 'flex'}`}>
             {imgSrc && (
-              <ReactCrop
-                crop={crop}
-                aspect={aspect}
-                onChange={(_, percentCrop) => setCrop(percentCrop)}
-                onComplete={(c) => setCompletedCrop(c)}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  ref={imgRef}
-                  alt="Crop me"
-                  src={imgSrc}
-                  style={{ transform: `rotate(${rotation}deg)`, maxHeight: '60vh', transition: 'transform 0.2s' }}
-                  onLoad={onImageLoad}
-                />
-              </ReactCrop>
+              <div className="relative">
+                <ReactCrop
+                  crop={crop}
+                  aspect={aspect}
+                  onChange={(_, percentCrop) => setCrop(percentCrop)}
+                  onComplete={(c) => setCompletedCrop(c)}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    ref={imgRef}
+                    alt="Crop me"
+                    src={imgSrc}
+                    style={{ 
+                      transform: `rotate(${rotation}deg)`, 
+                      maxHeight: mobileTab === 'edit' ? '40vh' : '60vh', 
+                      transition: 'transform 0.2s',
+                      filter: `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%) grayscale(${grayscale}%) sepia(${sepia}%) blur(${blur}px) hue-rotate(${hueRotate}deg)`
+                    }}
+                    className="md:max-h-[60vh]"
+                    onLoad={onImageLoad}
+                  />
+                </ReactCrop>
+                {textOverlay && (
+                  <div 
+                    className="absolute pointer-events-none select-none text-center font-bold"
+                    style={{
+                      left: `${textX}%`,
+                      top: `${textY}%`,
+                      color: textColor,
+                      fontSize: `${fontSize}px`,
+                      textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
+                      transform: 'translate(-50%, -50%)',
+                      maxWidth: '80%',
+                      zIndex: 20
+                    }}
+                  >
+                    {textOverlay}
+                  </div>
+                )}
+              </div>
             )}
           </div>
 
-          <div className="w-full md:w-80 bg-white border border-slate-200 rounded-xl p-5 shadow-sm overflow-y-auto">
-             <div className="flex items-center justify-between mb-4">
-               <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                 <Info className="w-4 h-4 text-blue-500" /> Individual SEO Meta
+          {/* Desktop Metadata Panel or Mobile Metadata View */}
+          <div className={`${mobileTab === 'seo' ? 'flex' : 'hidden md:flex'} w-full md:w-[480px] bg-white border-l border-slate-200 flex flex-col overflow-hidden`}>
+             <div className="p-3 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between sticky top-0 z-10 shrink-0">
+               <h4 className="text-xs font-bold text-slate-900 flex items-center gap-2">
+                 <Info className="w-4 h-4 text-blue-500" /> {d.individualSeoMeta || "Individual SEO Meta"}
                </h4>
-               <button 
-                 onClick={handleAiSuggest}
-                 disabled={isGeneratingAi}
-                 className="text-[10px] bg-blue-50 text-blue-600 px-2 py-1 rounded flex items-center gap-1 hover:bg-blue-100 transition-colors disabled:opacity-50"
-               >
-                 <Wand2 className={`w-3 h-3 ${isGeneratingAi ? 'animate-pulse' : ''}`} />
-                 {isGeneratingAi ? '...' : 'Suggest'}
-               </button>
+               <div className="flex items-center gap-2">
+                 <button 
+                   onClick={handleAiSuggest}
+                   disabled={isGeneratingAi}
+                   className="text-[10px] bg-blue-50 text-blue-600 px-2.5 py-1.5 rounded-lg flex items-center gap-1.5 hover:bg-blue-100 transition-colors disabled:opacity-50 font-bold border border-blue-100"
+                 >
+                   <Wand2 className={`w-3 h-3 ${isGeneratingAi ? 'animate-pulse' : ''}`} />
+                   {isGeneratingAi ? '...' : (d.aiSuggest || 'AI SUGGEST')}
+                 </button>
+               </div>
              </div>
              
-             <div className="space-y-4">
-                 <div>
-                    <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1 flex items-center gap-1.5">
-                      <Tag className="w-3 h-3" /> Business Type Preset
-                    </label>
-                    <select 
-                      value={localMeta.businessType || 'general'} 
-                      onChange={(e) => handleMetaChange('businessType', e.target.value)}
-                      className="w-full text-xs border border-slate-300 rounded-md px-2 py-2 outline-none focus:ring-2 focus:ring-blue-500 bg-white"
-                    >
+             <div className="flex-grow overflow-y-auto p-4 space-y-4 custom-scrollbar bg-slate-50/30">
+                 <div className="bg-white p-3 rounded-xl border border-slate-100 shadow-sm space-y-3">
+                  <div>
+                      <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1.5">
+                        <Tag className="w-3 h-3 text-slate-400" /> {d.businessTypePreset || "Business Type Preset"}
+                      </label>
+                      <select 
+                        value={localMeta.businessType || 'general'} 
+                        onChange={(e) => handleMetaChange('businessType', e.target.value)}
+                        className="w-full text-xs font-medium border border-slate-200 rounded-lg px-2.5 py-2.5 outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50 transition-all cursor-pointer"
+                      >
                       <option value="general">General Business</option>
                       <option disabled>--- Rank & Rent / Local SEO ---</option>
                       <option value="tree_service">Tree Service / Arborist</option>
@@ -496,204 +589,332 @@ export default function ImageEditorModal({ file, onClose, onSave, d = {}, global
                     </select>
                  </div>
 
-                <div>
-                   <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1 flex items-center gap-1.5">
-                     <Type className="w-3 h-3" /> Business Name
-                   </label>
-                   <input 
-                     type="text" 
-                     value={localMeta.businessName || ''} 
-                     onChange={(e) => handleMetaChange('businessName', e.target.value)}
-                     placeholder="Your Company Name"
-                     className="w-full text-xs border border-slate-300 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
-                   />
-                </div>
+                 <div className="bg-white p-3 rounded-xl border border-slate-100 shadow-sm space-y-3">
+                  <div>
+                     <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1.5">
+                       <Type className="w-3 h-3 text-slate-400" /> {d.businessNameLabel || "Business Name"}
+                     </label>
+                     <input 
+                       type="text" 
+                       value={localMeta.businessName || ''} 
+                       onChange={(e) => handleMetaChange('businessName', e.target.value)}
+                       placeholder={d.businessNamePlaceholder || "Your Company Name"}
+                       className="w-full text-xs font-medium border border-slate-200 rounded-lg px-2.5 py-2.5 outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50"
+                     />
+                  </div>
+ 
+                  <div>
+                     <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1.5">
+                       <Wand2 className="w-3 h-3 text-slate-400" /> {d.websiteUrl || "Website URL"}
+                     </label>
+                     <input 
+                       type="text" 
+                       value={localMeta.websiteUrl || ''} 
+                       onChange={(e) => handleMetaChange('websiteUrl', e.target.value)}
+                       placeholder="https://example.com"
+                       className="w-full text-xs font-medium border border-slate-200 rounded-lg px-2.5 py-2.5 outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50"
+                     />
+                  </div>
+ 
+                  <div>
+                     <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1.5">
+                       <Type className="w-3 h-3 text-slate-400" /> {d.serviceCategory || "Service Category"}
+                     </label>
+                     <input 
+                       type="text" 
+                       value={localMeta.serviceCategory || ''} 
+                       onChange={(e) => handleMetaChange('serviceCategory', e.target.value)}
+                       placeholder="e.g. Roofing Contractors"
+                       className="w-full text-xs font-medium border border-slate-200 rounded-lg px-2.5 py-2.5 outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50"
+                     />
+                  </div>
+                 </div>
 
-                <div>
-                   <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1 flex items-center gap-1.5">
-                     <Wand2 className="w-3 h-3" /> Website URL
-                   </label>
-                   <input 
-                     type="text" 
-                     value={localMeta.websiteUrl || ''} 
-                     onChange={(e) => handleMetaChange('websiteUrl', e.target.value)}
-                     placeholder="https://example.com"
-                     className="w-full text-xs border border-slate-300 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
-                   />
-                </div>
+                 <div className="bg-white p-3 rounded-xl border border-slate-100 shadow-sm space-y-3">
+                  <div>
+                     <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1.5">
+                       <Type className="w-3 h-3 text-slate-400" /> {d.imageTitle || "Image Title"}
+                     </label>
+                     <input 
+                       type="text" 
+                       value={localMeta.title || ''} 
+                       onChange={(e) => handleMetaChange('title', e.target.value)}
+                       placeholder="e.g. Roof Repair Service"
+                       className="w-full text-xs font-medium border border-slate-200 rounded-lg px-2.5 py-2.5 outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50"
+                     />
+                  </div>
 
-                <div>
-                   <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1 flex items-center gap-1.5">
-                     <Type className="w-3 h-3" /> Service Category
-                   </label>
-                   <input 
-                     type="text" 
-                     value={localMeta.serviceCategory || ''} 
-                     onChange={(e) => handleMetaChange('serviceCategory', e.target.value)}
-                     placeholder="e.g. Roofing Contractors"
-                     className="w-full text-xs border border-slate-300 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
-                   />
-                </div>
+                  <div>
+                     <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1.5">
+                       <Tag className="w-3 h-3 text-slate-400" /> {d.serviceDescription || "Service / Description"}
+                     </label>
+                     <textarea 
+                       rows={3}
+                       value={localMeta.description || ''} 
+                       onChange={(e) => handleMetaChange('description', e.target.value)}
+                       placeholder="e.g. Professional roof repair and maintenance..."
+                       className="w-full text-xs font-medium border border-slate-200 rounded-lg px-2.5 py-2.5 outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50 resize-none"
+                     />
+                  </div>
 
-                <div>
-                   <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1 flex items-center gap-1.5">
-                     <Type className="w-3 h-3" /> Image Title
-                   </label>
-                   <input 
-                     type="text" 
-                     value={localMeta.title || ''} 
-                     onChange={(e) => handleMetaChange('title', e.target.value)}
-                     placeholder="e.g. Roof Repair Service"
-                     className="w-full text-xs border border-slate-300 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
-                   />
-                </div>
+                  <div>
+                     <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1.5">
+                       <FileText className="w-3 h-3 text-slate-400" /> {d.keywordsTags || "Keywords / Tags"}
+                     </label>
+                     <input 
+                       type="text" 
+                       value={localMeta.keywords || ''} 
+                       onChange={(e) => handleMetaChange('keywords', e.target.value)}
+                       placeholder="roofing, repair, local"
+                       className="w-full text-xs font-medium border border-slate-200 rounded-lg px-2.5 py-2.5 outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50"
+                     />
+                  </div>
 
-                <div>
-                   <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1 flex items-center gap-1.5">
-                     <Tag className="w-3 h-3" /> Service / Description
-                   </label>
-                   <textarea 
-                     rows={3}
-                     value={localMeta.description || ''} 
-                     onChange={(e) => handleMetaChange('description', e.target.value)}
-                     placeholder="e.g. Professional roof repair and maintenance..."
-                     className="w-full text-xs border border-slate-300 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                   />
-                </div>
-
-                <div>
-                   <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1 flex items-center gap-1.5">
-                     <FileText className="w-3 h-3" /> Keywords / Tags
-                   </label>
-                   <input 
-                     type="text" 
-                     value={localMeta.keywords || ''} 
-                     onChange={(e) => handleMetaChange('keywords', e.target.value)}
-                     placeholder="roofing, repair, local"
-                     className="w-full text-xs border border-slate-300 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
-                   />
-                </div>
-
-                <div>
-                   <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1 flex items-center gap-1.5">
-                     <ImageIcon className="w-3 h-3" /> Alt Text
-                   </label>
-                   <input 
-                     type="text" 
-                     value={localMeta.suggestedAltText || ''} 
-                     onChange={(e) => handleMetaChange('suggestedAltText', e.target.value)}
-                     placeholder="Image description for accessibility"
-                     className="w-full text-xs border border-slate-300 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
-                   />
-                </div>
-
-                <div className="pt-2">
-                  <p className="text-[10px] text-blue-600 font-bold leading-tight uppercase tracking-tight">
-                    PRIORITY: This meta will override global settings.
-                  </p>
-                </div>
+                  <div>
+                     <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1.5">
+                       <ImageIcon className="w-3 h-3 text-slate-400" /> {d.altText || "Alt Text"}
+                     </label>
+                     <input 
+                       type="text" 
+                       value={localMeta.suggestedAltText || ''} 
+                       onChange={(e) => handleMetaChange('suggestedAltText', e.target.value)}
+                       placeholder={d.altTextPlaceholder || "Image description for accessibility"}
+                       className="w-full text-xs font-medium border border-slate-200 rounded-lg px-2.5 py-2.5 outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50"
+                     />
+                  </div>
+                 </div>
+ 
+                 <div className="pt-2 px-1 text-center">
+                   <p className="text-[10px] text-blue-600 font-bold leading-tight uppercase tracking-widest">
+                     {d.priorityNote || "PRIORITY: This meta will override global settings."}
+                   </p>
+                 </div>
              </div>
           </div>
         </div>
-        
-        <div className="p-4 border-t border-slate-200 bg-white flex flex-col sm:flex-row gap-4 justify-between items-center w-full">
+      </div>
+      
+      <div className="p-4 border-t border-slate-200 bg-white flex flex-col items-stretch gap-4 w-full">
           <div className="flex flex-col gap-4">
-            <div className="flex gap-4 items-center">
-              <div className="flex flex-wrap bg-slate-100 rounded-lg p-1 gap-1">
-                <button
-                  onClick={() => handleAspectChange(undefined)}
-                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${!aspect ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
-                >
-                  {d.cropFree || "Free"}
-                </button>
-                <button
-                  onClick={() => handleAspectChange(1)}
-                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${aspect === 1 ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
-                >
-                  1:1
-                </button>
-                <button
-                  onClick={() => handleAspectChange(4/3)}
-                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${aspect === 4/3 ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
-                >
-                  4:3
-                </button>
-                <button
-                  onClick={() => handleAspectChange(3/4)}
-                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${aspect === 3/4 ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
-                >
-                  3:4
-                </button>
-                <button
-                  onClick={() => handleAspectChange(16/9)}
-                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${aspect === 16/9 ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
-                >
-                  16:9
-                </button>
-                <button
-                  onClick={() => handleAspectChange(9/16)}
-                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${aspect === 9/16 ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
-                >
-                  9:16
-                </button>
-                <button
-                  onClick={() => handleAspectChange(3/2)}
-                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${aspect === 3/2 ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
-                >
-                  3:2
-                </button>
-                <button
-                  onClick={() => handleAspectChange(2/3)}
-                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${aspect === 2/3 ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
-                >
-                  2:3
-                </button>
-                <button
-                  onClick={() => handleAspectChange(5/4)}
-                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${aspect === 5/4 ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
-                >
-                  5:4
-                </button>
-                <button
-                  onClick={() => handleAspectChange(4/5)}
-                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${aspect === 4/5 ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
-                >
-                  4:5
-                </button>
-              </div>
+            {/* View Switcher for Mobile only */}
+            <div className="flex md:hidden bg-slate-100 p-1.5 rounded-xl w-full mb-1">
+              <button 
+                onClick={() => setMobileTab('edit')}
+                className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-xs font-bold rounded-lg transition-all ${mobileTab === 'edit' ? 'bg-white shadow-md text-blue-600' : 'text-slate-500 hover:text-slate-700'}`}
+              >
+                <ImageIcon className="w-4 h-4" /> {d.editingTools || "Editing Tools"}
+              </button>
+              <button 
+                onClick={() => setMobileTab('seo')}
+                className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-xs font-bold rounded-lg transition-all ${mobileTab === 'seo' ? 'bg-white shadow-md text-blue-600' : 'text-slate-500 hover:text-slate-700'}`}
+              >
+                <Info className="w-4 h-4" /> {d.seoMetadata || "SEO Metadata"}
+              </button>
             </div>
-            
-            <div className="flex gap-2 items-center flex-wrap">
-              <div className="flex items-center gap-2 bg-slate-100 rounded-lg p-1 pr-2">
-                 <button onClick={() => setEnhanceQuality(!enhanceQuality)} className={`p-1.5 px-3 rounded-md flex items-center gap-2 text-sm font-medium transition-colors ${enhanceQuality ? 'bg-white shadow-sm text-indigo-700' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-200'}`}>
-                   <Wand2 className="w-4 h-4" /> Enhance
-                 </button>
+ 
+            {/* Editing Tools Tabs (visible if on editor tab on mobile, or always on desktop) */}
+            <div className={`${mobileTab === 'edit' ? 'flex' : 'hidden md:flex'} items-center gap-2`}>
+               <div className="md:hidden flex-grow group relative">
                  <select 
-                    value={enhanceResolution} 
-                    onChange={(e) => setEnhanceResolution(e.target.value as any)}
-                    className="text-xs bg-transparent font-medium border-l border-slate-300 pl-2 ml-1 outline-none text-slate-700 cursor-pointer"
+                   value={activeTab} 
+                   onChange={(e) => setActiveTab(e.target.value as any)}
+                   className="w-full bg-slate-100 px-4 py-2.5 rounded-lg text-xs font-bold text-slate-700 outline-none border-none appearance-none cursor-pointer"
                  >
-                    <option value="Original">Original Res</option>
-                    <option value="HD">HD (720p)</option>
-                    <option value="FHD">1K / FHD (1080p)</option>
-                    <option value="2K">2K / QHD</option>
-                    <option value="4K">4K / UHD</option>
+                   <option value="transform">{d.transformLabel || "Transform / Crop"}</option>
+                   <option value="filters">{d.filtersLabel || "Filters & Color"}</option>
+                   <option value="text">{d.textLabel || "Add Text Overlay"}</option>
                  </select>
-              </div>
-              <button title="Rotate Left" onClick={() => handleRotate(-90)} className="p-2.5 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-lg flex items-center gap-2 font-medium transition-colors">
-                <RotateCcw className="w-4 h-4" />
-              </button>
-              <button title="Rotate Right" onClick={() => handleRotate(90)} className="p-2.5 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-lg flex items-center gap-2 font-medium transition-colors">
-                <RotateCw className="w-4 h-4" />
-              </button>
+                 <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                 </div>
+               </div>
+ 
+               <div className="hidden md:flex bg-slate-100 p-1 rounded-lg w-fit">
+                 <button 
+                   onClick={() => setActiveTab('transform')}
+                   className={`px-4 py-1.5 text-xs font-bold rounded-md transition-all ${activeTab === 'transform' ? 'bg-white shadow-sm text-blue-600' : 'text-slate-500 hover:text-slate-700'}`}
+                 >
+                   {d.transform || "Transform"}
+                 </button>
+                 <button 
+                   onClick={() => setActiveTab('filters')}
+                   className={`px-4 py-1.5 text-xs font-bold rounded-md transition-all ${activeTab === 'filters' ? 'bg-white shadow-sm text-blue-600' : 'text-slate-500 hover:text-slate-700'}`}
+                 >
+                   {d.filters || "Filters"}
+                 </button>
+                 <button 
+                   onClick={() => setActiveTab('text')}
+                   className={`px-4 py-1.5 text-xs font-bold rounded-md transition-all ${activeTab === 'text' ? 'bg-white shadow-sm text-blue-600' : 'text-slate-500 hover:text-slate-700'}`}
+                 >
+                   {d.text || "Text"}
+                 </button>
+               </div>
             </div>
+ 
+            {activeTab === 'transform' && mobileTab === 'edit' && (
+              <div className="flex flex-col gap-2">
+                <span className="text-[10px] font-bold text-slate-500 uppercase px-1">{d.aspectRatio || "Aspect Ratio"}</span>
+                <div className="flex overflow-x-auto pb-2 shrink-0 bg-slate-50 sm:bg-slate-100 rounded-lg p-1 gap-1 no-scrollbar">
+                  <button
+                    onClick={() => handleAspectChange(undefined)}
+                    className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors shrink-0 ${!aspect ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
+                  >
+                    {d.cropFree || "Free"}
+                  </button>
+                  {[ [1, '1:1'], [4/3, '4:3'], [3/4, '3:4'], [16/9, '16:9'], [9/16, '9:16'], [3/2, '3:2'], [2/3, '2:3'], [5/4, '5:4'], [4/5, '4:5'] ].map(([val, label]) => (
+                    <button
+                      key={label as string}
+                      onClick={() => handleAspectChange(val as number)}
+                      className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors shrink-0 ${aspect === val ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'}`}
+                    >
+                      {label as string}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'filters' && mobileTab === 'edit' && (
+              <div className="flex flex-col gap-4 bg-slate-50 p-4 rounded-xl">
+                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                   <div className="space-y-1">
+                     <label className="text-[10px] font-bold text-slate-500 uppercase px-1 flex justify-between">
+                       {d.brightness || "Brightness"} <span>{brightness}%</span>
+                     </label>
+                     <input type="range" min="0" max="200" value={brightness} onChange={(e) => setBrightness(parseInt(e.target.value))} className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                   </div>
+                   <div className="space-y-1">
+                     <label className="text-[10px] font-bold text-slate-500 uppercase px-1 flex justify-between">
+                       {d.contrast || "Contrast"} <span>{contrast}%</span>
+                     </label>
+                     <input type="range" min="0" max="200" value={contrast} onChange={(e) => setContrast(parseInt(e.target.value))} className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                   </div>
+                   <div className="space-y-1">
+                     <label className="text-[10px] font-bold text-slate-500 uppercase px-1 flex justify-between">
+                       {d.saturation || "Saturation"} <span>{saturation}%</span>
+                     </label>
+                     <input type="range" min="0" max="200" value={saturation} onChange={(e) => setSaturation(parseInt(e.target.value))} className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                   </div>
+                   <div className="space-y-1">
+                     <label className="text-[10px] font-bold text-slate-500 uppercase px-1 flex justify-between">
+                       {d.grayscale || "Grayscale"} <span>{grayscale}%</span>
+                     </label>
+                     <input type="range" min="0" max="100" value={grayscale} onChange={(e) => setGrayscale(parseInt(e.target.value))} className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                   </div>
+                   <div className="space-y-1">
+                     <label className="text-[10px] font-bold text-slate-500 uppercase px-1 flex justify-between">
+                       {d.sepia || "Sepia"} <span>{sepia}%</span>
+                     </label>
+                     <input type="range" min="0" max="100" value={sepia} onChange={(e) => setSepia(parseInt(e.target.value))} className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                   </div>
+                   <div className="space-y-1">
+                     <label className="text-[10px] font-bold text-slate-500 uppercase px-1 flex justify-between">
+                       {d.blur || "Blur"} <span>{blur}px</span>
+                     </label>
+                     <input type="range" min="0" max="10" step="0.1" value={blur} onChange={(e) => setBlur(parseFloat(e.target.value))} className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                   </div>
+                   <div className="space-y-1">
+                     <label className="text-[10px] font-bold text-slate-500 uppercase px-1 flex justify-between">
+                       {d.hueRotate || "Hue Rotate"} <span>{hueRotate}°</span>
+                     </label>
+                     <input type="range" min="0" max="360" value={hueRotate} onChange={(e) => setHueRotate(parseInt(e.target.value))} className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                   </div>
+                   <div className="flex items-end">
+                      <button onClick={resetFilters} className="text-[10px] font-bold text-blue-600 hover:text-blue-700 bg-blue-50 px-3 py-2 rounded-lg w-full transition-colors">
+                        {d.resetFilters || "RESET FILTERS"}
+                      </button>
+                   </div>
+                 </div>
+              </div>
+            )}
+
+            {activeTab === 'text' && mobileTab === 'edit' && (
+              <div className="flex flex-col md:flex-row gap-4 bg-slate-50 p-3 rounded-xl items-start md:items-center">
+                 <div className="flex-grow w-full">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase px-1 mb-1 block">{d.overlayText || "Overlay Text"}</label>
+                  <input 
+                    type="text" 
+                    value={textOverlay} 
+                    onChange={(e) => setTextOverlay(e.target.value)} 
+                    placeholder={d.textOnImagePlaceholder || "Enter text on image..."}
+                    className="w-full text-xs border border-slate-300 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                  />
+                </div>
+                <div className="flex gap-4 shrink-0 overflow-x-auto no-scrollbar pb-1 w-full md:w-auto">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-slate-500 uppercase px-1 block">{d.color || "Color"}</label>
+                    <input type="color" value={textColor} onChange={(e) => setTextColor(e.target.value)} className="w-10 h-10 rounded cursor-pointer border-none p-0 bg-transparent" />
+                  </div>
+                  <div className="space-y-1 min-w-[100px]">
+                    <label className="text-[10px] font-bold text-slate-500 uppercase px-1 block">{d.size || "Size"}: {fontSize}px</label>
+                    <input type="range" min="10" max="100" value={fontSize} onChange={(e) => setFontSize(parseInt(e.target.value))} className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                  </div>
+                  <div className="space-y-1 min-w-[100px]">
+                    <label className="text-[10px] font-bold text-slate-500 uppercase px-1 block">{d.position || "Position"} X: {textX}%</label>
+                    <input type="range" min="0" max="100" value={textX} onChange={(e) => setTextX(parseInt(e.target.value))} className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                  </div>
+                  <div className="space-y-1 min-w-[100px]">
+                    <label className="text-[10px] font-bold text-slate-500 uppercase px-1 block">{d.position || "Position"} Y: {textY}%</label>
+                    <input type="range" min="0" max="100" value={textY} onChange={(e) => setTextY(parseInt(e.target.value))} className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            <div className={`flex gap-3 items-center flex-wrap justify-between ${mobileTab === 'edit' ? 'flex' : 'hidden md:flex'} mt-auto`}>
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 bg-slate-100 rounded-lg p-1 pr-2 shadow-inner">
+                   <button onClick={() => setEnhanceQuality(!enhanceQuality)} className={`p-1.5 px-3 rounded-md flex items-center gap-2 text-[10px] font-bold transition-all ${enhanceQuality ? 'bg-white shadow-sm text-blue-600 translate-y-[-1px]' : 'text-slate-600 hover:text-slate-800 hover:bg-slate-200'}`}>
+                     <Wand2 className="w-3.5 h-3.5" /> {d.enhanceQuality || "Enhance"}
+                   </button>
+                   <select 
+                      value={enhanceResolution} 
+                      onChange={(e) => setEnhanceResolution(e.target.value as any)}
+                      className="text-[10px] bg-transparent font-bold border-l border-slate-300 pl-2 ml-1 outline-none text-slate-700 cursor-pointer uppercase tracking-tight"
+                   >
+                      <option value="Original">{d.originalRes || "Original Res"}</option>
+                      <option value="HD">{d.hdRes || "HD (720p)"}</option>
+                      <option value="FHD">{d.fhdRes || "1K / FHD"}</option>
+                      <option value="2K">2K / QHD</option>
+                      <option value="4K">4K / UHD</option>
+                   </select>
+                </div>
+
+                <div className="h-6 w-px bg-slate-200 mx-1 hidden sm:block"></div>
+                
+                <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-lg">
+                  <button title={d.rotateLeft || "Rotate Left"} onClick={() => handleRotate(-90)} className="p-2 text-slate-600 hover:text-blue-600 hover:bg-white hover:shadow-sm rounded-md flex items-center transition-all bg-transparent">
+                    <RotateCcw className="w-3.5 h-3.5" />
+                  </button>
+                  <button title={d.rotateRight || "Rotate Right"} onClick={() => handleRotate(90)} className="p-2 text-slate-600 hover:text-blue-600 hover:bg-white hover:shadow-sm rounded-md flex items-center transition-all bg-transparent">
+                    <RotateCw className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex gap-2 w-full sm:w-auto">
+                <button onClick={onClose} className="px-4 py-2.5 text-slate-600 font-bold text-xs hover:bg-slate-100 rounded-xl transition-all flex-grow sm:flex-grow-0 active:scale-95">
+                  {d.cancel || "Cancel"}
+                </button>
+                <button onClick={handleSave} className="px-8 py-2.5 bg-blue-600 text-white rounded-xl flex items-center gap-2 font-bold text-xs hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all active:scale-95 flex-grow sm:flex-grow-0 justify-center">
+                  <Check className="w-4 h-4" /> {(d.applyEdits || "APPLY EDITS").toUpperCase()}
+                </button>
+              </div>
+            </div>
+
+            {mobileTab === 'seo' && (
+               <div className="flex md:hidden gap-2 items-center justify-between pt-2">
+                 <button onClick={() => setMobileTab('edit')} className="px-4 py-2.5 text-blue-600 font-bold text-xs bg-blue-50 rounded-xl transition-all flex-grow text-center active:scale-95 border border-blue-100">
+                   {d.goBackToEditor || "Go Back to Editor"}
+                 </button>
+                 <button onClick={handleSave} className="px-8 py-2.5 bg-blue-600 text-white rounded-xl flex items-center gap-2 font-bold text-xs hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all active:scale-95 flex-grow justify-center">
+                   <Check className="w-4 h-4" /> {(d.applyEdits || "APPLY EDITS").toUpperCase()}
+                 </button>
+               </div>
+            )}
           </div>
-          
-          <button onClick={handleSave} className="px-6 py-2.5 bg-blue-600 text-white rounded-lg flex items-center gap-2 font-medium hover:bg-blue-700 transition-colors w-full sm:w-auto justify-center">
-            <Check className="w-5 h-5" /> {d.applyEdits || "Apply Edits"}
-          </button>
         </div>
       </div>
     </div>
   );
-}
+};
