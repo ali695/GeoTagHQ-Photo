@@ -18,22 +18,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const messages = await getMessages(p.lang);
   const m = messages.tool || {};
   
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ais-pre-mmjuvtpvcoditfinnw5al2-488794791272.asia-southeast1.run.app';
+  const siteUrl = 'https://geotaghq.com';
   
   return {
     title: m.metaTitle,
     description: m.metaDesc,
     keywords: m.metaKeywords ? m.metaKeywords.split(',').map((k: string) => k.trim()) : undefined,
-    alternates: {
-      canonical: `${siteUrl}/${p.lang}/free-geo-tagging-tool`,
-      languages: {
-        ...LANGUAGES.reduce((acc, l) => {
-          acc[l.code] = l.code === 'en' ? `${siteUrl}/free-geo-tagging-tool` : `${siteUrl}/${l.code}/free-geo-tagging-tool`;
-          return acc;
-        }, {} as Record<string, string>),
-        'x-default': `${siteUrl}/free-geo-tagging-tool`,
-      }
-    },
     openGraph: {
       title: m.metaTitle,
       description: m.metaDesc,
@@ -47,10 +37,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: m.metaDesc,
       images: ['/og/free-geo-tagging-tool.svg'],
     },
-    robots: {
-      index: true,
-      follow: true,
-    }
   };
 }
 
@@ -59,7 +45,7 @@ export default async function LocalizedToolPage({ params }: Props) {
   const messages = await getMessages(p.lang);
   const faqs = messages.faq || [];
   
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ais-pre-mmjuvtpvcoditfinnw5al2-488794791272.asia-southeast1.run.app';
+  const siteUrl = 'https://geotaghq.com';
 
   const jsonLd = {
     "@context": "https://schema.org",
