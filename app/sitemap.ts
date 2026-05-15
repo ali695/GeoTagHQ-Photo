@@ -3,7 +3,7 @@ import { LANGUAGES } from '@/lib/constants';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://geotaghq.com';
-  const lastModified = new Date();
+  const lastModified = new Date("2026-05-15T13:35:58.744Z");
 
   const toolAlternates = LANGUAGES.reduce((acc, lang) => {
     acc[lang.code] = lang.code === 'en' ? `${baseUrl}/free-geo-tagging-tool` : `${baseUrl}/${lang.code}/free-geo-tagging-tool`;
@@ -23,7 +23,37 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }));
 
   return [
+    {
+      url: `${baseUrl}/`,
+      lastModified,
+      changeFrequency: 'weekly',
+      priority: 1.0,
+    },
     ...toolPages,
+    {
+      url: `${baseUrl}/how-it-works`,
+      lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/geotagging-for-local-seo`,
+      lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/about`,
+      lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/contact`,
+      lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.5,
+    },
     {
       url: `${baseUrl}/privacy-policy`,
       lastModified,
@@ -37,22 +67,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.3,
     },
     {
-      url: `${baseUrl}/contact`,
-      lastModified,
-      changeFrequency: 'yearly',
-      priority: 0.5,
-    },
-    {
       url: `${baseUrl}/disclaimer`,
       lastModified,
       changeFrequency: 'yearly',
       priority: 0.3,
-    },
-    {
-      url: `${baseUrl}/about`,
-      lastModified,
-      changeFrequency: 'monthly',
-      priority: 0.7,
     }
   ];
 }

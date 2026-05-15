@@ -13,6 +13,16 @@ export async function generateMetadata(): Promise<Metadata> {
     title: m.metaTitle,
     description: m.metaDesc,
     keywords: m.metaKeywords ? m.metaKeywords.split(',').map((k: string) => k.trim()) : undefined,
+    alternates: {
+      canonical: `${siteUrl}/free-geo-tagging-tool`,
+      languages: {
+        ...LANGUAGES.reduce((acc, l) => {
+          acc[l.code] = l.code === 'en' ? `${siteUrl}/free-geo-tagging-tool` : `${siteUrl}/${l.code}/free-geo-tagging-tool`;
+          return acc;
+        }, {} as Record<string, string>),
+        'x-default': `${siteUrl}/free-geo-tagging-tool`,
+      }
+    },
     openGraph: {
       title: m.metaTitle,
       description: m.metaDesc,
@@ -26,6 +36,10 @@ export async function generateMetadata(): Promise<Metadata> {
       description: m.metaDesc,
       images: ['/og/free-geo-tagging-tool.svg'],
     },
+    robots: {
+      index: true,
+      follow: true,
+    }
   };
 }
 
