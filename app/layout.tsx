@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { headers } from 'next/headers';
+import { Analytics } from '@vercel/analytics/next';
 import './globals.css'; // Global styles
 
 export const viewport: Viewport = {
@@ -90,7 +91,10 @@ export default async function RootLayout({children}: {children: React.ReactNode}
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body suppressHydrationWarning>{children}</body>
+      <body suppressHydrationWarning>
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }
