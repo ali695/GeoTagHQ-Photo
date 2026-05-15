@@ -1,6 +1,10 @@
-import type {Metadata} from 'next';
+import type { Metadata, Viewport } from 'next';
 import { headers } from 'next/headers';
 import './globals.css'; // Global styles
+
+export const viewport: Viewport = {
+  themeColor: "#2563eb",
+};
 
 export const metadata: Metadata = {
   title: {
@@ -12,6 +16,17 @@ export const metadata: Metadata = {
   authors: [{ name: 'GeoTagHQ' }],
   publisher: 'GeoTagHQ',
   metadataBase: new URL('https://geotaghq.com'),
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon-96x96.png", sizes: "96x96", type: "image/png" }
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }
+    ]
+  },
+  manifest: "/site.webmanifest",
 };
 
 export default async function RootLayout({children}: {children: React.ReactNode}) {
@@ -41,7 +56,7 @@ export default async function RootLayout({children}: {children: React.ReactNode}
     "@type": "SoftwareApplication",
     "name": "GeoTagHQ",
     "url": siteUrl,
-    "logo": `${siteUrl}/icon.svg`,
+    "logo": `${siteUrl}/favicon.svg`,
     "description": "Professional free online geo tagging tool for photographers and local SEO experts. Add GPS coordinates and advanced metadata to photos.",
     "applicationCategory": "MultimediaApplication",
     "operatingSystem": "Web",

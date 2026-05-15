@@ -12,8 +12,16 @@ export default function Header({ lang = 'en', messages }: { lang?: string, messa
     <header className="border-b border-slate-200 bg-white sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <Link href={toolLink} className="flex items-center gap-2 group hover:opacity-90 transition-opacity">
-            <Image src="/logo.svg" alt="GeoTagHQ Logo" width={150} height={40} className="w-auto h-9" unoptimized priority />
+          <Link href="/" className="flex items-center gap-2 group hover:opacity-90 transition-opacity">
+            <Image 
+              src="/logo.svg" 
+              alt="GeoTagHQ Logo" 
+              width={320} 
+              height={100} 
+              className="h-8 sm:h-10 md:h-11 lg:h-12 w-auto object-contain max-w-[60vw] sm:max-w-none" 
+              priority 
+              unoptimized
+            />
           </Link>
           <div className="flex items-center gap-6">
             <nav className="hidden md:flex items-center gap-6">

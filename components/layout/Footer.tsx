@@ -11,8 +11,15 @@ export default function Footer({ lang = 'en', messages }: { lang?: string, messa
     <footer className="bg-slate-900 border-t border-slate-800 text-slate-400 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
         <div className="col-span-1 md:col-span-2">
-          <Link href={toolLink} className="inline-flex mb-4 hover:opacity-90 transition-opacity">
-            <Image src="/logo-dark.svg" alt="GeoTagHQ Logo" width={150} height={40} className="w-auto h-8" unoptimized />
+          <Link href="/" className="inline-flex mb-4 hover:opacity-90 transition-opacity">
+            <Image 
+              src="/logo-dark.svg" 
+              alt="GeoTagHQ Logo" 
+              width={320} 
+              height={100} 
+              className="w-full max-w-[170px] md:max-w-[220px] h-auto object-contain" 
+              unoptimized
+            />
           </Link>
           <p className="text-sm text-slate-400 leading-relaxed max-w-sm mb-6">
             {mCommon.footerDesc || 'A free, browser-based geo tagging tool for adding exact GPS locations to your photos instantly. Built for local SEO, photographers, and privacy-conscious users.'}
