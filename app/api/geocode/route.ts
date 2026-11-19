@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
+import { SITE_URL } from '@/lib/site';
 
 const schema = z.object({
   query: z.string().min(2).max(200)
@@ -9,6 +10,7 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const query = searchParams.get('q') || '';
+    const lang = (searchParams.get('lang') || '').replace(/[^a-z-]/gi, '').slice(0, 5);
 
     const validationResult = schema.safeParse({ query });
 
@@ -21,12 +23,12 @@ export async function GET(request: Request) {
 
     const validQuery = validationResult.data.query;
 
-    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(validQuery)}&format=json&addressdetails=1&limit=8`;
+    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(validQuery)}&format=json&addressdetails=1&limit=8${lang ? `&accept-language=${lang}` : ''}`;
     
     const response = await fetch(url, {
       headers: {
         'Accept': 'application/json',
-        'User-Agent': 'GeoTagHQ/1.0 (ma7122671@gmail.com)'
+        'User-Agent': `PinPixl/1.0 (+${SITE_URL})`
       },
     });
 

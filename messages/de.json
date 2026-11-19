@@ -23,7 +23,7 @@
     "h1": "Geo-Tagging für Lokale Sichtbarkeit",
     "subtitle": "Fügen Sie Ihren Fotos in Sekunden GPS-Standortdaten hinzu. Ideal für Ihr Google Unternehmensprofil (Google My Business), Handwerker, Dienstleister und Immobilienmakler. 100% datenschutzfreundlich direkt im Browser.",
     "privacyTitle": "Voller Datenschutz für Ihre Bilder",
-    "privacyDesc": "Ihre Immobilienbilder und Projektfotos bleiben bei Ihnen. Im Gegensatz zu anderen Tools verarbeiten wir Ihre Bilder lokal im Browser. Es findet kein Upload auf unsere Server statt.",
+    "privacyDesc": "Um die Metadaten zu schreiben, wird Ihr Foto über eine verschlüsselte Verbindung an unseren Server gesendet, im Arbeitsspeicher verarbeitet und an Sie zurückgegeben. Wir speichern Ihre Fotos nicht und behalten keine Kopien.",
     "seoTitle": "Mehr Sichtbarkeit im Google Unternehmensprofil",
     "seoDesc": "Lokale SEO erfordert präzise Standortdaten. Wenn Sie als Handwerker oder Dienstleister Fotos bei Google Maps hochladen, signalisieren EXIF-Metadaten mit GPS-Koordinaten genau Ihr Einzugsgebiet.",
     "howItWorks": "Standortdaten in 3 Schritten hinzufügen",
@@ -34,7 +34,7 @@
     "step2Desc": "Suchen Sie eine Adresse oder platzieren Sie den Pin direkt am Einsatzort.",
     "step3Title": "3. Speichern & Herunterladen",
     "step3Desc": "Die GPS-Koordinaten werden fest in die EXIF-Daten geschrieben.",
-    "metaKeywords": "Geo-Tagging, EXIF-Editor, GPS-Standort, Lokales SEO, Foto-Metadaten, Standort zum Foto hinzufügen, GeoTagHQ",
+    "metaKeywords": "Geo-Tagging, EXIF-Editor, GPS-Standort, Lokales SEO, Foto-Metadaten, Standort zum Foto hinzufügen, PinPixl",
     "step1Drop": "1. Fotos ablegen",
     "step2Pin": "2. Ort markieren",
     "step3Apply": "3. Geotag anwenden",
@@ -47,8 +47,8 @@
     "compressMedium": "Mittel",
     "compressHigh": "Hoch",
     "uploadToConfigure": "Laden Sie ein Bild hoch, um Metadaten zu konfigurieren",
-    "privacyNote": "Datenschutzhinweis: JPG/JPEG-Fotos werden direkt in Ihrem Browser verarbeitet.",
-    "privacyNoteSub": "Um andere Formate zu unterstützen, kann Ihr Bild von unserem Server sicher verarbeitet und sofort nach dem Geotagging gelöscht werden.",
+    "privacyNote": "Datenschutzhinweis: Ihre Fotos werden im Arbeitsspeicher verarbeitet und niemals gespeichert.",
+    "privacyNoteSub": "Zum Schreiben der Metadaten und Umwandeln des Formats wird jedes Foto verschlüsselt an unseren Server gesendet, verarbeitet und als Download an Sie zurückgegeben. Es wird nichts gespeichert.",
     "dragDropHere": "Ziehen Sie Fotos hierher oder klicken Sie zur Auswahl",
     "supportsFormats": "Unterstützt JPG, JPEG, PNG, WebP, HEIC, HEIF, AVIF und TIFF.",
     "noLocationSelected": "Noch kein Ort ausgewählt.",
@@ -104,7 +104,7 @@
     },
     {
       "q": "Werden meine Immobilienbilder gespeichert?",
-      "a": "Nein. Wir verstehen die Diskretion von Immobilienmaklern. Die Verarbeitung erfolgt zu 100% in Ihrem lokalen Browser."
+      "a": "Nein. Ihre Bilder werden nur kurz im Arbeitsspeicher unseres Servers verarbeitet, um die Metadaten zu schreiben, und danach weder gespeichert noch weitergegeben."
     }
   ],
   "extract": {

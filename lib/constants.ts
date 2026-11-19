@@ -12,7 +12,6 @@ export const LANGUAGES = [
   { code: 'id', name: 'Bahasa Indonesia' },
   { code: 'ja', name: '日本語' },
   { code: 'ko', name: '한국어' },
-  { code: 'zh', name: '中文' },
 ];
 
 export const UI_LABELS: Record<string, any> = {

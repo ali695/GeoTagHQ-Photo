@@ -1,4 +1,4 @@
-import exifr from 'exifr';
+import { parseExifAny } from './exifAny';
 import piexif from 'piexifjs';
 import { GeoCoordinates } from '@/types/geo';
 import { ImageMetadata } from '@/types/image';
@@ -19,11 +19,8 @@ function degToDmsRational(degrees: number): [[number, number], [number, number],
 
 export async function readImageMetadata(file: File): Promise<ImageMetadata> {
   try {
-    const data = await exifr.parse(file, { tiff: true, exif: true, gps: true }).catch(err => {
-      // Suppress "Unknown file format" error as it just means exifr doesn't support this specific file's signature
-      if (err?.message?.includes('Unknown file format')) return undefined;
-      throw err;
-    });
+    // parseExifAny also reads WebP, which exifr alone can't.
+    const data = await parseExifAny(file, { tiff: true, exif: true, gps: true }).catch(() => undefined);
     
     // Fallbacks
     let width, height;
@@ -53,7 +50,7 @@ export async function readImageMetadata(file: File): Promise<ImageMetadata> {
       cameraMake: data?.Make,
       cameraModel: data?.Model,
       dateTaken: data?.DateTimeOriginal || data?.CreateDate,
-      gps: data?.latitude && data?.longitude ? {
+      gps: Number.isFinite(data?.latitude) && Number.isFinite(data?.longitude) ? {
         lat: data.latitude,
         lng: data.longitude
       } : undefined,

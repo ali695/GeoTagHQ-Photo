@@ -23,7 +23,7 @@
     "h1": "Free Geo Tagging Tool",
     "subtitle": "Add GPS location to photos in seconds. Edit EXIF metadata, plot coordinates on a map, and ready your images for local SEO—100% free and processed privately in your browser.",
     "privacyTitle": "A Free Geo Tagging Tool Built for Privacy",
-    "privacyDesc": "Most online geotagging tools force you to upload your sensitive images to their servers. Our tool utilizes advanced web technologies to parse and write EXIF metadata directly inside your browser. Your photos never leave your device, ensuring total privacy.",
+    "privacyDesc": "To write metadata, your photo is sent over an encrypted connection to our server, processed in memory and returned to you. We never save your photos or keep copies.",
     "seoTitle": "Geotag Images for Local SEO",
     "seoDesc": "Uploading photos to Google Business Profile (GBP) or a local business directory? Adding accurate location metadata helps establish geographical relevance. Geotag photos online before posting to signal exactly where your business operates.",
     "howItWorks": "How the Free Geo Tagging Tool Works",
@@ -34,7 +34,7 @@
     "step2Desc": "Search an address, drag the map marker, or manually enter latitude and longitude coordinates.",
     "step3Title": "3. Download",
     "step3Desc": "Click write, and we embed the exact GPS location into the photo's EXIF data. Download instantly.",
-    "metaKeywords": "Geo Tagging, EXIF Editor, GPS Location, Local SEO, Photo Metadata, Add location to photo, GeoTagHQ",
+    "metaKeywords": "Geo Tagging, EXIF Editor, GPS Location, Local SEO, Photo Metadata, Add location to photo, PinPixl",
     "step1Drop": "1. Drop Photos",
     "step2Pin": "2. Pin Location",
     "step3Apply": "3. Apply Geotag",
@@ -47,8 +47,8 @@
     "compressMedium": "Medium",
     "compressHigh": "High",
     "uploadToConfigure": "Upload an image to configure metadata",
-    "privacyNote": "Privacy Note: JPG/JPEG photos are processed directly in your browser.",
-    "privacyNoteSub": "To support other formats (like PNG, HEIC, WebP), your image may be securely processed by our server and deleted immediately after geotagging.",
+    "privacyNote": "Privacy note: your photos are processed in memory and never stored.",
+    "privacyNoteSub": "To write metadata and convert formats, each photo is sent over an encrypted connection to our server, processed, and returned to you as a download. Nothing is saved.",
     "dragDropHere": "Drag & drop photos here, or click to select",
     "supportsFormats": "Supports JPG, JPEG, PNG, WebP, HEIC, HEIF, AVIF, and TIFF.",
     "noLocationSelected": "No location selected yet.",
@@ -106,7 +106,7 @@
     },
     {
       "q": "Does this tool upload my photos to your servers?",
-      "a": "No. Our application leverages modern web features to process the EXIF data entirely within your browser memory. We never see, store, or transmit your files permanently. Server processing is used only momentarily for compatibility if requested, and files are not saved."
+      "a": "No. Photos are processed in memory on our server only to write the metadata and convert the format, then returned to you. They are not saved, shared or used for anything else."
     }
   ],
   "extract": {

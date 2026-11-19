@@ -28,9 +28,33 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
+      // "/" is now the tools homepage (it used to redirect to the geotag tool).
+      // English lives at the root, so /en/... is a duplicate.
       {
-        source: '/',
+        source: '/en/:path*',
+        destination: '/:path*',
+        permanent: true,
+      },
+      // Chinese was listed before but never translated; send it to the English page.
+      {
+        source: '/zh/:path*',
         destination: '/free-geo-tagging-tool',
+        permanent: true,
+      },
+      // Old URLs that were in the sitemap but never existed.
+      {
+        source: '/how-it-works',
+        destination: '/free-geo-tagging-tool#how-it-works',
+        permanent: true,
+      },
+      {
+        source: '/geotagging-for-local-seo',
+        destination: '/free-geo-tagging-tool#local-seo',
+        permanent: true,
+      },
+      {
+        source: '/terms-of-service',
+        destination: '/terms',
         permanent: true,
       },
     ];

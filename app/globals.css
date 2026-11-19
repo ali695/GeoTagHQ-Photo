@@ -1,5 +1,58 @@
 @import "tailwindcss";
 
+@theme {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", "Noto Sans", "Noto Sans Arabic", "Noto Sans Devanagari", "Hiragino Sans", "Apple SD Gothic Neo", sans-serif;
+  --font-display: var(--font-jakarta), var(--font-inter), ui-sans-serif, system-ui, "Noto Sans", sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Headings use the display face. */
+h1, h2, h3 {
+  font-family: var(--font-display);
+  letter-spacing: -0.015em;
+}
+
+/* Soft map-grid texture used behind hero and CTA. */
+.bg-map-grid {
+  background-image:
+    linear-gradient(to right, rgb(148 163 184 / 0.18) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(148 163 184 / 0.18) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+@keyframes ping-soft {
+  0% { transform: scale(0.8); opacity: 0.7; }
+  80%, 100% { transform: scale(2.2); opacity: 0; }
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-float-slow { animation: float-slow 6s ease-in-out infinite; }
+.animate-ping-soft { animation: ping-soft 2.4s cubic-bezier(0, 0, 0.2, 1) infinite; }
+.animate-marquee { animation: marquee 38s linear infinite; }
+.animate-rise { animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.mask-fade-x {
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-float-slow, .animate-ping-soft, .animate-marquee, .animate-rise { animation: none; }
+  html { scroll-behavior: auto; }
+}
+
 /* Leaflet Map Styles */
 @import "leaflet/dist/leaflet.css";
 

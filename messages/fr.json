@@ -23,7 +23,7 @@
     "h1": "Outil de Géolocalisation pour Commerces Locaux",
     "subtitle": "Insérez des métadonnées de localisation et coordonnées GPS directement dans l'EXIF de vos photos d'entreprise. Idéal pour optimiser votre fiche Google Business Profile et dominer le référencement local.",
     "privacyTitle": "Garantie de Sécurité et Confidentialité",
-    "privacyDesc": "Ne risquez pas la fuite de vos clichés exclusifs. Notre outil traite vos photos d'agences immobilières et commerces locaux entièrement dans votre navigateur. Aucun transfert externe n'a lieu.",
+    "privacyDesc": "Pour écrire les métadonnées, votre photo est envoyée via une connexion chiffrée à notre serveur, traitée en mémoire puis renvoyée. Nous n'enregistrons jamais vos photos et n'en gardons aucune copie.",
     "seoTitle": "Boostez votre présence sur Google Maps",
     "seoDesc": "Le SEO local s'appuie énormément sur le Google Business Profile (anciennement Google My Business). Géolocaliser vos photos d'entreprise prouve votre présence géographique locale.",
     "howItWorks": "Comment insérer un point GPS dans une image",
@@ -34,7 +34,7 @@
     "step2Desc": "Trouvez l'adresse du commerce local sur la carte interactive.",
     "step3Title": "3. Exporter l'image",
     "step3Desc": "Téléchargez votre photo optimisée et insérez-la dans Google Business Profile.",
-    "metaKeywords": "Géolocalisation, Éditeur EXIF, Localisation GPS, SEO Local, Métadonnées Photo, Ajouter localisation photo, GeoTagHQ",
+    "metaKeywords": "Géolocalisation, Éditeur EXIF, Localisation GPS, SEO Local, Métadonnées Photo, Ajouter localisation photo, PinPixl",
     "step1Drop": "1. Déposez Photos",
     "step2Pin": "2. Épinglez l'emplacement",
     "step3Apply": "3. Appliquer Géotag",
@@ -47,8 +47,8 @@
     "compressMedium": "Moyenne",
     "compressHigh": "Haute",
     "uploadToConfigure": "Téléchargez une image pour configurer les métadonnées",
-    "privacyNote": "Note de confidentialité : Les photos JPG/JPEG sont traitées directement dans votre navigateur.",
-    "privacyNoteSub": "Pour prendre en charge d'autres formats (comme PNG, HEIC, WebP), votre image peut être traitée en toute sécurité par notre serveur et supprimée immédiatement.",
+    "privacyNote": "Note de confidentialité : vos photos sont traitées en mémoire et ne sont jamais stockées.",
+    "privacyNoteSub": "Pour écrire les métadonnées et convertir le format, chaque photo est envoyée de façon chiffrée à notre serveur, traitée puis renvoyée en téléchargement. Rien n'est conservé.",
     "dragDropHere": "Glissez-déposez les photos ici, ou cliquez pour sélectionner",
     "supportsFormats": "Prend en charge JPG, JPEG, PNG, WebP, HEIC, HEIF, AVIF et TIFF.",
     "noLocationSelected": "Aucun emplacement sélectionné pour le moment.",
@@ -100,7 +100,7 @@
     },
     {
       "q": "Est-ce sécurisé pour mes photos d'entreprise ?",
-      "a": "Absolument. Traitées en local sur votre appareil, aucune photo de vos agences immobilières ou clients n'est stockée chez nous."
+      "a": "Oui. Vos photos sont traitées en mémoire sur notre serveur uniquement pour écrire les métadonnées, puis vous sont renvoyées. Aucune photo n'est stockée chez nous."
     },
     {
       "q": "Comment cela améliore-t-il le référencement local ?",

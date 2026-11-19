@@ -23,7 +23,7 @@
     "h1": "Geoetiquetado de Fotos para SEO Local",
     "subtitle": "Inserta coordenadas GPS a tus imágenes en segundos. Impulsa la visibilidad de tus negocios locales e inmobiliarias en Google Maps. 100% gratis y procesado de forma privada en tu navegador.",
     "privacyTitle": "Una herramienta segura para fotógrafos y empresas",
-    "privacyDesc": "No subimos tus imágenes a ningún servidor externo. Procesamos los metadatos EXIF directamente en tu navegador, protegiendo la privacidad de tus trabajos de turismo e inmobiliaria.",
+    "privacyDesc": "Para escribir los metadatos, tu foto se envía mediante una conexión cifrada a nuestro servidor, se procesa en memoria y se te devuelve. Nunca guardamos tus fotos ni conservamos copias.",
     "seoTitle": "Optimiza negocios locales para Google Maps",
     "seoDesc": "Para el SEO local, las coordenadas GPS en las fotos son vitales. Etiqueta geográficamente imágenes antes de publicarlas en Google Business Profile para destacar frente a la competencia de tu ciudad.",
     "howItWorks": "Cómo geolocalizar imágenes fácilmente",
@@ -34,7 +34,7 @@
     "step2Desc": "Escribe una dirección local o mueve el pin hasta encontrar la latitud y longitud exactas.",
     "step3Title": "3. Descarga la imagen optimizada",
     "step3Desc": "El GPS se incrusta permanentemente. Lista para subir a Google Maps.",
-    "metaKeywords": "Geoetiquetado, Editor EXIF, Ubicación GPS, SEO Local, Metadatos de Foto, Añadir ubicación a foto, GeoTagHQ",
+    "metaKeywords": "Geoetiquetado, Editor EXIF, Ubicación GPS, SEO Local, Metadatos de Foto, Añadir ubicación a foto, PinPixl",
     "step1Drop": "1. Suelta las fotos",
     "step2Pin": "2. Fija la ubicación",
     "step3Apply": "3. Aplicar Geoetiqueta",
@@ -47,8 +47,8 @@
     "compressMedium": "Media",
     "compressHigh": "Alta",
     "uploadToConfigure": "Sube una imagen para configurar los metadatos",
-    "privacyNote": "Nota de privacidad: Las fotos JPG/JPEG se procesan directamente en su navegador.",
-    "privacyNoteSub": "Para otros formatos, su imagen puede ser procesada de forma segura por nuestro servidor y eliminada inmediatamente después de geoetiquetar.",
+    "privacyNote": "Nota de privacidad: tus fotos se procesan en memoria y nunca se guardan.",
+    "privacyNoteSub": "Para escribir los metadatos y convertir el formato, cada foto se envía cifrada a nuestro servidor, se procesa y se te devuelve como descarga. No se guarda nada.",
     "dragDropHere": "Arrastra y suelta las fotos aquí, o haz clic para seleccionar",
     "supportsFormats": "Admite JPG, JPEG, PNG, WebP, HEIC, HEIF, AVIF y TIFF.",
     "noLocationSelected": "Aún no se ha seleccionado ninguna ubicación.",
@@ -104,7 +104,7 @@
     },
     {
       "q": "¿Mis fotos se guardan en la nube?",
-      "a": "De ninguna manera. El procesamiento es local en tu navegador."
+      "a": "No. Tus fotos se procesan en la memoria de nuestro servidor solo para escribir los metadatos y se te devuelven al instante. No se guardan ni se comparten."
     }
   ],
   "extract": {

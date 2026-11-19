@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { ImageMetadata } from '@/types/image';
 import { Camera, Calendar, HardDrive, FileType, Map, Wand2, Copy, CheckCircle2 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { generateSeoMetadata } from '@/lib/gemini';
+import { generateSeoMetadata } from '@/lib/seoClient';
 import { UI_LABELS } from '@/lib/constants';
 
 interface MetadataPanelProps {

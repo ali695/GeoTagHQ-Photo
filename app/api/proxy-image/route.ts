@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { SITE_URL } from '@/lib/site';
 
 const isInternalOrPrivate = (hostname: string) => {
   if (['localhost', '127.0.0.1', '0.0.0.0'].includes(hostname)) return true;
@@ -36,7 +37,7 @@ export async function POST(req: NextRequest) {
     try {
       fetchRes = await fetch(targetUrl.toString(), {
         headers: {
-          'User-Agent': 'Mozilla/5.0 (compatible; GeoTagHQBot/1.0; +http://geotaghq.com/)',
+          'User-Agent': `Mozilla/5.0 (compatible; PinPixlBot/1.0; +${SITE_URL}/)`,
           'Accept': 'image/jpeg,image/png,image/webp,image/avif,image/heic,image/heif,image/tiff,*/*;q=0.8',
         },
         signal: controller.signal

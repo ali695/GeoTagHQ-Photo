@@ -1,6 +1,12 @@
+// SERVER ONLY. Called from /api/seo-metadata and /api/alt-text, never from the browser,
+// so the API key is not shipped to visitors.
 import { GoogleGenAI } from "@google/genai";
 
-const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+// Prefer the server-only GEMINI_API_KEY. NEXT_PUBLIC_GEMINI_API_KEY is accepted as a
+// fallback so existing deployments keep working, but it should be removed and the key
+// rotated: anything named NEXT_PUBLIC_ is visible to every visitor.
+export const geminiApiKey = () => process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+export const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-3-flash-preview";
 
 export async function generateSeoMetadata(params: {
   businessName?: string;
@@ -15,8 +21,9 @@ export async function generateSeoMetadata(params: {
   stateRegion?: string;
   countryCode?: string;
 }) {
+  const apiKey = geminiApiKey();
   if (!apiKey) {
-    throw new Error('NEXT_PUBLIC_GEMINI_API_KEY is not defined');
+    throw new Error('GEMINI_API_KEY is not configured');
   }
 
   const ai = new GoogleGenAI({ apiKey });
@@ -66,7 +73,7 @@ export async function generateSeoMetadata(params: {
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: GEMINI_MODEL,
       contents: [{ parts: [{ text: prompt }] }],
       config: {
           responseMimeType: "application/json"

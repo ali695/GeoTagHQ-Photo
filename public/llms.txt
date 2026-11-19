@@ -1,20 +1,33 @@
-# GeoTagHQ
+# PinPixl
 
-GeoTagHQ is a free online geo tagging tool for adding GPS coordinates and local SEO metadata to photos.
+PinPixl is a set of free online photo tools for location, metadata and image formats. No sign-up. Most tools run in the visitor's browser; when the server is used, files are processed in memory and not stored.
 
-## Main Tool
-/free-geo-tagging-tool
+## Location & metadata
+- Geo Tagging Tool: add GPS coordinates and local SEO metadata (title, keywords, business name) to photos. Available in 13 languages. /free-geo-tagging-tool
+- EXIF Viewer: see camera, lens, settings, date, GPS on a map and every EXIF/XMP/IPTC tag. /exif-viewer
+- Photo Location Finder: find where a photo was taken from its GPS metadata. /photo-location-finder
+- Remove EXIF Data: strip GPS location and metadata from photos, lossless for JPG/PNG/WebP. /remove-exif-data
+- Lat Long Finder: get latitude and longitude for any address, or the address for coordinates. /lat-long-finder
 
-## Features
-- Add GPS coordinates to photos
-- Select real map locations
-- Edit local SEO metadata
-- Add title, description, keywords, business name, service, city, district and country
-- Generate suggested alt text
-- Download optimized images
+## Convert images
+- Image Converter (any to JPG, PNG or WebP): /image-converter
+- HEIC to JPG: /heic-to-jpg
+- HEIC to PNG: /heic-to-png
+- WebP to JPG: /webp-to-jpg
+- WebP to PNG: /webp-to-png
+- JPG to WebP: /jpg-to-webp
+- PNG to WebP: /png-to-webp
+- PNG to JPG: /png-to-jpg
+- JPG to PNG: /jpg-to-png
+- AVIF to JPG: /avif-to-jpg
+- AVIF to PNG: /avif-to-png
+- SVG to PNG: /svg-to-png
 
-## Important Note
-Geo tagging and metadata can support image organization and local SEO workflows, but they do not guarantee Google rankings.
+## Optimize & SEO
+- Image Compressor: reduce JPG, PNG and WebP file size. /image-compressor
+
+## Important note
+Geotagging can support image organisation and local SEO workflows, but it does not guarantee Google rankings. Google Business Profile removes EXIF data from published photos.
 
 ## Pages
 - Privacy Policy: /privacy-policy

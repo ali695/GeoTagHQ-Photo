@@ -5,7 +5,8 @@ import ReactCrop, { Crop, PixelCrop, centerCrop, makeAspectCrop } from 'react-im
 import 'react-image-crop/dist/ReactCrop.css';
 import { X, RotateCcw, RotateCw, Check, Wand2, Info, Tag, FileText, Type, Image as ImageIcon } from 'lucide-react';
 import { ImageFile, ImageMetadata } from '@/types/image';
-import { generateSeoMetadata } from '@/lib/gemini';
+import { generateSeoMetadata } from '@/lib/seoClient';
+import { AI_ENABLED } from '@/lib/features';
 import { UI_LABELS } from '@/lib/constants';
 
 interface ImageEditorModalProps {
@@ -547,6 +548,7 @@ export default function ImageEditorModal({ file, onClose, onSave, d = {}, global
                  <Info className="w-4 h-4 text-blue-500" /> {d.individualSeoMeta || "Individual SEO Meta"}
                </h4>
                <div className="flex items-center gap-2">
+                 {AI_ENABLED && (
                  <button 
                    onClick={handleAiSuggest}
                    disabled={isGeneratingAi}
@@ -555,6 +557,7 @@ export default function ImageEditorModal({ file, onClose, onSave, d = {}, global
                    <Wand2 className={`w-3 h-3 ${isGeneratingAi ? 'animate-pulse' : ''}`} />
                    {isGeneratingAi ? '...' : currentLabels.aiSuggest}
                  </button>
+                 )}
                </div>
              </div>
              

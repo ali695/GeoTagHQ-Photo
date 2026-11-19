@@ -23,7 +23,7 @@
     "h1": "Geotag Bedrijfsfoto's in één klik",
     "subtitle": "Koppel razendsnel locatiegegevens aan afbeeldingen voor dienstverleners en winkels. Boost uw Google Bedrijfsprofiel (GMB) en lokale SEO met 100% privacy in uw eigen browser.",
     "privacyTitle": "Uw bedrijfsfoto's blijven privé",
-    "privacyDesc": "Geen data-opslag op onze servers. We bewerken de locatie- en EXIF-data direct in uw internetbrowser. Ideaal voor privacygevoelige bedrijfsfoto's en panden.",
+    "privacyDesc": "Om de metadata te schrijven, wordt uw foto via een versleutelde verbinding naar onze server gestuurd, in het geheugen verwerkt en aan u teruggegeven. We bewaren geen foto's en houden geen kopieën.",
     "seoTitle": "Bereik meer klanten via Lokale SEO",
     "seoDesc": "Maakt u gebruik van een Google Bedrijfsprofiel? Lokale zoekopdrachten hechten veel waarde aan geo-signalen. Met een correcte geotag bij alle bedrijfsfoto's vergroot de kans om door lokale klanten ontdekt te worden.",
     "howItWorks": "Locatie toevoegen aan afbeeldingen",
@@ -34,7 +34,7 @@
     "step2Desc": "Zoek je bedrijf op de map of typ direct uw coördinaten in.",
     "step3Title": "3. Geotaggen en Downloaden",
     "step3Desc": "We stoppen de locatie en SEO-data in het EXIF bestand.",
-    "metaKeywords": "Geo-tagging, EXIF-editor, GPS-locatie, Lokale SEO, Foto metadata, Locatie toevoegen aan foto, GeoTagHQ",
+    "metaKeywords": "Geo-tagging, EXIF-editor, GPS-locatie, Lokale SEO, Foto metadata, Locatie toevoegen aan foto, PinPixl",
     "step1Drop": "1. Foto's Toevoegen",
     "step2Pin": "2. Locatie Markeren",
     "step3Apply": "3. Geotag Toepassen",
@@ -47,8 +47,8 @@
     "compressMedium": "Gemiddeld",
     "compressHigh": "Hoog",
     "uploadToConfigure": "Upload een afbeelding om metadata te configureren",
-    "privacyNote": "Privacyopmerking: JPG/JPEG-foto's worden direct in uw browser verwerkt.",
-    "privacyNoteSub": "Voor andere indelingen kan uw afbeelding veilig door onze server worden verwerkt en onmiddellijk worden verwijderd.",
+    "privacyNote": "Privacyopmerking: uw foto's worden in het geheugen verwerkt en nooit opgeslagen.",
+    "privacyNoteSub": "Om metadata te schrijven en het formaat om te zetten, wordt elke foto versleuteld naar onze server gestuurd, verwerkt en als download aan u teruggegeven. Er wordt niets bewaard.",
     "dragDropHere": "Sleep foto's hierheen of klik om te selecteren",
     "supportsFormats": "Ondersteunt JPG, JPEG, PNG, WebP, HEIC, HEIF, AVIF en TIFF.",
     "noLocationSelected": "Nog geen locatie geselecteerd.",
@@ -100,7 +100,7 @@
     },
     {
       "q": "Slaat deze tool foto's op in een database?",
-      "a": "Nee. Omdat het script in uw eigen browser draait, blijft uw data uit onze bezitting en is de geotag veilig toegepast."
+      "a": "Nee. Uw foto's worden alleen in het geheugen van onze server verwerkt om de metadata te schrijven en daarna aan u teruggegeven. Ze worden niet opgeslagen of gedeeld."
     },
     {
       "q": "Werkt dit met alle foto of afbeeldingsformaten?",

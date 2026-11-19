@@ -23,7 +23,7 @@
     "h1": "Geotagging para SEO Local",
     "subtitle": "Adicione geolocalização às suas fotos em segundos. Impressione clientes e impulsione o seu Google Meu Negócio com metadatos precisos. Ferramenta gratuita e 100% privada.",
     "privacyTitle": "Privacidade total para suas imagens profissionais",
-    "privacyDesc": "Sabemos que fotos com geolocalização podem ser sensíveis. Processe tudo diretamente no seu navegador, sem envio de arquivos para a nuvem. Seus dados estão seguros conosco, no Brasil ou em Portugal.",
+    "privacyDesc": "Para gravar os metadados, sua foto é enviada por uma conexão criptografada ao nosso servidor, processada em memória e devolvida para você. Nunca guardamos suas fotos nem mantemos cópias.",
     "seoTitle": "Destaque suas empresas locais no Google",
     "seoDesc": "Se você é uma agência no Brasil ou Portugal, usar fotos otimizadas no Google Meu Negócio é um diferencial. Injetamos dados EXIF nas imagens para comprovar a atividade da empresa na região.",
     "howItWorks": "Como colocar GPS na foto rapidamente",
@@ -34,7 +34,7 @@
     "step2Desc": "Busque pelo endereço no mapa ou informe as coordenadas desejadas.",
     "step3Title": "3. Gravar e Baixar",
     "step3Desc": "As etiquetas EXIF serão aplicadas e sua foto com geolocalização estará pronta.",
-    "metaKeywords": "Geo Tagging, Editor EXIF, Localização GPS, SEO Local, Metadados de Foto, Adicionar localização à foto, GeoTagHQ",
+    "metaKeywords": "Geo Tagging, Editor EXIF, Localização GPS, SEO Local, Metadados de Foto, Adicionar localização à foto, PinPixl",
     "step1Drop": "1. Soltar Fotos",
     "step2Pin": "2. Fixar o local",
     "step3Apply": "3. Aplicar Geotag",
@@ -47,8 +47,8 @@
     "compressMedium": "Média",
     "compressHigh": "Alta",
     "uploadToConfigure": "Faça upload de uma imagem para configurar os metadados",
-    "privacyNote": "Nota de privacidade: Fotos JPG/JPEG são processadas diretamente no seu navegador.",
-    "privacyNoteSub": "Outros formatos podem ser processados com segurança por nosso servidor e excluídos imediatamente.",
+    "privacyNote": "Nota de privacidade: suas fotos são processadas em memória e nunca são armazenadas.",
+    "privacyNoteSub": "Para gravar os metadados e converter o formato, cada foto é enviada de forma criptografada ao nosso servidor, processada e devolvida como download. Nada é guardado.",
     "dragDropHere": "Arraste e solte fotos aqui, ou clique para selecionar",
     "supportsFormats": "Suporta JPG, JPEG, PNG, WebP, HEIC, HEIF, AVIF e TIFF.",
     "noLocationSelected": "Nenhum local selecionado.",
@@ -104,7 +104,7 @@
     },
     {
       "q": "Isto tem custos mentais ou de armazenamento?",
-      "a": "Não! Totalmente grátis e o processamento é fetio com Javascript no próprio dispositivo."
+      "a": "Não. É totalmente grátis. As fotos são processadas em memória no nosso servidor apenas para gravar os metadados e depois devolvidas para você, sem serem armazenadas."
     }
   ],
   "extract": {

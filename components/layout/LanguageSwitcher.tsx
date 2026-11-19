@@ -1,12 +1,40 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useState, useRef, useEffect } from 'react';
 import { LANGUAGES } from '@/lib/constants';
 
-export function LanguageSwitcher({ currentLang }: { currentLang: string }) {
+/**
+ * Keeps the visitor on the same page when switching language:
+ * /heic-to-jpg -> /de/heic-to-jpg, / -> /de. Pages that only exist in English
+ * (about, privacy...) fall back to the geotag tool, which exists in every language.
+ */
+export function LanguageSwitcher({
+  currentLang,
+  toolLangs = [],
+  toolSlugs = [],
+}: {
+  currentLang: string;
+  /** Languages (besides English) that have the full set of tool pages. */
+  toolLangs?: string[];
+  /** Tool paths like "/heic-to-jpg" that exist in those languages. */
+  toolSlugs?: string[];
+}) {
   const router = useRouter();
+  const pathname = usePathname() || '/';
+  const codes = LANGUAGES.map((l) => l.code);
+  const seg = pathname.split('/')[1];
+  const rest = codes.includes(seg) && seg !== 'en' ? pathname.slice(seg.length + 1) || '' : pathname === '/' ? '' : pathname;
+  const targetFor = (code: string) => {
+    if (code === 'en') return rest || '/';
+    if (rest === '/free-geo-tagging-tool') return `/${code}/free-geo-tagging-tool`;
+    if (toolLangs.includes(code)) {
+      if (rest === '') return `/${code}`;
+      if (toolSlugs.includes(rest)) return `/${code}${rest}`;
+    }
+    return `/${code}/free-geo-tagging-tool`;
+  };
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -25,7 +53,7 @@ export function LanguageSwitcher({ currentLang }: { currentLang: string }) {
       <button 
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors uppercase bg-slate-100 px-3 py-1.5 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-300"
+        className="flex items-center gap-1 text-sm font-semibold text-slate-700 hover:text-slate-950 transition-colors uppercase border border-slate-200 bg-white hover:bg-slate-50 px-3 py-2 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
         aria-expanded={isOpen}
       >
         {currentLang.toUpperCase()}
@@ -35,10 +63,10 @@ export function LanguageSwitcher({ currentLang }: { currentLang: string }) {
       </button>
       
       {isOpen && (
-        <div className="absolute end-0 mt-2 w-48 origin-top-right bg-white border border-slate-200 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-[100] max-h-[60vh] overflow-y-auto">
+        <div className="absolute end-0 mt-2 w-52 origin-top-right bg-white border border-slate-200 rounded-2xl shadow-xl shadow-slate-900/10 p-1 focus:outline-none z-[100] max-h-[60vh] overflow-y-auto">
           <div className="py-1">
             {LANGUAGES.map((lang) => {
-              const targetPath = lang.code === 'en' ? '/free-geo-tagging-tool' : `/${lang.code}/free-geo-tagging-tool`;
+              const targetPath = targetFor(lang.code);
               return (
                 <button
                   key={lang.code}
@@ -46,7 +74,7 @@ export function LanguageSwitcher({ currentLang }: { currentLang: string }) {
                     setIsOpen(false);
                     router.push(targetPath);
                   }}
-                  className={`w-full text-start block px-4 py-2 text-sm transition-colors ${lang.code === currentLang ? 'font-bold bg-slate-50 text-slate-900' : 'text-slate-700 hover:bg-slate-100'}`}
+                  className={`w-full text-start block rounded-xl px-3 py-2 text-sm transition-colors ${lang.code === currentLang ? 'font-semibold bg-blue-50 text-blue-700' : 'text-slate-700 hover:bg-slate-50'}`}
                 >
                   {lang.name}
                 </button>

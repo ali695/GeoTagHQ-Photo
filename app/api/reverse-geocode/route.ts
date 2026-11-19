@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
+import { SITE_URL } from '@/lib/site';
 
 const schema = z.object({
   lat: z.coerce.number().min(-90).max(90),
@@ -11,6 +12,8 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const latStr = searchParams.get('lat');
     const lonStr = searchParams.get('lon');
+    // Optional address language (e.g. "en"); without it OSM uses local-script names.
+    const lang = (searchParams.get('lang') || '').replace(/[^a-z-]/gi, '').slice(0, 5);
 
     const validationResult = schema.safeParse({ lat: latStr, lon: lonStr });
 
@@ -23,12 +26,12 @@ export async function GET(request: Request) {
 
     const { lat, lon } = validationResult.data;
 
-    const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&addressdetails=1&extratags=1&namedetails=1&zoom=18`;
+    const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&addressdetails=1&extratags=1&namedetails=1&zoom=18${lang ? `&accept-language=${lang}` : ''}`;
 
     const response = await fetch(url, {
       headers: {
         'Accept': 'application/json',
-        'User-Agent': 'GeoTagHQ/1.0 (ma7122671@gmail.com)'
+        'User-Agent': `PinPixl/1.0 (+${SITE_URL})`
       },
     });
 

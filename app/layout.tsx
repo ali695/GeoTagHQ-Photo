@@ -1,21 +1,27 @@
 import type { Metadata, Viewport } from 'next';
 import { headers } from 'next/headers';
+import { Inter, Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css'; // Global styles
+import { OG_IMAGE, SITE_URL } from '@/lib/site';
+
+// Self-hosted by Next.js at build time (no request to Google from visitors).
+const inter = Inter({ subsets: ['latin', 'latin-ext'], variable: '--font-inter', display: 'swap' });
+const jakarta = Plus_Jakarta_Sans({ subsets: ['latin', 'latin-ext'], variable: '--font-jakarta', display: 'swap' });
 
 export const viewport: Viewport = {
-  themeColor: "#2563eb",
+  themeColor: "#4f46e5",
 };
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | GeoTagHQ',
-    default: 'GeoTagHQ - Free Geo Tagging Tool',
+    template: '%s | PinPixl',
+    default: 'PinPixl - Free Geo Tagging Tool',
   },
   description: 'Free online tool to add GPS location and local SEO metadata to your photos. Edit EXIF data safely.',
-  keywords: ['Geo Tagging', 'EXIF Editor', 'GPS Location', 'Local SEO', 'Photo Metadata', 'Add location to photo', 'GeoTagHQ'],
-  authors: [{ name: 'GeoTagHQ' }],
-  publisher: 'GeoTagHQ',
-  metadataBase: new URL('https://geotaghq.com'),
+  keywords: ['Geo Tagging', 'EXIF Editor', 'GPS Location', 'Local SEO', 'Photo Metadata', 'Add location to photo', 'PinPixl'],
+  authors: [{ name: 'PinPixl' }],
+  publisher: 'PinPixl',
+  metadataBase: new URL(SITE_URL),
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any" },
@@ -27,6 +33,9 @@ export const metadata: Metadata = {
     ]
   },
   manifest: "/site.webmanifest",
+  applicationName: "PinPixl",
+  openGraph: { siteName: "PinPixl", type: "website", images: [OG_IMAGE] },
+  twitter: { card: "summary_large_image", images: [OG_IMAGE.url] },
 };
 
 export default async function RootLayout({children}: {children: React.ReactNode}) {
@@ -46,43 +55,34 @@ export default async function RootLayout({children}: {children: React.ReactNode}
     }
   }
 
-  const siteUrl = 'https://geotaghq.com';
-  const fullUrl = `${siteUrl}${pathname}`;
+  const siteUrl = SITE_URL;
 
-  const supportedLanguages = ['en', 'de', 'es', 'pt', 'fr', 'it', 'nl', 'tr', 'ar', 'hi', 'id', 'ja', 'ko'];
-
+  // Site-wide identity. Page-level schema (WebApplication, FAQ, HowTo) lives on each page.
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "name": "GeoTagHQ",
-    "url": siteUrl,
-    "logo": `${siteUrl}/favicon.svg`,
-    "description": "Professional free online geo tagging tool for photographers and local SEO experts. Add GPS coordinates and advanced metadata to photos.",
-    "applicationCategory": "MultimediaApplication",
-    "operatingSystem": "Web",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "USD"
-    }
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": `${siteUrl}/#organization`,
+        "name": "PinPixl",
+        "url": siteUrl,
+        "logo": `${siteUrl}/brand/pinpixl-icon-512.png`,
+      },
+      {
+        "@type": "WebSite",
+        "@id": `${siteUrl}/#website`,
+        "name": "PinPixl",
+        "url": siteUrl,
+        "publisher": { "@id": `${siteUrl}/#organization` },
+      },
+    ],
   };
 
   return (
-    <html lang={lang} dir={dir} suppressHydrationWarning>
+    <html lang={lang} dir={dir} className={`${inter.variable} ${jakarta.variable}`} suppressHydrationWarning>
       <head>
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossOrigin="" />
         
-        {/* Hreflang Tags */}
-        <link rel="alternate" href={siteUrl} hrefLang="x-default" />
-        {supportedLanguages.map(l => (
-          <link key={l} rel="alternate" href={`${siteUrl}/${l}${pathname.replace(new RegExp(`^/${lang}`), '')}`} hrefLang={l} />
-        ))}
-
-        {/* Global OpenGraph Tags */}
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content={fullUrl} />
-        <meta property="og:site_name" content="GeoTagHQ" />
-        <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:site" content="@geotaghq" />
         
         <script

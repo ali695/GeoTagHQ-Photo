@@ -53,4 +53,8 @@ export interface ImageFile {
   editedBlob?: Blob; // Added for cropping/rotating
   editedMetadata?: Partial<ImageMetadata>; // Added for metadata editing
   error?: string;
+  /** Set when the upload was converted in the browser first, e.g. "HEIC". */
+  convertedFrom?: string;
+  /** GPS read back from the finished file, proving it was written. */
+  verifiedGps?: { lat: number; lng: number } | null;
 }

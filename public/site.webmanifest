@@ -1,23 +1,29 @@
 {
-  "name": "GeoTagHQ",
-  "short_name": "GeoTagHQ",
-  "description": "Free geo tagging and image SEO tool for adding location metadata to photos.",
+  "name": "PinPixl – Free Photo Tools",
+  "short_name": "PinPixl",
+  "description": "Geotag photos, view and remove EXIF data, convert HEIC and WebP, and compress images.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#2563eb",
+  "theme_color": "#4f46e5",
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "/web-app-manifest-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/web-app-manifest-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }

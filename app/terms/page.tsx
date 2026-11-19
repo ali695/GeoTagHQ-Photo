@@ -14,7 +14,7 @@ export default function Terms() {
 
         <h2>2. Use License</h2>
         <p>
-          Permission is granted to temporarily use the materials (information or software) on GeoTagHQ&apos;s website for personal, non-commercial transitory viewing only.
+          Permission is granted to temporarily use the materials (information or software) on PinPixl&apos;s website for personal, non-commercial transitory viewing only.
         </p>
 
         <h2>3. Use of Metadata & SEO</h2>
@@ -24,7 +24,7 @@ export default function Terms() {
 
         <h2>4. Limitations</h2>
         <p>
-          In no event shall GeoTagHQ or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on the website.
+          In no event shall PinPixl or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on the website.
         </p>
       </main>
       <Footer />

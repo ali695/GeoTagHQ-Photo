@@ -3,7 +3,9 @@
 import { useState, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import UploadDropzone from './UploadDropzone';
-import { readImageMetadata, writeGeoToJpeg } from '@/lib/exif';
+import { readImageMetadata } from '@/lib/exif';
+import { heicToBlob, isHeicFile, replaceExt } from '@/lib/imageIO';
+import { readGpsAny } from '@/lib/exifAny';
 import { ImageFile, ImageMetadata } from '@/types/image';
 import { GeoCoordinates } from '@/types/geo';
 import MetadataPanel from './MetadataPanel';
@@ -29,6 +31,7 @@ export default function GeoTaggingTool({ messages }: { messages?: any }) {
   const [zoomLevel, setZoomLevel] = useState<number | undefined>();
   const [selectedLoc, setSelectedLoc] = useState<import('@/lib/location').SelectedLocation | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [preparingHeic, setPreparingHeic] = useState(false);
   const [errorInfo, setErrorInfo] = useState<string | null>(null);
   const [successInfo, setSuccessInfo] = useState<string | null>(null);
   const [exportFormat, setExportFormat] = useState<'original' | 'jpg' | 'png' | 'webp' | 'avif' | 'tiff' | 'gif'>('original');
@@ -94,7 +97,7 @@ export default function GeoTaggingTool({ messages }: { messages?: any }) {
         source,
         provider
       });
-      fetch(`/api/reverse-geocode?lat=${newCoords.lat}&lon=${newCoords.lng}`)
+      fetch(`/api/reverse-geocode?lat=${newCoords.lat}&lon=${newCoords.lng}&lang=${lang}`)
         .then(async res => {
           let data;
           try {
@@ -165,21 +168,45 @@ export default function GeoTaggingTool({ messages }: { messages?: any }) {
       }
       validFiles.push(file);
     }
-    const newFiles: ImageFile[] = await Promise.all(
-      validFiles.map(async (file) => {
-        const metadata = await readImageMetadata(file);
-        return {
-          id: Math.random().toString(36).substring(7),
-          originalFile: file,
-          preview: URL.createObjectURL(file),
-          metadata,
-          name: file.name,
-          size: file.size,
-          type: file.type,
-          status: 'pending'
-        };
-      })
-    );
+    // iPhone HEIC/HEIF (HEVC) can't be decoded by browsers or by sharp on the server,
+    // so convert it to JPEG here (libheif in WebAssembly) before anything else.
+    const hasHeic = validFiles.some(isHeicFile);
+    if (hasHeic) setPreparingHeic(true);
+    let newFiles: ImageFile[] = [];
+    try {
+      const results = await Promise.all(
+        validFiles.map(async (file): Promise<ImageFile | null> => {
+          // Read GPS/date/camera from the original first; exifr understands HEIC.
+          const metadata = await readImageMetadata(file);
+          let workingFile = file;
+          let convertedFrom: string | undefined;
+          if (isHeicFile(file)) {
+            try {
+              const jpeg = await heicToBlob(file, 'image/jpeg', 0.92);
+              workingFile = new File([jpeg], replaceExt(file.name, 'jpg'), { type: 'image/jpeg', lastModified: file.lastModified });
+              convertedFrom = 'HEIC';
+            } catch {
+              setErrorInfo(`Could not read ${file.name}. The HEIC file may be damaged.`);
+              return null;
+            }
+          }
+          return {
+            id: Math.random().toString(36).substring(7),
+            originalFile: workingFile,
+            preview: URL.createObjectURL(workingFile),
+            metadata: metadata ? { ...metadata, fileName: workingFile.name, format: workingFile.type } : metadata,
+            name: workingFile.name,
+            size: workingFile.size,
+            type: workingFile.type,
+            status: 'pending',
+            convertedFrom,
+          };
+        })
+      );
+      newFiles = results.filter((f): f is ImageFile => f !== null);
+    } finally {
+      if (hasHeic) setPreparingHeic(false);
+    }
     setFiles((prev) => [...prev, ...newFiles]);
     if (newFiles.length > 0 && newFiles[0].metadata?.gps && !coords) {
       handleLocationChange(newFiles[0].metadata.gps, 'map');
@@ -261,7 +288,19 @@ export default function GeoTaggingTool({ messages }: { messages?: any }) {
           }
           let mimeType = res.headers.get("Content-Type") || "application/octet-stream";
           const processedBlob = new Blob([await res.blob()], { type: mimeType });
-          updatedFiles[i] = { ...file, name: finalName, type: mimeType, processedBlob, status: 'done', error: undefined };
+          // Read the GPS back out of the finished file so we only report success
+          // when the coordinates are really in it.
+          const verifiedGps = await readGpsAny(processedBlob);
+          const gpsMatches = !coords || (verifiedGps !== null && Math.abs(verifiedGps.lat - coords.lat) < 1e-4 && Math.abs(verifiedGps.lng - coords.lng) < 1e-4);
+          if (!gpsMatches) {
+            updatedFiles[i] = {
+              ...file, name: finalName, type: mimeType, processedBlob, verifiedGps, status: 'error',
+              error: `GPS could not be confirmed in the ${finalName.split('.').pop()?.toUpperCase()} file. Try exporting as JPG.`,
+            };
+            failCount++;
+            continue;
+          }
+          updatedFiles[i] = { ...file, name: finalName, type: mimeType, processedBlob, verifiedGps, status: 'done', error: undefined };
           successCount++;
         } catch (error: any) {
           updatedFiles[i] = { ...file, status: 'error', error: error.message || 'Failed to write data' };
@@ -311,6 +350,12 @@ export default function GeoTaggingTool({ messages }: { messages?: any }) {
       <div className="flex-1 space-y-6 flex flex-col">
         <section className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
           <h2 className="text-xl font-bold text-slate-900 mb-4">{d.step1Drop || "1. Drop Photos"}</h2>
+          {preparingHeic && (
+            <div className="mb-4 flex items-center gap-2 rounded-lg border border-blue-100 bg-blue-50 p-3 text-sm text-blue-800" role="status">
+              <Loader2 className="w-4 h-4 animate-spin shrink-0" />
+              Converting iPhone HEIC photos in your browser…
+            </div>
+          )}
           <UploadDropzone onDropAccepted={handleDrop} messages={messages} />
           <ExtractImagesSection messages={messages} onImport={async (acceptedFiles) => {
             const newArray = Array.from(acceptedFiles);
@@ -352,10 +397,14 @@ export default function GeoTaggingTool({ messages }: { messages?: any }) {
                }} 
             />
             <div className="flex-grow min-h-[500px] border border-slate-200 rounded-lg overflow-hidden relative shadow-inner flex flex-col">
-                <MapPicker 
-                  initialCoords={coords} 
-                  zoomLevel={zoomLevel} 
+                <MapPicker
+                  initialCoords={coords}
+                  zoomLevel={zoomLevel}
                   language={seoLang}
+                  placeholder={d.searchAddress}
+                  photoPoints={files
+                    .filter((f) => f.metadata?.gps)
+                    .map((f) => ({ lat: f.metadata!.gps!.lat, lng: f.metadata!.gps!.lng, label: f.name }))}
                   onChange={(c, source, displayName, provider, fullSuggestion) => handleLocationChange(c, source || 'map', displayName, provider, fullSuggestion)} 
                 />
             </div>
@@ -389,7 +438,7 @@ export default function GeoTaggingTool({ messages }: { messages?: any }) {
       </div>
 
       <div className="w-full lg:w-[400px] space-y-6">
-        <section className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sticky top-6">
+        <section className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 lg:sticky lg:top-[88px]">
           <h2 className="text-xl font-bold text-slate-900 mb-4">{d.step3Apply || "3. Apply Geotag"}</h2>
           {errorInfo && (
             <div className="mb-4 p-3 flex items-start gap-2 bg-red-50 text-red-700 rounded-lg text-sm border border-red-100">

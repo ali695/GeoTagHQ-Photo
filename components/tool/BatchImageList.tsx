@@ -65,6 +65,9 @@ export default function BatchImageList({ files, onRemove, onClearAll, onEdit, me
               {/* Info section */}
               <div className="flex-grow min-w-0">
                 <p className="text-sm font-bold text-slate-800 truncate mb-1">{file.name}</p>
+                {file.status === 'error' && file.error && (
+                  <p className="text-[11px] leading-snug text-red-600 mb-1.5">{file.error}</p>
+                )}
                 <div className="flex flex-wrap items-center gap-2">
                   {file.metadata?.gps ? (
                     <span className="inline-flex items-center gap-1 text-[10px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full font-bold border border-emerald-100">
@@ -78,8 +81,16 @@ export default function BatchImageList({ files, onRemove, onClearAll, onEdit, me
                   
                   {file.status === 'done' && file.processedBlob && (
                     <div className="flex items-center gap-2">
-                      <span className="inline-flex items-center gap-1 text-[10px] text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full font-bold border border-blue-100">
+                      <span
+                        className="inline-flex items-center gap-1 text-[10px] text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full font-bold border border-blue-100"
+                        title={file.verifiedGps ? 'GPS read back from the finished file' : undefined}
+                      >
                         <CheckCircle className="w-3 h-3" /> {t.geotagged || "Geotagged"}
+                        {file.verifiedGps && (
+                          <span className="font-mono font-semibold" dir="ltr">
+                            · {file.verifiedGps.lat.toFixed(5)}, {file.verifiedGps.lng.toFixed(5)} ✓
+                          </span>
+                        )}
                       </span>
                       <span className="text-[10px] font-medium text-slate-500 bg-slate-50 px-2 py-0.5 rounded-full border border-slate-100">
                          {Math.round(file.size / 1024)}KB → {Math.round(file.processedBlob.size / 1024)}KB
@@ -94,8 +105,17 @@ export default function BatchImageList({ files, onRemove, onClearAll, onEdit, me
                   )}
                   
                   {file.status === 'error' && (
-                    <span className="inline-flex items-center gap-1 text-[10px] text-red-700 bg-red-50 px-2 py-0.5 rounded-full font-bold border border-red-100">
+                    <span
+                      className="inline-flex items-center gap-1 text-[10px] text-red-700 bg-red-50 px-2 py-0.5 rounded-full font-bold border border-red-100"
+                      title={file.error}
+                    >
                       <AlertCircle className="w-3 h-3" /> {t.failedAction || "Failed"}
+                    </span>
+                  )}
+
+                  {file.convertedFrom && (
+                    <span className="inline-flex items-center gap-1 text-[10px] text-slate-600 bg-slate-100 px-2 py-0.5 rounded-full font-bold border border-slate-200">
+                      {file.convertedFrom} → JPG
                     </span>
                   )}
 
