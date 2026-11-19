@@ -8,7 +8,7 @@ import ToolIcon from '@/components/layout/ToolIcon';
 import { TOOL_LANGS, availableTools, getUi, pathFor, toolText } from '@/lib/i18n';
 import { hubFor } from '@/lib/i18n/hub';
 import { factsFor } from '@/lib/i18n/facts';
-import { uiStrings, type ToolCategory } from '@/lib/tools';
+import { isPair, uiStrings, type ToolCategory } from '@/lib/tools';
 import { CONTENT_UPDATED, FOUNDER, SITE_URL, OG_IMAGE, ogAlternates, ogLocale, updatedLabel } from '@/lib/site';
 
 // Localized tools hub: /de, /es, ... (the English hub is app/page.tsx).
@@ -54,8 +54,8 @@ export default async function LocalizedHome({ params }: Props) {
   const hub = hubFor(lang);
   const fx = factsFor(lang);
   const tools = availableTools(lang);
-  const featured = tools.filter((t) => t.inMenu && !t.path.includes('-to-'));
-  const converters = tools.filter((t) => t.category === 'convert' && t.path.includes('-to-'));
+  const featured = tools.filter((t) => t.inMenu && !isPair(t));
+  const converters = tools.filter(isPair);
   const label = (t: (typeof tools)[number]) => toolText(t, lang, { name: g.geotagName, desc: g.geotagDesc });
   const cats: [ToolCategory, string][] = [
     ['location', ui.catLocation],
@@ -97,80 +97,80 @@ export default async function LocalizedHome({ params }: Props) {
     ],
   };
 
-  const label2 = 'flex items-center gap-3 font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-ink-3';
+  const label2 = 'flex items-center gap-3 font-sans text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500';
 
   return (
-    <div className="flex min-h-screen flex-col bg-paper font-sans text-ink" dir={lang === 'ar' ? 'rtl' : 'ltr'} lang={lang}>
+    <div className="flex min-h-screen flex-col bg-white font-sans text-slate-900" dir={lang === 'ar' ? 'rtl' : 'ltr'} lang={lang}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <Header lang={lang} />
       <main className="flex-grow">
         {/* ───────── Hero ───────── */}
-        <section className="relative overflow-hidden border-b border-ink">
+        <section className="relative overflow-hidden bg-slate-950 text-white">
           <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-            <div className="absolute inset-0 paper-grain opacity-70" />
-            <div className="anim-drift absolute -end-40 -top-24 h-[620px] w-[620px] topo" />
+            <div className="absolute inset-0 hidden opacity-70" />
+            <div className="absolute -end-40 -top-24 h-[620px] w-[620px] bg-map-grid opacity-[0.09]" />
           </div>
           <div className="relative mx-auto max-w-5xl px-4 pb-14 pt-14 sm:px-6 md:pb-20 md:pt-20">
             <p className={label2}>
-              <span className="text-pin">●</span> PinPixl <span className="h-px w-8 bg-ink/30" /> {tools.length} · {ui.freeTools}
+              <span className="text-blue-400">●</span> PinPixl <span className="h-px w-8 bg-white/30" /> {tools.length} · {ui.freeTools}
             </p>
             <h1 className="animate-rise mt-6 text-[2.5rem] font-extrabold leading-[1.02] tracking-[-0.04em] sm:text-6xl lg:text-[4.2rem]">{ui.homeTitle}</h1>
-            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-ink-2 md:text-xl">{ui.homeSub}</p>
+            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-slate-300 md:text-xl">{ui.homeSub}</p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-              <Link href={geotagHref} className="press inline-flex items-center justify-center gap-2 rounded-md border border-ink bg-pin px-6 py-3.5 font-bold text-white shadow-hard">
+              <Link href={geotagHref} className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/15 bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-3.5 font-bold text-white shadow-xl shadow-slate-900/10">
                 {hub?.ctaButton || g.cta} <ArrowRight className="h-5 w-5 rtl:rotate-180" aria-hidden />
               </Link>
-              <a href="#tools" className="inline-flex items-center justify-center rounded-md border border-ink/30 px-6 py-3.5 font-bold text-ink hover:border-ink">
+              <a href="#tools" className="inline-flex items-center justify-center rounded-xl border border-white/25 px-6 py-3.5 font-bold text-white hover:border-white/15">
                 {ui.allTools}
               </a>
             </div>
-            <p className="mt-8 font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-3">
+            <p className="mt-8 font-sans text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">
               {fx.by}{' '}
-              <Link href="/about" rel="author" className="text-ink underline decoration-pin decoration-2 underline-offset-2 hover:text-pin-2">{FOUNDER.name}</Link>
-              , {fx.role} <span className="mx-1.5 text-ink/30">·</span> {fx.updated} <time dateTime={CONTENT_UPDATED}>{updatedLabel(lang)}</time>
+              <Link href="/about" rel="author" className="text-white underline decoration-blue-400 decoration-2 underline-offset-2 hover:text-white">{FOUNDER.name}</Link>
+              , {fx.role} <span className="mx-1.5 text-slate-600">·</span> {fx.updated} <time dateTime={CONTENT_UPDATED}>{updatedLabel(lang)}</time>
             </p>
           </div>
         </section>
 
         {/* ───────── Answer-first definition (AEO) ───────── */}
         {hub && (
-          <section className="border-b border-ink bg-paper-2/60">
+          <section className="border-b border-slate-200 bg-slate-50">
             <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 md:py-12">
-              <p data-reveal className="border-s-4 border-pin ps-5 text-xl font-semibold leading-relaxed text-ink md:text-2xl">{hub.answer}</p>
+              <p data-reveal className="border-s-4 border-blue-600 ps-5 text-xl font-semibold leading-relaxed text-slate-900 md:text-2xl">{hub.answer}</p>
             </div>
           </section>
         )}
 
         {/* ───────── Tools ───────── */}
-        <section id="tools" className="scroll-mt-20 border-b border-ink py-16 md:py-24">
+        <section id="tools" className="scroll-mt-20 border-b border-slate-200 py-16 md:py-24">
           <div className="mx-auto max-w-7xl space-y-14 px-4 sm:px-6 lg:px-8">
             {cats.map(([cat, title], ci) => {
               const list = featured.filter((t) => t.category === cat);
               if (!list.length) return null;
               return (
                 <div key={cat} data-reveal>
-                  <p className={label2}><span className="text-pin">{String(ci + 1).padStart(2, '0')}</span><span className="h-px w-8 bg-ink/30" /></p>
+                  <p className={label2}><span className="text-blue-600">{String(ci + 1).padStart(2, '0')}</span><span className="h-px w-8 bg-slate-300" /></p>
                   <h2 className="mt-3 text-3xl font-extrabold tracking-[-0.03em] md:text-4xl">{title}</h2>
-                  <ol className="mt-6 border-t-2 border-ink">
+                  <ol className="mt-6 border-t border-slate-200">
                     {list.map((t, i) => (
-                      <li key={t.id} className="stagger border-b border-ink" style={{ ['--i' as string]: i }}>
-                        <Link href={pathFor(lang, t.path)} className="group grid grid-cols-[2rem_1fr_auto] items-center gap-4 py-5 transition-colors hover:bg-paper-2 md:grid-cols-[3rem_1fr_1.4fr_2rem] md:gap-6">
-                          <ToolIcon name={t.icon} className="h-5 w-5 text-ink group-hover:text-pin" />
+                      <li key={t.id} className="stagger border-b border-slate-200" style={{ ['--i' as string]: i }}>
+                        <Link href={pathFor(lang, t.path)} className="group grid grid-cols-[2rem_1fr_auto] items-center gap-4 py-5 transition-colors hover:bg-slate-50 md:grid-cols-[3rem_1fr_1.4fr_2rem] md:gap-6">
+                          <ToolIcon name={t.icon} className="h-5 w-5 text-slate-900 group-hover:text-blue-600" />
                           <span className="text-lg font-extrabold tracking-[-0.01em] md:text-xl">{label(t).name}</span>
-                          <span className="col-span-2 col-start-2 text-ink-2 md:col-span-1 md:col-start-auto">{label(t).desc}</span>
-                          <ArrowUpRight className="col-start-3 row-start-1 h-5 w-5 transition-transform group-hover:-translate-y-0.5 group-hover:text-pin md:col-start-auto md:row-start-auto rtl:-scale-x-100" aria-hidden />
+                          <span className="col-span-2 col-start-2 text-slate-600 md:col-span-1 md:col-start-auto">{label(t).desc}</span>
+                          <ArrowUpRight className="col-start-3 row-start-1 h-5 w-5 transition-transform group-hover:-translate-y-0.5 group-hover:text-blue-600 md:col-start-auto md:row-start-auto rtl:-scale-x-100" aria-hidden />
                         </Link>
                       </li>
                     ))}
                   </ol>
                   {cat === 'convert' && converters.length > 0 && (
-                    <div className="mt-6 rounded-sm border-2 border-ink bg-paper p-5 shadow-hard">
-                      <p className="mb-3 font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-ink-3">{ui.homeConversions}</p>
+                    <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-xl shadow-slate-900/10">
+                      <p className="mb-3 font-sans text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">{ui.homeConversions}</p>
                       <ul className="flex flex-wrap gap-2">
                         {converters.map((t) => (
                           <li key={t.id}>
-                            <Link href={pathFor(lang, t.path)} className="inline-flex items-center gap-1.5 rounded-sm border border-ink px-3 py-1.5 text-sm font-bold text-ink hover:bg-ink hover:text-paper">
-                              <Check className="h-3.5 w-3.5 text-moss" aria-hidden /> {label(t).name}
+                            <Link href={pathFor(lang, t.path)} className="inline-flex items-center gap-1.5 rounded-2xl border border-slate-200 px-3 py-1.5 text-sm font-bold text-slate-900 hover:bg-slate-950 hover:text-white">
+                              <Check className="h-3.5 w-3.5 text-emerald-600" aria-hidden /> {label(t).name}
                             </Link>
                           </li>
                         ))}
@@ -186,18 +186,18 @@ export default async function LocalizedHome({ params }: Props) {
         {hub && (
           <>
             {/* ───────── Why ───────── */}
-            <section className="relative overflow-hidden border-b border-ink bg-ink py-16 text-paper md:py-24">
-              <div aria-hidden className="absolute inset-0 topo opacity-50 invert" />
+            <section className="relative overflow-hidden border-b border-slate-200 bg-slate-950 py-16 text-white md:py-24">
+              <div aria-hidden className="absolute inset-0 bg-map-grid opacity-[0.07]" />
               <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <h2 data-reveal className="text-4xl font-extrabold tracking-[-0.035em] md:text-5xl">{hub.whyTitle}</h2>
-                <div data-reveal className="mt-12 grid gap-px border border-paper/25 bg-paper/25 md:grid-cols-3">
+                <div data-reveal className="mt-12 grid gap-px border border-white/15 bg-white/10 md:grid-cols-3">
                   {hub.why.map((w, i) => {
                     const Icon = WHY_ICONS[i] || Check;
                     return (
-                      <div key={w.t} className="stagger bg-ink p-7" style={{ ['--i' as string]: i }}>
-                        <Icon className="h-6 w-6 text-pin" aria-hidden />
+                      <div key={w.t} className="stagger bg-slate-950 p-7" style={{ ['--i' as string]: i }}>
+                        <Icon className="h-6 w-6 text-blue-600" aria-hidden />
                         <h3 className="mt-4 text-xl font-extrabold">{w.t}</h3>
-                        <p className="mt-2 leading-relaxed text-paper/70">{w.d}</p>
+                        <p className="mt-2 leading-relaxed text-slate-300">{w.d}</p>
                       </div>
                     );
                   })}
@@ -206,19 +206,19 @@ export default async function LocalizedHome({ params }: Props) {
             </section>
 
             {/* ───────── FAQ ───────── */}
-            <section id="faq" className="scroll-mt-20 border-b border-ink py-16 md:py-24">
+            <section id="faq" className="scroll-mt-20 border-b border-slate-200 py-16 md:py-24">
               <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-12 lg:px-8">
                 <h2 data-reveal className="text-4xl font-extrabold tracking-[-0.035em] md:text-5xl lg:col-span-4">{hub.faqTitle}</h2>
-                <div data-reveal className="border-t-2 border-ink lg:col-span-8">
+                <div data-reveal className="border-t border-slate-200 lg:col-span-8">
                   {hub.faqs.map((f, i) => (
-                    <details key={f.q} open={i === 0} className="group border-b border-ink">
+                    <details key={f.q} open={i === 0} className="group border-b border-slate-200">
                       <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-6 [&::-webkit-details-marker]:hidden">
-                        <h3 className="text-lg font-extrabold group-hover:text-pin-2 md:text-xl">{f.q}</h3>
-                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-sm border border-ink transition-all group-open:rotate-45 group-open:bg-pin group-open:text-white">
+                        <h3 className="text-lg font-extrabold group-hover:text-blue-700 md:text-xl">{f.q}</h3>
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl border border-slate-200 transition-all group-open:rotate-45 group-open:bg-blue-600 group-open:text-white">
                           <Plus className="h-4 w-4" aria-hidden />
                         </span>
                       </summary>
-                      <p className="-mt-1 max-w-2xl pb-7 text-lg leading-relaxed text-ink-2">{f.a}</p>
+                      <p className="-mt-1 max-w-2xl pb-7 text-lg leading-relaxed text-slate-600">{f.a}</p>
                     </details>
                   ))}
                 </div>
@@ -228,12 +228,12 @@ export default async function LocalizedHome({ params }: Props) {
             {/* ───────── CTA ───────── */}
             <section className="py-16 md:py-24">
               <div className="mx-auto max-w-6xl px-4">
-                <div data-reveal className="relative overflow-hidden rounded-sm border-2 border-ink bg-pin px-6 py-12 text-white shadow-[8px_8px_0_0_var(--color-ink)] md:px-14 md:py-16">
-                  <div aria-hidden className="anim-drift absolute -end-32 -top-32 h-[480px] w-[480px] topo opacity-70 invert" />
+                <div data-reveal className="relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-12 text-white shadow-2xl shadow-indigo-600/30 md:px-14 md:py-16">
+                  <div aria-hidden className="absolute -end-32 -top-32 h-[480px] w-[480px] bg-map-grid opacity-25" />
                   <div className="relative max-w-2xl">
                     <h2 className="text-3xl font-extrabold leading-tight tracking-[-0.03em] md:text-5xl">{hub.ctaTitle}</h2>
                     <p className="mt-4 text-lg text-white/85">{hub.ctaText}</p>
-                    <Link href={geotagHref} className="press mt-8 inline-flex items-center gap-2 rounded-md border border-ink bg-paper px-7 py-4 font-bold text-ink shadow-hard">
+                    <Link href={geotagHref} className="mt-8 inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-7 py-4 font-bold text-slate-900 shadow-xl shadow-slate-900/10">
                       {hub.ctaButton} <ArrowRight className="h-5 w-5 rtl:rotate-180" aria-hidden />
                     </Link>
                   </div>

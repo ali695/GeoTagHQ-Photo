@@ -5,6 +5,7 @@ import type { Landing } from '@/lib/content/landing';
 import { converterLanding, IMAGE_CONVERTER_LANDING } from '@/lib/content/converters';
 import { EXIF_VIEWER, PHOTO_LOCATION_FINDER, REMOVE_EXIF } from '@/lib/content/metadataTools';
 import { AI_ALT_TEXT, IMAGE_COMPRESSOR, LAT_LONG_FINDER } from '@/lib/content/seoTools';
+import { IMAGE_RESIZER, JPG_TO_PDF, PNG_TO_PDF, compressToLanding } from '@/lib/content/newTools';
 import { CONVERTER_PAIRS, FORMAT_LABEL, TOOLS, toolById, type ToolEntry } from '@/lib/tools';
 import { UI_EN, type UiDict } from './ui';
 import type { ToolLocale } from './types';
@@ -18,6 +19,13 @@ const EN_LANDINGS: Record<string, Landing> = {
   'image-compressor': IMAGE_COMPRESSOR,
   'ai-alt-text': AI_ALT_TEXT,
   'image-converter': IMAGE_CONVERTER_LANDING,
+  'image-resizer': IMAGE_RESIZER,
+  'jpg-to-pdf': JPG_TO_PDF,
+  'png-to-pdf': PNG_TO_PDF,
+  'compress-to-20kb': compressToLanding(20),
+  'compress-to-50kb': compressToLanding(50),
+  'compress-to-100kb': compressToLanding(100),
+  'compress-to-200kb': compressToLanding(200),
 };
 
 export const locale = (lang: string): ToolLocale | undefined => TOOL_LOCALES[lang];

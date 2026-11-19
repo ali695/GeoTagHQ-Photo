@@ -12,6 +12,7 @@ const converter: ConverterTemplate = {
   chips: { free: '100 % kostenlos', batch: 'Bis zu 20 Dateien', noUpload: 'Kein Upload', nothingStored: 'Nichts wird gespeichert', noWatermark: 'Ohne Wasserzeichen' },
   privacyBrowser: 'Die Umwandlung von {F} in {T} läuft komplett in Ihrem Browser. Ihre Bilder werden nicht hochgeladen.',
   privacyMixed: 'Die Umwandlung läuft in Ihrem Browser. Nur wenn Ihr Browser kein WebP erzeugen kann, wird das Bild auf unserem Server im Arbeitsspeicher umgewandelt und nicht gespeichert.',
+  privacyTiff: 'Safari wandelt {F} in {T} direkt im Browser um. Andere Browser können TIFF nicht lesen; dann wird die Datei auf unserem Server im Arbeitsspeicher verarbeitet und sofort gelöscht. Es wird nichts gespeichert.',
   stepsTitle: 'So wandeln Sie {F} in {T} um',
   steps: {
     add: ['{F}-Dateien hinzufügen', 'Ziehen Sie bis zu 20 {F}-Bilder in das Feld oder wählen Sie sie per Klick aus.'],
@@ -27,6 +28,9 @@ const converter: ConverterTemplate = {
     webp: ['WebP-Dateien sind meist 25–35 % kleiner als JPG bei ähnlicher Qualität.', 'Kleinere Bilder lassen Webseiten schneller laden – gut für mobile Besucher und Core Web Vitals.', 'Alle aktuellen Browser unterstützen WebP, ebenso WordPress und Shopify.'],
   },
   fromNote: {
+    gif: 'Bei animierten GIFs wird das erste Bild umgewandelt – JPG und PNG können keine Animation speichern.',
+    bmp: 'BMP-Dateien sind meist unkomprimiert und dadurch oft 10- bis 20-mal größer als nötig.',
+    tiff: 'Browser, Webseiten und die meisten Smartphones können TIFF-Dateien nicht öffnen.',
     heic: 'Windows, viele Android-Geräte und die meisten Webseiten können iPhone-Fotos im HEIC-Format nicht öffnen.',
     webp: 'Von Webseiten gespeicherte Bilder sind oft WebP – ältere Programme und manche Formulare akzeptieren das nicht.',
     avif: 'AVIF ist ein neues Format, das viele Programme noch nicht öffnen können.',
@@ -41,6 +45,9 @@ const converter: ConverterTemplate = {
     webp: ['Verlustbehaftet oder verlustfrei', 'Ja', 'Alle modernen Browser', 'Schnelle Webseiten-Bilder'],
     avif: ['Verlustbehaftet, sehr effizient', 'Ja', 'Moderne Browser; wenige Programme', 'Kleinste Web-Bilder'],
     svg: ['Vektor (textbasiert)', 'Ja', 'Browser; kaum soziale Netzwerke', 'Logos und Icons in jeder Größe'],
+    gif: ['Verlustfrei, max. 256 Farben', 'Ja (nur an/aus)', 'Überall', 'Kurze Animationen, einfache Grafiken'],
+    bmp: ['Meist unkomprimiert (sehr groß)', 'Selten', 'Windows; kaum im Web', 'Ältere Windows-Programme'],
+    tiff: ['Verlustfrei oder unkomprimiert', 'Ja', 'Druck- und Profi-Software; keine Browser', 'Scans, Druck, Archiv'],
   },
   faqs: {
     free: ['Ist der {F}-zu-{T}-Konverter kostenlos?', 'Ja. Ohne Anmeldung, ohne Wasserzeichen und ohne Tageslimit. Bis zu 20 Dateien pro Durchgang, je bis zu 25 MB.'],

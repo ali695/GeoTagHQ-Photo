@@ -12,6 +12,7 @@ const converter: ConverterTemplate = {
   chips: { free: '100% gratis', batch: 'Hingga 20 file', noUpload: 'Tanpa unggah', nothingStored: 'Tidak ada yang disimpan', noWatermark: 'Tanpa watermark' },
   privacyBrowser: 'Konversi {F} ke {T} sepenuhnya berjalan di browser Anda. Gambar Anda tidak pernah diunggah.',
   privacyMixed: 'Konversi berjalan di browser Anda. Hanya jika browser tidak bisa membuat WebP, gambar dikonversi di server kami di memori dan tidak disimpan.',
+  privacyTiff: 'Safari mengubah {F} ke {T} langsung di browser. Browser lain tidak bisa membaca TIFF, jadi file diproses di memori server kami lalu langsung dihapus. Tidak ada yang disimpan.',
   stepsTitle: 'Cara mengubah {F} ke {T}',
   steps: {
     add: ['Tambahkan file {F}', 'Seret hingga 20 gambar {F} atau klik untuk memilih.'],
@@ -27,6 +28,9 @@ const converter: ConverterTemplate = {
     webp: ['File WebP biasanya 25–35% lebih kecil dari JPG dengan kualitas serupa.', 'Gambar yang lebih ringan membuat situs lebih cepat, terutama di HP.', 'Semua browser modern, WordPress, dan Shopify mendukung WebP.'],
   },
   fromNote: {
+    gif: 'Kalau GIF-nya beranimasi, yang diubah adalah frame pertama: JPG dan PNG tidak bisa menyimpan animasi.',
+    bmp: 'File BMP biasanya tanpa kompresi, jadi ukurannya 10–20 kali lebih besar dari yang perlu.',
+    tiff: 'Browser, situs web, dan kebanyakan HP tidak bisa membuka file TIFF.',
     heic: 'Windows, banyak HP Android, dan sebagian besar situs tidak bisa membuka foto HEIC dari iPhone.',
     webp: 'Gambar yang disimpan dari situs sering berformat WebP, yang tidak diterima aplikasi lama dan beberapa formulir.',
     avif: 'AVIF adalah format baru yang belum bisa dibuka banyak aplikasi.',
@@ -41,6 +45,9 @@ const converter: ConverterTemplate = {
     webp: ['Lossy atau lossless', 'Ya', 'Semua browser modern', 'Gambar situs yang cepat'],
     avif: ['Lossy, sangat efisien', 'Ya', 'Browser modern; sedikit aplikasi', 'Gambar web paling kecil'],
     svg: ['Vektor (berbasis teks)', 'Ya', 'Browser; hampir tidak ada media sosial', 'Logo dan ikon ukuran berapa pun'],
+    gif: ['Lossless, maks. 256 warna', 'Ya (hanya ada/tidak)', 'Di mana saja', 'Animasi pendek dan grafis sederhana'],
+    bmp: ['Biasanya tanpa kompresi (sangat besar)', 'Jarang', 'Windows; jarang di web', 'Program Windows lama'],
+    tiff: ['Lossless atau tanpa kompresi', 'Ya', 'Percetakan dan software profesional; bukan browser', 'Hasil scan, cetak, dan arsip'],
   },
   faqs: {
     free: ['Apakah konverter {F} ke {T} ini gratis?', 'Ya. Tanpa daftar, tanpa watermark, dan tanpa batas harian. Hingga 20 file sekaligus, masing-masing maksimal 25 MB.'],

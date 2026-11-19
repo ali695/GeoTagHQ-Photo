@@ -12,6 +12,7 @@ const converter: ConverterTemplate = {
   chips: { free: '100% grátis', batch: 'Até 20 arquivos', noUpload: 'Sem upload', nothingStored: 'Nada é armazenado', noWatermark: 'Sem marca d’água' },
   privacyBrowser: 'A conversão de {F} para {T} acontece toda no seu navegador. Suas imagens nunca são enviadas.',
   privacyMixed: 'A conversão acontece no seu navegador. Só se o navegador não conseguir gerar WebP, a imagem é convertida no nosso servidor, em memória, e não é armazenada.',
+  privacyTiff: 'O Safari converte {F} para {T} no seu navegador. Os outros navegadores não leem TIFF, então o arquivo é processado na memória do nosso servidor e apagado na hora. Nada é guardado.',
   stepsTitle: 'Como converter {F} para {T}',
   steps: {
     add: ['Adicione os arquivos {F}', 'Arraste até 20 imagens {F} ou clique para escolher.'],
@@ -27,6 +28,9 @@ const converter: ConverterTemplate = {
     webp: ['Arquivos WebP costumam ser 25–35% menores que JPG com qualidade parecida.', 'Imagens mais leves deixam o site mais rápido no celular.', 'Todos os navegadores atuais, o WordPress e a Shopify aceitam WebP.'],
   },
   fromNote: {
+    gif: 'Se o GIF for animado, o primeiro quadro é convertido: JPG e PNG não guardam animação.',
+    bmp: 'Arquivos BMP costumam não ter compressão, por isso ficam de 10 a 20 vezes maiores que o necessário.',
+    tiff: 'Navegadores, sites e a maioria dos celulares não abrem arquivos TIFF.',
     heic: 'Windows, muitos Android e a maioria dos sites não abrem fotos HEIC do iPhone.',
     webp: 'Imagens salvas da internet costumam vir em WebP, que programas antigos e alguns formulários não aceitam.',
     avif: 'AVIF é um formato novo que muitos programas ainda não abrem.',
@@ -41,6 +45,9 @@ const converter: ConverterTemplate = {
     webp: ['Com ou sem perda', 'Sim', 'Todos os navegadores modernos', 'Imagens rápidas para sites'],
     avif: ['Com perda, muito eficiente', 'Sim', 'Navegadores modernos; poucos programas', 'As imagens web mais leves'],
     svg: ['Vetorial (texto)', 'Sim', 'Navegadores; quase nenhuma rede social', 'Logos e ícones em qualquer tamanho'],
+    gif: ['Sem perda, máx. 256 cores', 'Sim (só liga/desliga)', 'Em todo lugar', 'Animações curtas e gráficos simples'],
+    bmp: ['Geralmente sem compressão (muito pesado)', 'Raramente', 'Windows; pouco na web', 'Programas antigos do Windows'],
+    tiff: ['Sem perda ou sem compressão', 'Sim', 'Gráficas e softwares profissionais; não navegadores', 'Digitalizações, impressão e arquivo'],
   },
   faqs: {
     free: ['O conversor de {F} para {T} é grátis?', 'Sim. Sem cadastro, sem marca d’água e sem limite diário. Até 20 arquivos por vez, com até 25 MB cada.'],

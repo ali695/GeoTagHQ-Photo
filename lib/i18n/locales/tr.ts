@@ -13,6 +13,7 @@ const converter: ConverterTemplate = {
   chips: { free: '%100 ücretsiz', batch: '20 dosyaya kadar', noUpload: 'Yükleme yok', nothingStored: 'Hiçbir şey saklanmaz', noWatermark: 'Filigran yok' },
   privacyBrowser: '{F} → {T} dönüştürme tamamen tarayıcınızda yapılır. Görselleriniz hiçbir sunucuya yüklenmez.',
   privacyMixed: 'Dönüştürme tarayıcınızda yapılır. Yalnızca tarayıcınız WebP üretemezse görsel sunucumuzda bellekte dönüştürülür ve saklanmaz.',
+  privacyTiff: 'Safari {F} → {T} dönüştürmesini tarayıcıda yapar. Diğer tarayıcılar TIFF okuyamadığından dosya sunucumuzun belleğinde işlenir ve hemen silinir. Hiçbir şey saklanmaz.',
   stepsTitle: '{F} → {T} nasıl dönüştürülür?',
   steps: {
     add: ['{F} dosyalarını ekleyin', 'En fazla 20 {F} görselini sürükleyip bırakın ya da tıklayıp seçin.'],
@@ -28,6 +29,9 @@ const converter: ConverterTemplate = {
     webp: ['WebP dosyaları benzer kalitede JPG’den genellikle %25–35 daha küçüktür.', 'Daha küçük görseller sitenizi özellikle mobilde hızlandırır.', 'Tüm güncel tarayıcılar, WordPress ve Shopify WebP’yi destekler.'],
   },
   fromNote: {
+    gif: 'Hareketli GIF’lerde ilk kare dönüştürülür; JPG ve PNG animasyon saklayamaz.',
+    bmp: 'BMP dosyaları genelde sıkıştırmasızdır, bu yüzden gereğinden 10–20 kat büyüktür.',
+    tiff: 'Tarayıcılar, web siteleri ve çoğu telefon TIFF dosyalarını açamaz.',
     heic: 'Windows, birçok Android cihaz ve çoğu web sitesi iPhone’un HEIC fotoğraflarını açamaz.',
     webp: 'Web sitelerinden kaydedilen görseller genellikle WebP’dir; eski programlar ve bazı formlar bunu kabul etmez.',
     avif: 'AVIF, birçok programın henüz açamadığı yeni bir formattır.',
@@ -42,6 +46,9 @@ const converter: ConverterTemplate = {
     webp: ['Kayıplı veya kayıpsız', 'Evet', 'Tüm modern tarayıcılar', 'Hızlı web sitesi görselleri'],
     avif: ['Kayıplı, çok verimli', 'Evet', 'Modern tarayıcılar; az program', 'En küçük web görselleri'],
     svg: ['Vektörel (metin tabanlı)', 'Evet', 'Tarayıcılar; neredeyse hiç sosyal medya', 'Her boyutta logo ve ikon'],
+    gif: ['Kayıpsız, en fazla 256 renk', 'Var (yalnızca açık/kapalı)', 'Her yerde', 'Kısa animasyonlar, basit grafikler'],
+    bmp: ['Genelde sıkıştırmasız (çok büyük)', 'Nadiren', 'Windows; web’de pek yok', 'Eski Windows yazılımları'],
+    tiff: ['Kayıpsız veya sıkıştırmasız', 'Var', 'Baskı ve profesyonel yazılımlar; tarayıcılar değil', 'Tarama, baskı ve arşiv'],
   },
   faqs: {
     free: ['{F} → {T} dönüştürücü ücretsiz mi?', 'Evet. Üyelik, filigran ve günlük sınır yok. Tek seferde her biri en fazla 25 MB olan 20 dosya.'],

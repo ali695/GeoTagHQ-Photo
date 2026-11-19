@@ -54,7 +54,7 @@ export default function ImageConverter({
   );
 
   // A page like "JPG to PNG" still accepts any image, but leads with its own format.
-  const accept = from ? { ...acceptFor(from === 'jpg' ? ['jpg', 'jpeg'] : [from]), ...ACCEPT_IMAGES } : ACCEPT_IMAGES;
+  const accept = from ? { ...acceptFor(from === 'jpg' ? ['jpg', 'jpeg'] : from === 'tiff' ? ['tif', 'tiff'] : [from]), ...ACCEPT_IMAGES } : ACCEPT_IMAGES;
 
   const add = (files: File[]) => {
     setItems((prev) => [

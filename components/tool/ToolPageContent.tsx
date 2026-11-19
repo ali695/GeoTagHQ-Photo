@@ -88,26 +88,24 @@ export default function ToolPageContent({
   const toolMessages = { tool: Object.fromEntries(Object.entries(messages?.tool || {}).filter(([k]) => !PAGE_COPY.has(k))) };
 
   return (
-    <div className="min-h-screen bg-paper flex flex-col font-sans text-slate-900" dir={dir}>
+    <div className="min-h-screen bg-white flex flex-col font-sans text-slate-900" dir={dir}>
       <Header lang={lang} messages={messages} />
 
       <main className="flex-grow">
         {/* ───────── Hero ───────── */}
-        <section className="relative overflow-hidden">
-          <div aria-hidden className="absolute inset-0 bg-gradient-to-b from-paper-2/70 via-paper to-paper" />
-          <div
-            aria-hidden
-            className="absolute inset-0 bg-map-grid"
-            style={{ maskImage: 'radial-gradient(ellipse at top, black 30%, transparent 75%)', WebkitMaskImage: 'radial-gradient(ellipse at top, black 30%, transparent 75%)' }}
-          />
-          <div aria-hidden className="absolute -top-24 end-[-10%] h-[28rem] w-[28rem] rounded-full bg-indigo-400/20 blur-3xl" />
-          <div aria-hidden className="absolute top-40 start-[-10%] h-[22rem] w-[22rem] rounded-full bg-sky-300/25 blur-3xl" />
+        <section className="relative bg-slate-950 text-white">
+          <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+            <div className="absolute inset-0 bg-map-grid opacity-[0.09]" style={{ maskImage: 'radial-gradient(ellipse at 30% 20%, black 20%, transparent 70%)', WebkitMaskImage: 'radial-gradient(ellipse at 30% 20%, black 20%, transparent 70%)' }} />
+            <div className="absolute -top-40 start-[-10%] h-[34rem] w-[34rem] rounded-full bg-blue-600/35 blur-[120px]" />
+            <div className="absolute top-20 end-[-12%] h-[30rem] w-[30rem] rounded-full bg-violet-600/30 blur-[120px]" />
+            <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+          </div>
 
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16 md:pt-20 md:pb-24">
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-32 md:pt-20 md:pb-40">
             <div className={`grid items-center gap-12 lg:gap-16 ${heroRows.length ? 'lg:grid-cols-[1.05fr_1fr]' : ''}`}>
               <div className={heroRows.length ? 'text-center lg:text-start' : 'text-center max-w-3xl mx-auto'}>
                 {c.eyebrow && (
-                  <p className="inline-flex items-center gap-2 rounded-full border border-blue-200/80 bg-white/80 px-4 py-1.5 text-sm font-semibold text-blue-700 shadow-sm backdrop-blur mb-6">
+                  <p className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-sm font-semibold text-slate-200 backdrop-blur mb-6">
                     <span className="relative flex h-2 w-2">
                       <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 animate-ping-soft" />
                       <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
@@ -115,10 +113,10 @@ export default function ToolPageContent({
                     {c.eyebrow}
                   </p>
                 )}
-                <h1 className="text-4xl sm:text-5xl lg:text-[3.6rem] font-extrabold tracking-tight leading-[1.08] text-slate-950">
+                <h1 className="animate-rise text-4xl sm:text-5xl lg:text-[3.6rem] font-extrabold tracking-tight leading-[1.08] text-white">
                   {c.h1}
                 </h1>
-                <p className="mt-6 text-lg md:text-xl text-slate-600 leading-relaxed max-w-2xl mx-auto lg:mx-0">{c.subtitle}</p>
+                <p className="mt-6 text-lg md:text-xl text-slate-300 leading-relaxed max-w-2xl mx-auto lg:mx-0">{c.subtitle}</p>
 
                 {c.ctaPrimary && (
                   <div className="mt-9 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3">
@@ -132,7 +130,7 @@ export default function ToolPageContent({
                     {c.ctaSecondary && (
                       <a
                         href="#how-it-works"
-                        className="inline-flex w-full sm:w-auto items-center justify-center rounded-xl border border-slate-200 bg-white px-7 py-4 text-base font-semibold text-slate-800 hover:border-slate-300 hover:bg-slate-50 transition-colors"
+                        className="inline-flex w-full sm:w-auto items-center justify-center rounded-xl border border-white/25 bg-white/5 px-7 py-4 text-base font-semibold text-white backdrop-blur hover:bg-white/10 transition-colors"
                       >
                         {c.ctaSecondary}
                       </a>
@@ -143,19 +141,19 @@ export default function ToolPageContent({
                 {c.trustChips && (
                   <ul className="mt-9 grid grid-cols-2 gap-3 max-w-xl mx-auto lg:mx-0 text-start">
                     {c.trustChips.map((chip) => (
-                      <li key={chip} className="flex items-center gap-2 text-sm font-medium text-slate-700">
-                        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100">
-                          <Check className="w-3.5 h-3.5 text-emerald-700" aria-hidden />
+                      <li key={chip} className="flex items-center gap-2 text-sm font-medium text-slate-200">
+                        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-400/15">
+                          <Check className="w-3.5 h-3.5 text-emerald-400" aria-hidden />
                         </span>
                         {chip}
                       </li>
                     ))}
                   </ul>
                 )}
-                <p className="mt-7 font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-3">
+                <p className="mt-7 text-sm text-slate-400">
                   {factsFor(lang).by}{' '}
-                  <Link href="/about" rel="author" className="text-ink underline decoration-pin decoration-2 underline-offset-2 hover:text-pin-2">{FOUNDER.name}</Link>
-                  , {factsFor(lang).role} <span className="mx-1.5 text-ink/30">·</span> {factsFor(lang).updated}{' '}
+                  <Link href="/about" rel="author" className="font-semibold text-blue-300 hover:text-white">{FOUNDER.name}</Link>
+                  , {factsFor(lang).role} <span className="mx-1.5 text-slate-600">·</span> {factsFor(lang).updated}{' '}
                   <time dateTime={CONTENT_UPDATED}>{updatedLabel(lang)}</time>
                 </p>
               </div>
@@ -170,15 +168,15 @@ export default function ToolPageContent({
         </section>
 
         {/* ───────── Tool, framed as an app window ───────── */}
-        <section id="tool" className="scroll-mt-20 relative px-3 sm:px-6 lg:px-8 pb-20 md:pb-28">
+        <section id="tool" className="scroll-mt-20 relative z-10 -mt-24 md:-mt-28 px-3 sm:px-6 lg:px-8 pb-20 md:pb-28">
           <div className="max-w-7xl mx-auto">
-            <div className="rounded-[1.75rem] bg-gradient-to-b from-slate-200 via-slate-200/60 to-transparent p-px shadow-2xl shadow-slate-900/10">
-              <div className="rounded-[1.7rem] bg-slate-50/90">
-                <div className="flex items-center gap-2 border-b border-slate-200 px-5 py-3.5">
-                  <span className="h-3 w-3 rounded-full bg-red-400" aria-hidden />
+            <div className="rounded-[1.75rem] border border-slate-200 bg-white shadow-2xl shadow-slate-900/15">
+              <div className="rounded-[1.7rem] bg-white">
+                <div className="flex items-center gap-2 rounded-t-[1.7rem] border-b border-slate-200 bg-slate-50 px-5 py-3.5">
+                  <span className="h-3 w-3 rounded-full bg-rose-400" aria-hidden />
                   <span className="h-3 w-3 rounded-full bg-amber-400" aria-hidden />
                   <span className="h-3 w-3 rounded-full bg-emerald-400" aria-hidden />
-                  <div className="mx-auto flex items-center gap-2 rounded-lg bg-paper border border-slate-200 px-4 py-1.5 text-xs font-medium text-slate-500" dir="ltr">
+                  <div className="mx-auto flex items-center gap-2 rounded-lg bg-white border border-slate-200 px-4 py-1.5 text-xs font-medium text-slate-500" dir="ltr">
                     <Lock className="w-3 h-3 text-emerald-600" aria-hidden />
                     {SITE_HOST}
                   </div>

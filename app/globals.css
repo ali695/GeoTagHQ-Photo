@@ -4,109 +4,31 @@
 @theme {
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", "Noto Sans", "Noto Sans Arabic", "Noto Sans Devanagari", "Hiragino Sans", "Apple SD Gothic Neo", sans-serif;
   --font-display: var(--font-jakarta), var(--font-inter), ui-sans-serif, system-ui, "Noto Sans", sans-serif;
-  --font-serif: var(--font-instrument), "Iowan Old Style", Georgia, serif;
+  --font-serif: var(--font-jakarta), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-jbmono), ui-monospace, "SF Mono", Menlo, monospace;
 
-  /* Field-notes palette: paper, ink and one pin colour. */
-  --color-paper: #f4f1ea;
-  --color-paper-2: #ebe6db;
-  --color-ink: #16150f;
-  --color-ink-2: #4a473d;
-  --color-ink-3: #8a8676;
-  --color-rule: #d9d3c4;
-  --color-pin: #ff4f1f;
-  --color-pin-2: #e23d10;
-  --color-water: #cfdfe6;
-  --color-moss: #2f5d3a;
+  /* Legacy token names, now mapped to the homepage palette (white, slate, blue). */
+  --color-paper: #ffffff;
+  --color-paper-2: #f8fafc;
+  --color-ink: #0f172a;
+  --color-ink-2: #475569;
+  --color-ink-3: #64748b;
+  --color-rule: #e2e8f0;
+  --color-pin: #2563eb;
+  --color-pin-2: #1d4ed8;
+  --color-water: #dbeafe;
+  --color-moss: #059669;
 
-  /* Site-wide retheme: the tool UIs were built with slate/blue/indigo/sky/violet classes.
-     Remapping those scales here moves every component to the field-notes palette at once. */
-  --color-slate-50: #f7f4ee;
-  --color-slate-100: #ece7dc;
-  --color-slate-200: #dcd5c6;
-  --color-slate-300: #c6bfae;
-  --color-slate-400: #9a9584;
-  --color-slate-500: #77735f;
-  --color-slate-600: #4a473d;
-  --color-slate-700: #36332b;
-  --color-slate-800: #24221b;
-  --color-slate-900: #16150f;
-  --color-slate-950: #0d0c08;
-
-  --color-blue-50: #fff3ec;
-  --color-blue-100: #ffe3d6;
-  --color-blue-200: #ffc6ae;
-  --color-blue-300: #ffa07d;
-  --color-blue-400: #ff7a4d;
-  --color-blue-500: #ff5a2a;
-  --color-blue-600: #ff4f1f;
-  --color-blue-700: #d93a0e;
-  --color-blue-800: #a92d0b;
-  --color-blue-900: #6e1f09;
-  --color-blue-950: #3a1004;
-
-  --color-indigo-50: #fff3ec;
-  --color-indigo-100: #ffe3d6;
-  --color-indigo-200: #ffc6ae;
-  --color-indigo-300: #ffa07d;
-  --color-indigo-400: #f0683a;
-  --color-indigo-500: #e8521f;
-  --color-indigo-600: #e04512;
-  --color-indigo-700: #b9360c;
-  --color-indigo-800: #8a2a0b;
-  --color-indigo-900: #24221b;
-  --color-indigo-950: #16150f;
-
-  --color-sky-50: #eef4f5;
-  --color-sky-100: #dbe8eb;
-  --color-sky-200: #bcd5db;
-  --color-sky-300: #94bac3;
-  --color-sky-400: #6a9aa6;
-  --color-sky-500: #4a7d8a;
-  --color-sky-600: #3a6672;
-  --color-sky-700: #2e525c;
-  --color-sky-800: #233f47;
-  --color-sky-900: #182c32;
-
-  --color-violet-50: #eef3ec;
-  --color-violet-100: #dce7d8;
-  --color-violet-200: #bcd2b6;
-  --color-violet-300: #93b38b;
-  --color-violet-400: #6b9363;
-  --color-violet-500: #4d7745;
-  --color-violet-600: #3d6337;
-  --color-violet-700: #2f5d3a;
-  --color-violet-800: #244a2d;
-  --color-violet-900: #183420;
 }
 
-/* Native dropdowns: drop the OS arrow and draw our own ink chevron, so every <select> matches the design.
-   Unlayered on purpose, so it wins over utility padding and keeps room for the arrow. */
-select {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2316150f' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 0.9rem center;
-  background-size: 1rem;
-  padding-inline-end: 2.6rem;
-  cursor: pointer;
-}
-[dir='rtl'] select { background-position: left 0.9rem center; }
-select::-ms-expand { display: none; }
-select:disabled { cursor: not-allowed; opacity: 0.6; }
-select[multiple], select[size]:not([size='1']) { background-image: none; padding-inline-end: 0.75rem; }
-
-/* Pages built on white now sit on paper. */
-body { background-color: var(--color-paper); color: var(--color-ink); }
+body { background-color: #ffffff; color: #0f172a; }
 
 /* Hard offset shadow used on buttons and key cards. */
-.shadow-hard { box-shadow: 4px 4px 0 0 var(--color-ink); }
-.shadow-hard-sm { box-shadow: 2px 2px 0 0 var(--color-ink); }
-.press { transition: transform 0.12s ease, box-shadow 0.12s ease; }
-.press:hover { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 0 var(--color-ink); }
-.press:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 0 var(--color-ink); }
+.shadow-hard { box-shadow: 0 24px 48px -24px rgb(15 23 42 / 0.25); }
+.shadow-hard-sm { box-shadow: 0 10px 24px -10px rgb(37 99 235 / 0.45); }
+.press { transition: transform 0.15s ease, box-shadow 0.15s ease; }
+.press:hover { transform: translateY(-2px); }
+.press:active { transform: translateY(0); }
 
 /* Paper grain (static SVG noise, no JS). */
 .paper-grain {

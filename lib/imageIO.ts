@@ -15,12 +15,17 @@ export const MIME_EXT: Record<string, string> = {
   'image/heic': 'heic',
   'image/heif': 'heif',
   'image/tiff': 'tiff',
+  'image/bmp': 'bmp',
 };
 
 /** HEIC/HEIF by MIME type or extension (Windows often reports an empty type). */
 export function isHeicFile(file: File): boolean {
   const t = (file.type || '').toLowerCase();
   return t === 'image/heic' || t === 'image/heif' || /\.(heic|heif)$/i.test(file.name);
+}
+
+export function isTiffFile(file: File): boolean {
+  return file.type === 'image/tiff' || /\.tiff?$/i.test(file.name);
 }
 
 export function isSvgFile(file: File): boolean {
@@ -84,6 +89,13 @@ export async function loadDrawable(file: File): Promise<{ source: CanvasImageSou
     const bmp = await createImageBitmap(file, { imageOrientation: 'from-image' });
     return { source: bmp, width: bmp.width, height: bmp.height, close: () => bmp.close() };
   } catch {
+    // Most browsers (all but Safari) cannot decode TIFF. Decode it on the server instead:
+    // sharp turns it into a lossless PNG in memory, nothing is stored.
+    if (isTiffFile(file)) {
+      const png = await serverConvert(file, 'image/png', 1);
+      const bmp = await createImageBitmap(png, { imageOrientation: 'from-image' });
+      return { source: bmp, width: bmp.width, height: bmp.height, close: () => bmp.close() };
+    }
     throw new Error('Your browser cannot read this image format.');
   }
 }

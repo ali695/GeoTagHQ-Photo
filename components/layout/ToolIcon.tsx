@@ -1,4 +1,4 @@
-import { MapPin, ScanSearch, Eraser, FileImage, Minimize2, Crosshair, Type, Repeat, LocateFixed } from 'lucide-react';
+import { MapPin, ScanSearch, Eraser, FileImage, Minimize2, Crosshair, Type, Repeat, LocateFixed, Scaling, FileText, Gauge } from 'lucide-react';
 import type { ToolIcon as ToolIconName } from '@/lib/tools';
 
 const ICONS = {
@@ -11,6 +11,9 @@ const ICONS = {
   type: Type,
   repeat: Repeat,
   locate: LocateFixed,
+  scaling: Scaling,
+  fileText: FileText,
+  gauge: Gauge,
 } as const;
 
 export default function ToolIcon({ name, className }: { name: ToolIconName; className?: string }) {

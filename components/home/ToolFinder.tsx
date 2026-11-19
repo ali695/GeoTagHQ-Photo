@@ -4,7 +4,7 @@ import { useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { Search, ArrowRight, X, CornerDownLeft } from 'lucide-react';
 import ToolIcon from '@/components/layout/ToolIcon';
-import type { ToolEntry } from '@/lib/tools';
+import { isPair, type ToolEntry } from '@/lib/tools';
 
 // Extra words people type for each tool, so "iphone" finds HEIC and "privacy" finds Remove EXIF.
 const KEYWORDS: Record<string, string> = {
@@ -15,6 +15,13 @@ const KEYWORDS: Record<string, string> = {
   'lat-long-finder': 'latitude longitude coordinates address find lat long gps',
   'image-converter': 'convert converter format change',
   'image-compressor': 'compress reduce size shrink smaller optimize kb mb',
+  'image-resizer': 'resize resizer dimensions pixels width height scale instagram facebook youtube smaller bigger',
+  'jpg-to-pdf': 'pdf jpg jpeg photo document combine merge scan',
+  'png-to-pdf': 'pdf png screenshot document combine',
+  'compress-to-20kb': 'compress 20kb kb signature form exam size reduce',
+  'compress-to-50kb': 'compress 50kb kb passport photo form exam size reduce',
+  'compress-to-100kb': 'compress 100kb kb form upload job size reduce',
+  'compress-to-200kb': 'compress 200kb kb upload size reduce',
   'ai-alt-text': 'alt text seo accessibility ai description caption',
 };
 
@@ -24,7 +31,8 @@ const QUICK = [
   { label: 'Remove location', q: 'remove' },
   { label: 'Compress image', q: 'compress' },
   { label: 'WebP to JPG', q: 'webp to jpg' },
-  { label: 'Get coordinates', q: 'coordinates' },
+  { label: 'JPG to PDF', q: 'jpg to pdf' },
+  { label: 'Resize image', q: 'resize' },
 ];
 
 export default function ToolFinder({ tools, dark = false }: { tools: ToolEntry[]; dark?: boolean }) {
@@ -41,7 +49,7 @@ export default function ToolFinder({ tools, dark = false }: { tools: ToolEntry[]
         const hits = words.filter((w) => hay.includes(w)).length;
         // Exact "x to y" converter matches rank first.
         const exact = t.name.toLowerCase() === q.trim().toLowerCase() ? 10 : 0;
-        return { t, score: hits * 2 + exact - (t.path.includes('-to-') ? 0.5 : 0) };
+        return { t, score: hits * 2 + exact - (isPair(t) ? 0.5 : 0) };
       })
       .filter((r) => r.score >= words.length * 2 - 0.5)
       .sort((a, b) => b.score - a.score)
@@ -63,7 +71,7 @@ export default function ToolFinder({ tools, dark = false }: { tools: ToolEntry[]
         }}
         className="relative"
       >
-        <Search className="pointer-events-none absolute start-5 top-1/2 h-5 w-5 -translate-y-1/2 text-ink" aria-hidden />
+        <Search className="pointer-events-none absolute left-5 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" aria-hidden />
         <input
           ref={inputRef}
           value={q}
@@ -84,16 +92,16 @@ export default function ToolFinder({ tools, dark = false }: { tools: ToolEntry[]
           aria-label="Search tools"
           aria-autocomplete="list"
           aria-expanded={results.length > 0}
-          className="h-16 w-full rounded-md border-2 border-ink bg-white ps-14 pe-12 text-base font-medium text-ink placeholder:text-ink-3 shadow-hard outline-none transition focus:shadow-[6px_6px_0_0_var(--color-pin)]"
+          className="h-16 w-full rounded-2xl border border-slate-200 bg-white pl-14 pr-12 text-base font-medium text-slate-900 shadow-xl shadow-blue-900/10 outline-none ring-blue-600 transition focus:ring-2"
         />
         {q && (
-          <button type="button" onClick={() => { setQ(''); inputRef.current?.focus(); }} className="absolute end-4 top-1/2 -translate-y-1/2 rounded-md p-1.5 text-ink-3 hover:bg-paper-2 hover:text-ink" aria-label="Clear search">
+          <button type="button" onClick={() => { setQ(''); inputRef.current?.focus(); }} className="absolute right-4 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700" aria-label="Clear search">
             <X className="h-4 w-4" />
           </button>
         )}
 
         {q && (
-          <div className="absolute inset-x-0 top-full z-30 mt-3 overflow-hidden rounded-md border-2 border-ink bg-white shadow-hard">
+          <div className="absolute left-0 right-0 top-full z-30 mt-2 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl">
             {results.length > 0 ? (
               <ul role="listbox">
                 {results.map((t, i) => (
@@ -101,31 +109,31 @@ export default function ToolFinder({ tools, dark = false }: { tools: ToolEntry[]
                     <Link
                       href={t.path}
                       onMouseEnter={() => setActive(i)}
-                      className={`flex items-center gap-3 px-4 py-3 transition-colors ${i === active ? 'bg-paper-2' : 'hover:bg-paper'}`}
+                      className={`flex items-center gap-3 px-4 py-3 transition-colors ${i === active ? 'bg-blue-50' : 'hover:bg-slate-50'}`}
                     >
-                      <span className="rounded-md bg-ink p-2 text-paper">
+                      <span className="rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 p-2 text-white">
                         <ToolIcon name={t.icon} className="h-4 w-4" />
                       </span>
                       <span className="min-w-0 flex-1">
-                        <span className="block font-semibold text-ink">{t.name}</span>
-                        <span className="block truncate text-sm text-ink-3">{t.desc}</span>
+                        <span className="block font-semibold text-slate-900">{t.name}</span>
+                        <span className="block truncate text-sm text-slate-500">{t.desc}</span>
                       </span>
-                      {i === active ? <CornerDownLeft className="h-4 w-4 text-pin" aria-hidden /> : <ArrowRight className="h-4 w-4 text-ink-3" aria-hidden />}
+                      {i === active ? <CornerDownLeft className="h-4 w-4 text-blue-600" aria-hidden /> : <ArrowRight className="h-4 w-4 text-slate-300" aria-hidden />}
                     </Link>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="px-5 py-4 text-sm text-ink-2">
-                No tool matches “{q}”. Try “convert”, “gps” or “compress”, or <a href="#tools" className="font-semibold text-ink underline decoration-pin decoration-2 underline-offset-2">browse all tools</a>.
+              <p className="px-5 py-4 text-sm text-slate-600">
+                No tool matches “{q}”. Try “convert”, “gps” or “compress”, or <a href="#tools" className="font-semibold text-blue-700 hover:underline">browse all tools</a>.
               </p>
             )}
           </div>
         )}
       </form>
 
-      <ul className="mt-5 flex flex-wrap gap-2" aria-label="Popular tasks">
-        {dark && <li className="me-1 self-center font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-ink-3">Try:</li>}
+      <ul className="mt-5 flex flex-wrap justify-center gap-2 lg:justify-start" aria-label="Popular tasks">
+        {dark && <li className="me-1 self-center text-sm font-medium text-slate-400">Popular:</li>}
         {QUICK.map((c) => (
           <li key={c.label}>
             <button
@@ -136,7 +144,9 @@ export default function ToolFinder({ tools, dark = false }: { tools: ToolEntry[]
                 inputRef.current?.focus();
               }}
               className={
-                'rounded-md border border-ink/25 bg-paper px-3 py-1.5 text-sm font-medium text-ink transition hover:border-ink hover:bg-white'
+                dark
+                  ? 'rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-sm font-medium text-slate-200 backdrop-blur transition hover:border-blue-400/60 hover:bg-white/10 hover:text-white'
+                  : 'rounded-full border border-slate-200 bg-white/80 px-3.5 py-1.5 text-sm font-medium text-slate-700 backdrop-blur transition hover:border-blue-300 hover:text-blue-700'
               }
             >
               {c.label}

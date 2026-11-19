@@ -14,6 +14,7 @@ export const ACCEPT_IMAGES: Accept = {
   'image/heic': ['.heic'],
   'image/heif': ['.heif'],
   'image/gif': ['.gif'],
+  'image/bmp': ['.bmp'],
   'image/svg+xml': ['.svg'],
   'image/tiff': ['.tif', '.tiff'],
 };

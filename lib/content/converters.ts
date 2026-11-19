@@ -4,7 +4,7 @@ import { FORMAT_LABEL } from '@/lib/tools';
 // Content for the converter pages. Each pair has its own intro, reasons and FAQs;
 // the format comparison table is built from FORMAT_INFO.
 
-type Fmt = 'heic' | 'jpg' | 'png' | 'webp' | 'avif' | 'svg';
+type Fmt = 'heic' | 'jpg' | 'png' | 'webp' | 'avif' | 'svg' | 'gif' | 'bmp' | 'tiff';
 
 const FORMAT_INFO: Record<Fmt, { full: string; compression: string; transparency: string; support: string; bestFor: string }> = {
   heic: { full: 'High Efficiency Image Container (HEVC)', compression: 'Lossy, very efficient', transparency: 'Yes', support: 'Apple devices; poor on Windows and the web', bestFor: 'Storing iPhone photos' },
@@ -13,6 +13,9 @@ const FORMAT_INFO: Record<Fmt, { full: string; compression: string; transparency
   webp: { full: 'WebP (Google)', compression: 'Lossy or lossless', transparency: 'Yes', support: 'All modern browsers; some older apps', bestFor: 'Fast-loading website images' },
   avif: { full: 'AV1 Image File Format', compression: 'Lossy, very efficient', transparency: 'Yes', support: 'Modern browsers; limited in editing apps', bestFor: 'Smallest web images' },
   svg: { full: 'Scalable Vector Graphics', compression: 'Vector (text-based)', transparency: 'Yes', support: 'Browsers; not most social sites', bestFor: 'Logos and icons at any size' },
+  gif: { full: 'Graphics Interchange Format', compression: 'Lossless, max 256 colors', transparency: 'Yes (on/off only)', support: 'Everywhere', bestFor: 'Short animations and simple graphics' },
+  bmp: { full: 'Bitmap Image File', compression: 'Usually none (very large files)', transparency: 'Rarely', support: 'Windows; poor on the web', bestFor: 'Legacy Windows software' },
+  tiff: { full: 'Tagged Image File Format', compression: 'Lossless or none', transparency: 'Yes', support: 'Print and pro software; not browsers', bestFor: 'Scans, print and archiving' },
 };
 
 type PairCopy = {
@@ -232,6 +235,163 @@ const PAIRS: Record<string, PairCopy> = {
       { q: 'Are fonts and external images included?', a: 'Shapes and embedded content are drawn exactly. SVGs that load fonts or images from other websites may render without them, because browsers block external resources in this mode.' },
     ],
   },
+  'gif-jpg': {
+    h1: 'GIF to JPG Converter',
+    metaTitle: 'GIF to JPG Converter – Free Online, No Upload',
+    metaDescription: 'Convert GIF images to JPG free in your browser. Turn a GIF into a still JPG photo, batch convert up to 20 files, no upload and no sign-up.',
+    subtitle: 'Turn GIF images into JPG stills that upload anywhere. The first frame of an animated GIF is saved as a high-quality JPG, right in your browser.',
+    whyTitle: 'Why convert GIF to JPG?',
+    why: [
+      'Many upload forms, profile pictures and print services accept JPG but reject GIF.',
+      'GIF is limited to 256 colors, so photos saved as GIF look grainy; JPG shows full color.',
+      'You only need one still image from an animation, for a thumbnail or a document.',
+      'JPG is smaller than GIF for photo-like images.',
+    ],
+    faqs: [
+      { q: 'What happens to an animated GIF?', a: 'JPG cannot store animation, so the first frame is converted to a still JPG. If you need the animation, keep the GIF or convert it to WebP, which supports animation in browsers.' },
+      { q: 'Will the colors improve?', a: 'The JPG shows exactly the colors that are in the GIF. Converting can’t add colors that GIF’s 256-color palette removed, but it won’t make them worse either.' },
+      { q: 'What about transparent areas?', a: 'JPG has no transparency, so transparent pixels are filled with a background color you choose (white by default).' },
+    ],
+  },
+  'gif-png': {
+    h1: 'GIF to PNG Converter',
+    metaTitle: 'GIF to PNG Converter – Free, Keeps Transparency',
+    metaDescription: 'Convert GIF to PNG free in your browser. Keeps transparency and every pixel, batch converts up to 20 files, with no upload and no sign-up.',
+    subtitle: 'Convert GIF images to lossless PNG with transparency intact. Ideal for logos, icons and graphics you want to edit.',
+    whyTitle: 'Why convert GIF to PNG?',
+    why: [
+      'PNG keeps every pixel of the GIF, with no quality loss.',
+      'PNG supports smooth, partial transparency; GIF only has fully on or off.',
+      'Design and editing tools handle PNG better than GIF.',
+      'PNG is the standard for logos, icons and screenshots on the web.',
+    ],
+    faqs: [
+      { q: 'Is the conversion lossless?', a: 'Yes. PNG is lossless, so the result looks exactly like the GIF’s first frame.' },
+      { q: 'Does it keep the animation?', a: 'No. PNG is a still format, so the first frame is saved. For animation in browsers, use GIF to WebP.' },
+      { q: 'Is transparency kept?', a: 'Yes. Transparent areas in the GIF stay transparent in the PNG.' },
+    ],
+  },
+  'gif-webp': {
+    h1: 'GIF to WebP Converter',
+    metaTitle: 'GIF to WebP Converter – Smaller Images, Free',
+    metaDescription: 'Convert GIF to WebP free. WebP files are much smaller than GIF and keep transparency, which makes your pages load faster. No sign-up.',
+    subtitle: 'Turn heavy GIFs into lightweight WebP images for your website. Smaller files, full color and transparency, converted in your browser.',
+    whyTitle: 'Why convert GIF to WebP?',
+    why: [
+      'WebP images are often far smaller than the same GIF, so pages load faster.',
+      'WebP shows millions of colors, not GIF’s 256.',
+      'Every modern browser supports WebP.',
+      'Lighter images help Core Web Vitals and mobile visitors.',
+    ],
+    faqs: [
+      { q: 'Is the animation kept?', a: 'This converter saves the first frame as a still WebP image. Animated WebP is possible, but converting animations needs a video-style encoder that isn’t part of this tool.' },
+      { q: 'Will older apps open WebP?', a: 'All modern browsers do. Some older desktop apps and email clients don’t, so keep a JPG or PNG copy if you also send the image by email.' },
+      { q: 'Is anything uploaded?', a: 'Normally no. Only if your browser can’t create WebP files is the image converted on our server, in memory, and never stored.' },
+    ],
+  },
+  'bmp-jpg': {
+    h1: 'BMP to JPG Converter',
+    metaTitle: 'BMP to JPG Converter – Shrink BMP Files, Free',
+    metaDescription: 'Convert BMP to JPG free in your browser. Make huge bitmap files small enough to email and upload. Batch convert, no upload, no sign-up.',
+    subtitle: 'Turn large BMP bitmaps into compact JPGs you can email, upload and share. Converted in your browser, nothing is uploaded.',
+    whyTitle: 'Why convert BMP to JPG?',
+    why: [
+      'BMP files are usually uncompressed, so they are often 10 to 20 times larger than a JPG of the same image.',
+      'Websites, social networks and upload forms rarely accept BMP.',
+      'Email attachment limits are easy to hit with BMP files.',
+      'JPG opens on every phone, computer and browser.',
+    ],
+    faqs: [
+      { q: 'How much smaller will the file be?', a: 'It depends on the image, but a photo-like BMP commonly shrinks by 90% or more as a JPG at 90% quality, with no visible difference.' },
+      { q: 'Should I use JPG or PNG?', a: 'Use JPG for photos and PNG for screenshots, diagrams or anything with sharp text, where JPG can show soft edges.' },
+      { q: 'Where do BMP files come from?', a: 'Mostly older Windows programs, Paint, scanners and some industrial or medical software that save uncompressed bitmaps.' },
+    ],
+  },
+  'bmp-png': {
+    h1: 'BMP to PNG Converter',
+    metaTitle: 'BMP to PNG Converter – Lossless and Free',
+    metaDescription: 'Convert BMP to PNG free in your browser. Lossless, much smaller files that work on the web. Batch convert up to 20 images, no upload.',
+    subtitle: 'Convert BMP bitmaps to lossless PNG: same pixels, far smaller files, and support on every website and device.',
+    whyTitle: 'Why convert BMP to PNG?',
+    why: [
+      'PNG is lossless like BMP, so nothing about the image changes.',
+      'PNG compresses the data, so files are much smaller than BMP.',
+      'PNG works on the web, in documents and in every image editor.',
+      'Screenshots and diagrams stay perfectly sharp.',
+    ],
+    faqs: [
+      { q: 'Is BMP to PNG lossless?', a: 'Yes. Both are lossless formats, so the PNG has exactly the same pixels as the BMP.' },
+      { q: 'Why is the PNG so much smaller?', a: 'BMP usually stores every pixel uncompressed. PNG uses lossless compression, which removes redundancy without changing the image.' },
+      { q: 'Can I convert many BMP files at once?', a: 'Yes, up to 20 at a time, downloaded together as a ZIP.' },
+    ],
+  },
+  'tiff-jpg': {
+    h1: 'TIFF to JPG Converter',
+    metaTitle: 'TIFF to JPG Converter – Free Online, No Sign-up',
+    metaDescription: 'Convert TIFF and TIF files to JPG free. Make scans and print files small enough to share and upload. Batch convert up to 20, no sign-up.',
+    subtitle: 'Convert TIFF and TIF scans or print files to JPGs that open everywhere and are small enough to email or upload.',
+    whyTitle: 'Why convert TIFF to JPG?',
+    why: [
+      'Browsers, websites and most phones can’t open TIFF files.',
+      'TIFF scans are often tens of megabytes; a JPG is a fraction of that.',
+      'Upload forms and email clients accept JPG without problems.',
+      'JPG is ideal for sharing scanned photos and documents.',
+    ],
+    extra: {
+      title: 'How TIFF files are processed',
+      paragraphs: [
+        'Most browsers can’t read TIFF, so Safari converts it locally while other browsers send the file to our server, which decodes it in memory and discards it immediately. Nothing is stored or logged.',
+        'Multi-page TIFF files (common with scanners and faxes) are converted page one only. Save each page separately if you need all of them.',
+      ],
+    },
+    faqs: [
+      { q: 'Is TIFF to JPG lossy?', a: 'Yes, JPG is a lossy format, but at 90% quality the difference is not visible for normal viewing. Keep the TIFF as your master copy for printing or archiving.' },
+      { q: 'Do you support .tif and .tiff?', a: 'Yes. Both extensions are the same format and are accepted.' },
+      { q: 'What about multi-page TIFFs?', a: 'Only the first page is converted. For a whole scanned document, a PDF is usually the better format.' },
+    ],
+  },
+  'tiff-png': {
+    h1: 'TIFF to PNG Converter',
+    metaTitle: 'TIFF to PNG Converter – Lossless, Free Online',
+    metaDescription: 'Convert TIFF and TIF files to lossless PNG free. Keep full quality and transparency in a format every browser can open. No sign-up.',
+    subtitle: 'Convert TIFF and TIF images to lossless PNG: full quality and transparency, in a format browsers and websites support.',
+    whyTitle: 'Why convert TIFF to PNG?',
+    why: [
+      'PNG keeps full quality, like TIFF, but opens in every browser.',
+      'Transparency in the TIFF is preserved.',
+      'PNG is accepted by websites, CMSs and design tools.',
+      'Good for scans with text, diagrams and line art.',
+    ],
+    extra: {
+      title: 'How TIFF files are processed',
+      paragraphs: [
+        'Safari converts TIFF locally. Other browsers can’t read TIFF, so the file is decoded on our server in memory and discarded right away. Nothing is stored.',
+      ],
+    },
+    faqs: [
+      { q: 'Is TIFF to PNG lossless?', a: 'Yes. Both are lossless, so no detail is lost.' },
+      { q: 'Will the PNG be smaller than the TIFF?', a: 'Often, yes, especially for uncompressed TIFFs. Highly detailed photos can stay large because PNG is lossless; use TIFF to JPG if size matters more.' },
+      { q: 'Are multi-page TIFFs supported?', a: 'The first page is converted.' },
+    ],
+  },
+  'svg-jpg': {
+    h1: 'SVG to JPG Converter',
+    metaTitle: 'SVG to JPG Converter – Free, Any Size, No Upload',
+    metaDescription: 'Convert SVG to JPG free in your browser. Turn vector logos and icons into JPG images at the size you need. No upload, no sign-up.',
+    subtitle: 'Turn SVG vector graphics into JPG images for places that don’t accept SVG, such as social media, documents and email.',
+    whyTitle: 'Why convert SVG to JPG?',
+    why: [
+      'Social networks, marketplaces and many forms don’t accept SVG uploads.',
+      'Email clients and office documents display JPG reliably.',
+      'JPG gives you a fixed-size image for previews and thumbnails.',
+      'Easy to share with people who don’t have design software.',
+    ],
+    faqs: [
+      { q: 'What about the transparent background?', a: 'JPG has no transparency, so transparent areas are filled with the background color you pick. If you need transparency, use SVG to PNG instead.' },
+      { q: 'What size will the JPG be?', a: 'It uses the size defined in the SVG (1024 pixels if none is set). Use the resize option to choose a different size.' },
+      { q: 'Is anything uploaded?', a: 'No. SVG to JPG conversion runs entirely in your browser.' },
+    ],
+  },
 };
 
 const GENERIC_FAQS = [
@@ -256,6 +416,7 @@ function table(from: Fmt, to: Fmt) {
 }
 
 const usesServerFallback = (to: string) => to === 'webp';
+const serverDecode = (from: string) => from === 'tiff';
 
 export function converterLanding(from: Fmt, to: Fmt): Landing {
   const key = `${from}-${to}`;
@@ -273,9 +434,11 @@ export function converterLanding(from: Fmt, to: Fmt): Landing {
     metaDescription: p.metaDescription,
     h1: p.h1,
     subtitle: p.subtitle,
-    chips: ['100% free', 'Batch up to 20 files', from === 'heic' || !usesServerFallback(to) ? 'No upload' : 'Nothing stored', 'No watermark'],
-    privacy: usesServerFallback(to) ? 'mixed' : 'browser',
-    privacyNote: usesServerFallback(to)
+    chips: ['100% free', 'Batch up to 20 files', serverDecode(from) || (from !== 'heic' && usesServerFallback(to)) ? 'Nothing stored' : 'No upload', 'No watermark'],
+    privacy: usesServerFallback(to) || serverDecode(from) ? 'mixed' : 'browser',
+    privacyNote: serverDecode(from)
+      ? `Safari converts ${F} to ${T} in your browser. Other browsers can’t read TIFF, so the file is decoded on our server in memory and discarded immediately. Nothing is stored.`
+      : usesServerFallback(to)
       ? `${F} to ${T} conversion runs in your browser. Only if your browser can’t create WebP files is the image converted on our server, in memory, and never stored.`
       : `${F} to ${T} conversion runs entirely in your browser. Your images are never uploaded.`,
     stepsTitle: `How to convert ${F} to ${T}`,
@@ -329,7 +492,7 @@ export const IMAGE_CONVERTER_LANDING: Landing = {
     rows: (Object.keys(FORMAT_INFO) as Fmt[]).map((f) => [FORMAT_LABEL[f], FORMAT_INFO[f].compression, FORMAT_INFO[f].transparency, FORMAT_INFO[f].support, FORMAT_INFO[f].bestFor]),
   },
   faqs: [
-    { q: 'Which formats can I convert?', a: 'You can open HEIC/HEIF, JPG, PNG, WebP, AVIF, GIF (first frame) and SVG, and save as JPG, PNG or WebP.' },
+    { q: 'Which formats can I convert?', a: 'You can open HEIC/HEIF, JPG, PNG, WebP, AVIF, GIF (first frame), BMP, TIFF and SVG, and save as JPG, PNG or WebP.' },
     { q: 'Are my images uploaded?', a: 'Normally no; conversion runs in your browser. The only exception is WebP output in older browsers that can’t create WebP, where our server converts the image in memory and doesn’t store it.' },
     { q: 'Can I convert iPhone photos?', a: 'Yes. HEIC photos are decoded in your browser with a WebAssembly version of libheif.' },
     ...GENERIC_FAQS,

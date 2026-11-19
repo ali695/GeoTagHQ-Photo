@@ -3,7 +3,7 @@
 import type { Landing } from '@/lib/content/landing';
 import type { ConverterCtx } from './types';
 
-type Fmt = 'heic' | 'jpg' | 'png' | 'webp' | 'avif' | 'svg';
+type Fmt = 'heic' | 'jpg' | 'png' | 'webp' | 'avif' | 'svg' | 'gif' | 'bmp' | 'tiff';
 
 export type ConverterTemplate = {
   metaTitle: string; // {F} {T}
@@ -13,6 +13,8 @@ export type ConverterTemplate = {
   chips: { free: string; batch: string; noUpload: string; nothingStored: string; noWatermark: string };
   privacyBrowser: string; // {F} {T}
   privacyMixed: string;
+  /** TIFF input: decoded on the server in browsers other than Safari. */
+  privacyTiff: string;
   stepsTitle: string;
   steps: { add: [string, string]; settings: [string, string]; settingsPng: string; bgNote: string; download: [string, string] };
   whyTitle: string;
@@ -37,12 +39,13 @@ export type ConverterTemplate = {
 
 const fill = (s: string, c: ConverterCtx) => s.replaceAll('{F}', c.F).replaceAll('{T}', c.T);
 
-const PAIRS = ['heic-jpg', 'heic-png', 'webp-jpg', 'webp-png', 'jpg-webp', 'png-webp', 'png-jpg', 'jpg-png', 'avif-jpg', 'avif-png', 'svg-png'];
+const PAIRS = ['heic-jpg', 'heic-png', 'webp-jpg', 'webp-png', 'jpg-webp', 'png-webp', 'png-jpg', 'jpg-png', 'avif-jpg', 'avif-png', 'svg-png', 'gif-jpg', 'gif-png', 'gif-webp', 'bmp-jpg', 'bmp-png', 'tiff-jpg', 'tiff-png', 'svg-jpg'];
 
 export function buildConverter(t: ConverterTemplate, c: ConverterCtx): Landing {
   const from = c.from as Fmt;
   const to = c.to as 'jpg' | 'png' | 'webp';
-  const mixed = to === 'webp';
+  const tiff = from === 'tiff';
+  const mixed = to === 'webp' || tiff;
   const key = `${from}-${to}`;
   const related = PAIRS.filter((k) => k !== key && (k.startsWith(`${from}-`) || k.endsWith(`-${to}`) || k === `${to}-${from}`))
     .slice(0, 3)
@@ -67,7 +70,7 @@ export function buildConverter(t: ConverterTemplate, c: ConverterCtx): Landing {
     subtitle: fill(t.subtitle, c),
     chips: [t.chips.free, t.chips.batch, mixed && from !== 'heic' ? t.chips.nothingStored : t.chips.noUpload, t.chips.noWatermark],
     privacy: mixed ? 'mixed' : 'browser',
-    privacyNote: fill(mixed ? t.privacyMixed : t.privacyBrowser, c),
+    privacyNote: fill(tiff ? t.privacyTiff : mixed ? t.privacyMixed : t.privacyBrowser, c),
     stepsTitle: fill(t.stepsTitle, c),
     steps: [
       { title: fill(t.steps.add[0], c), desc: fill(t.steps.add[1], c) },

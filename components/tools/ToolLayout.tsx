@@ -6,7 +6,7 @@ import { Check, Plus, ArrowRight, ShieldCheck, Cpu, Server, Sparkles, Lock } fro
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import ToolIcon from '@/components/layout/ToolIcon';
-import { toolById, type ToolEntry } from '@/lib/tools';
+import { isPair, toolById, type ToolEntry } from '@/lib/tools';
 import { getUi, pathFor, toolLangs, toolText } from '@/lib/i18n';
 import { UiProvider } from './UiProvider';
 import { uiStrings } from '@/lib/tools';
@@ -84,13 +84,13 @@ export default function ToolLayout({ content: c, children, lang = 'en' }: { cont
     .filter((t): t is ToolEntry => !!t && t.id !== c.id && (t.id === 'geotag' || toolLangs(t.id).includes(lang)));
 
   const fx = factsFor(lang);
-  const BATCH_TOOLS = ['remove-exif', 'image-compressor', 'image-converter'];
+  const BATCH_TOOLS = ['remove-exif', 'image-compressor', 'image-converter', 'image-resizer', 'jpg-to-pdf', 'png-to-pdf'];
   const takesFiles = c.id !== 'lat-long-finder';
   const facts: Array<[string, string]> = [
     [fx.price, fx.priceVal],
     [fx.signup, fx.signupVal],
     ...(takesFiles ? [[fx.files, c.privacy === 'browser' ? fx.browserVal : c.privacy === 'mixed' ? fx.mixedVal : fx.serverVal] as [string, string]] : []),
-    ...(BATCH_TOOLS.includes(c.id) || c.id.includes('-to-') ? [[fx.batch, fx.batchVal] as [string, string]] : []),
+    ...(BATCH_TOOLS.includes(c.id) || isPair({ id: c.id }) || c.id.startsWith('compress-to-') ? [[fx.batch, fx.batchVal] as [string, string]] : []),
     [fx.works, fx.worksVal],
   ];
 
@@ -147,73 +147,82 @@ export default function ToolLayout({ content: c, children, lang = 'en' }: { cont
   };
 
   return (
-    <div className="min-h-screen bg-paper flex flex-col font-sans text-slate-900" dir={dir} lang={lang}>
+    <div className="flex min-h-screen flex-col bg-white font-sans text-slate-900" dir={dir} lang={lang}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <Header lang={lang} />
 
       <main className="flex-grow">
-        {/* Hero */}
-        <section className="relative overflow-hidden">
-          <div aria-hidden className="absolute inset-0 bg-gradient-to-b from-paper-2/70 via-paper to-paper" />
-          <div aria-hidden className="absolute inset-0 bg-map-grid" style={{ maskImage: 'radial-gradient(ellipse at top, black 30%, transparent 70%)', WebkitMaskImage: 'radial-gradient(ellipse at top, black 30%, transparent 70%)' }} />
-          <div aria-hidden className="absolute -top-24 end-[-8%] h-80 w-80 rounded-full bg-indigo-400/20 blur-3xl" />
-          <div className="relative max-w-4xl mx-auto px-4 sm:px-6 pt-10 pb-10 md:pt-16 md:pb-12 text-center">
-            <nav aria-label="Breadcrumb" className="mb-5 text-sm text-slate-500">
-              <Link href={home} className="hover:text-blue-700">{ui.freeTools}</Link>
-              <span className="mx-2" aria-hidden>/</span>
-              <span className="text-slate-700">{toolName}</span>
+        {/* ───────── Hero (dark, like the homepage) ───────── */}
+        <section className="relative bg-slate-950 text-white">
+          <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+            <div className="absolute inset-0 bg-map-grid opacity-[0.09]" style={{ maskImage: 'radial-gradient(ellipse at 50% 0%, black 25%, transparent 70%)', WebkitMaskImage: 'radial-gradient(ellipse at 50% 0%, black 25%, transparent 70%)' }} />
+            <div className="absolute -top-40 start-[-10%] h-[30rem] w-[30rem] rounded-full bg-blue-600/35 blur-[120px]" />
+            <div className="absolute top-10 end-[-12%] h-[28rem] w-[28rem] rounded-full bg-violet-600/30 blur-[120px]" />
+            <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+          </div>
+          <div className="relative mx-auto max-w-4xl px-4 pb-32 pt-10 text-center sm:px-6 md:pb-40 md:pt-14">
+            <nav aria-label="Breadcrumb" className="mb-6 text-sm text-slate-400">
+              <Link href={home} className="hover:text-white">{ui.freeTools}</Link>
+              <span className="mx-2 text-slate-600" aria-hidden>/</span>
+              <span className="text-slate-200">{toolName}</span>
             </nav>
-            <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight leading-[1.1] text-slate-950">{c.h1}</h1>
-            <p className="mt-5 text-lg md:text-xl text-slate-600 leading-relaxed max-w-2xl mx-auto">{c.subtitle}</p>
-            <ul className="mt-7 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm font-medium text-slate-700">
+            <p className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-sm font-medium text-slate-200 backdrop-blur">
+              <badge.icon className="h-4 w-4 text-emerald-400" aria-hidden />
+              {ui[badge.key]}
+            </p>
+            <h1 className="animate-rise text-4xl font-extrabold leading-[1.06] tracking-tight sm:text-5xl lg:text-[3.6rem]">{c.h1}</h1>
+            <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-slate-300 md:text-xl">{c.subtitle}</p>
+            <ul className="mt-7 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm font-medium text-slate-200">
               {c.chips.map((chip) => (
                 <li key={chip} className="inline-flex items-center gap-1.5">
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100">
-                    <Check className="w-3.5 h-3.5 text-emerald-700" aria-hidden />
-                  </span>
-                  {chip}
+                  <Check className="h-4 w-4 text-emerald-400" aria-hidden /> {chip}
                 </li>
               ))}
             </ul>
-            <p className="mt-6 font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-3">
+            <p className="mt-6 text-sm text-slate-400">
               {fx.by}{' '}
-              <Link href="/about" rel="author" className="text-ink underline decoration-pin decoration-2 underline-offset-2 hover:text-pin-2">{FOUNDER.name}</Link>
-              , {fx.role} <span className="mx-1.5 text-ink/30">·</span> {fx.updated}{' '}
-              <time dateTime={CONTENT_UPDATED}>{updatedLabel(lang)}</time>
+              <Link href="/about" rel="author" className="font-semibold text-blue-300 hover:text-white">{FOUNDER.name}</Link>, {fx.role}
+              <span className="mx-2 text-slate-600">·</span>
+              {fx.updated} <time dateTime={CONTENT_UPDATED}>{updatedLabel(lang)}</time>
             </p>
           </div>
         </section>
 
-        {/* Tool in an app window */}
-        <section id="tool" className="scroll-mt-20 px-3 sm:px-6 lg:px-8 pb-16 md:pb-24">
-          <div className="max-w-6xl mx-auto">
-            <div className="rounded-[1.75rem] bg-gradient-to-b from-slate-200 via-slate-200/60 to-transparent p-px shadow-2xl shadow-slate-900/10">
-              <div className="rounded-[1.7rem] bg-slate-50/90">
-                <div className="flex flex-wrap items-center gap-2 border-b border-slate-200 px-5 py-3.5">
-                  <span className="h-3 w-3 rounded-full bg-red-400" aria-hidden />
-                  <span className="h-3 w-3 rounded-full bg-amber-400" aria-hidden />
-                  <span className="h-3 w-3 rounded-full bg-emerald-400" aria-hidden />
-                  <span className={`ms-auto inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold ${badge.tone}`}>
-                    <badge.icon className="w-3.5 h-3.5" aria-hidden />
-                    {ui[badge.key]}
-                  </span>
-                </div>
-                <div className="p-3 sm:p-6 lg:p-8">
-                  <UiProvider lang={lang} dict={ui}>{children}</UiProvider>
-                </div>
+        {/* ───────── Tool, framed as an app window, overlapping the hero ───────── */}
+        <section id="tool" className="relative z-10 -mt-24 scroll-mt-20 px-3 pb-16 sm:px-6 md:-mt-28 md:pb-24 lg:px-8">
+          <div className="mx-auto max-w-6xl">
+            <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl shadow-slate-900/15">
+              <div className="flex flex-wrap items-center gap-2 border-b border-slate-200 bg-slate-50 px-5 py-3.5">
+                <span className="h-3 w-3 rounded-full bg-rose-400" aria-hidden />
+                <span className="h-3 w-3 rounded-full bg-amber-400" aria-hidden />
+                <span className="h-3 w-3 rounded-full bg-emerald-400" aria-hidden />
+                <span className={`ms-auto inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold ${badge.tone}`}>
+                  <badge.icon className="h-3.5 w-3.5" aria-hidden />
+                  {ui[badge.key]}
+                </span>
+              </div>
+              <div className="p-3 sm:p-6 lg:p-8">
+                <UiProvider lang={lang} dict={ui}>{children}</UiProvider>
               </div>
             </div>
             <p className="mt-4 flex items-start justify-center gap-2 text-center text-sm text-slate-500">
-              <Lock className="w-4 h-4 mt-0.5 shrink-0" aria-hidden />
+              <Lock className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
               {c.privacyNote}
             </p>
-            <section aria-labelledby="quick-facts" className="mt-8 rounded-sm border-2 border-ink bg-paper shadow-hard">
-              <h2 id="quick-facts" className="border-b border-ink px-5 py-2.5 font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-ink">{fx.title}</h2>
+
+            {/* Quick facts (answer-first, for AI search) */}
+            <section aria-labelledby="quick-facts" className="mt-10 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-900/5">
+              <h2 id="quick-facts" className="border-b border-slate-100 bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-3 text-xs font-bold uppercase tracking-[0.14em] text-blue-700">{fx.title}</h2>
               <dl className="grid sm:grid-cols-2 lg:grid-cols-3">
                 {facts.map(([k, v]) => (
-                  <div key={k} className="border-b border-rule px-5 py-4 sm:border-e last:border-b-0">
-                    <dt className="font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-ink-3">{k}</dt>
-                    <dd className="mt-1 font-semibold leading-snug text-ink">{v}</dd>
+                  <div key={k} className="flex items-start gap-3 border-b border-slate-100 px-6 py-5 sm:border-e">
+                    <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-md shadow-blue-500/25">
+                      <Check className="h-4 w-4" aria-hidden />
+                    </span>
+                    <span>
+                      <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">{k}</dt>
+                      <dd className="mt-1 font-semibold leading-snug text-slate-900">{v}</dd>
+                    </span>
                   </div>
                 ))}
               </dl>
@@ -221,40 +230,41 @@ export default function ToolLayout({ content: c, children, lang = 'en' }: { cont
           </div>
         </section>
 
-        {/* Steps */}
-        <section id="how-it-works" className="scroll-mt-20 py-16 md:py-24 bg-slate-50 border-y border-slate-200/70">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-center text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900 mb-12">{c.stepsTitle}</h2>
-            <ol className={`relative grid grid-cols-1 sm:grid-cols-2 ${c.steps.length >= 4 ? 'lg:grid-cols-4' : 'lg:grid-cols-3'} gap-6`}>
-              <span aria-hidden className="hidden lg:block absolute top-7 start-[12%] end-[12%] border-t-2 border-dashed border-blue-200" />
+        {/* ───────── Steps ───────── */}
+        <section id="how-it-works" className="scroll-mt-20 border-y border-slate-200/70 bg-slate-50 py-16 md:py-24">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+            <h2 data-reveal className="mb-12 text-center text-3xl font-extrabold tracking-tight text-slate-950 md:text-[2.6rem] md:leading-[1.15]">{c.stepsTitle}</h2>
+            <ol data-reveal className={`relative grid gap-6 sm:grid-cols-2 ${c.steps.length >= 4 ? 'lg:grid-cols-4' : 'lg:grid-cols-3'}`}>
+              <span aria-hidden className="absolute start-[16%] end-[16%] top-10 hidden border-t-2 border-dashed border-blue-200 lg:block" />
               {c.steps.map((s, i) => (
-                <li key={i} className="relative flex flex-col items-center text-center">
-                  <span className="relative z-10 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 text-xl font-extrabold text-white shadow-lg shadow-blue-600/30 ring-8 ring-slate-50">{i + 1}</span>
-                  <div className="mt-6 w-full flex-1 rounded-2xl border border-slate-200 bg-paper p-6 shadow-sm">
-                    <h3 className="text-lg font-bold text-slate-900 mb-2">{s.title}</h3>
-                    <p className="text-slate-600 leading-relaxed">{s.desc}</p>
-                  </div>
+                <li key={i} className="stagger relative rounded-3xl border border-slate-200 bg-white p-7 text-center shadow-sm" style={{ ['--i' as string]: i }}>
+                  <span className="relative mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 font-display text-2xl font-extrabold text-white shadow-xl shadow-blue-600/30">{i + 1}</span>
+                  <h3 className="mt-5 text-lg font-bold text-slate-950">{s.title}</h3>
+                  <p className="mt-2 leading-relaxed text-slate-600">{s.desc}</p>
                 </li>
               ))}
             </ol>
           </div>
         </section>
 
-        {/* Long-form content */}
+        {/* ───────── Long-form content ───────── */}
         <section className="py-16 md:py-24">
-          <div className="max-w-3xl mx-auto px-4 sm:px-6 space-y-14">
+          <div className="mx-auto max-w-3xl space-y-14 px-4 sm:px-6">
             {c.sections.map((sec) => (
-              <article key={sec.title}>
-                <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900 mb-5">{sec.title}</h2>
+              <article key={sec.title} data-reveal>
+                <h2 className="mb-5 flex items-start gap-3 text-2xl font-extrabold tracking-tight text-slate-950 md:text-3xl">
+                  <span aria-hidden className="mt-2 h-6 w-1.5 shrink-0 rounded-full bg-gradient-to-b from-blue-500 to-violet-500" />
+                  {sec.title}
+                </h2>
                 <div className="space-y-4 text-lg leading-relaxed text-slate-700">
                   {sec.paragraphs?.map((p, i) => <p key={i}>{p}</p>)}
                 </div>
                 {sec.bullets && (
                   <ul className="mt-5 space-y-3">
                     {sec.bullets.map((b) => (
-                      <li key={b} className="flex items-start gap-3 text-slate-700">
-                        <span className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-100">
-                          <Check className="w-3.5 h-3.5 text-blue-700" aria-hidden />
+                      <li key={b} className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-white p-4 text-slate-700 shadow-sm">
+                        <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
+                          <Check className="h-3.5 w-3.5" aria-hidden />
                         </span>
                         <span className="leading-relaxed">{b}</span>
                       </li>
@@ -265,23 +275,26 @@ export default function ToolLayout({ content: c, children, lang = 'en' }: { cont
             ))}
 
             {c.table && (
-              <article>
-                <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900 mb-5">{c.table.title}</h2>
-                <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-sm">
-                  <table className="w-full text-left text-sm">
-                    <thead className="bg-slate-50 text-slate-700">
-                      <tr>
-                        {c.table.headers.map((h) => (
-                          <th key={h} scope="col" className="px-4 py-3 font-semibold whitespace-nowrap">{h}</th>
+              <article data-reveal>
+                <h2 className="mb-5 flex items-start gap-3 text-2xl font-extrabold tracking-tight text-slate-950 md:text-3xl">
+                  <span aria-hidden className="mt-2 h-6 w-1.5 shrink-0 rounded-full bg-gradient-to-b from-blue-500 to-violet-500" />
+                  {c.table.title}
+                </h2>
+                <div className="overflow-x-auto rounded-3xl border border-slate-200 shadow-xl shadow-slate-900/[0.06]">
+                  <table className="w-full text-start text-sm">
+                    <thead>
+                      <tr className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+                        {c.table.headers.map((h, i) => (
+                          <th key={h + i} scope="col" className="whitespace-nowrap px-4 py-3.5 text-start font-semibold">{h}</th>
                         ))}
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                      {c.table.rows.map((r) => (
-                        <tr key={r[0]}>
+                      {c.table.rows.map((r, ri) => (
+                        <tr key={r[0]} className={ri % 2 ? 'bg-white' : 'bg-slate-50/60'}>
                           {r.map((cell, i) =>
                             i === 0 ? (
-                              <th key={i} scope="row" className="px-4 py-3 font-semibold text-slate-900 whitespace-nowrap">{cell}</th>
+                              <th key={i} scope="row" className="whitespace-nowrap px-4 py-3 text-start font-semibold text-slate-900">{cell}</th>
                             ) : (
                               <td key={i} className="px-4 py-3 text-slate-600">{cell}</td>
                             ),
@@ -297,57 +310,78 @@ export default function ToolLayout({ content: c, children, lang = 'en' }: { cont
           </div>
         </section>
 
-        {/* FAQ */}
-        <section id="faq" className="scroll-mt-20 py-16 md:py-24 bg-slate-50 border-t border-slate-200/70">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-10">
+        {/* ───────── FAQ ───────── */}
+        <section id="faq" className="scroll-mt-20 border-t border-slate-200/70 bg-slate-50 py-16 md:py-24">
+          <div className="mx-auto grid max-w-6xl grid-cols-1 gap-10 px-4 sm:px-6 lg:grid-cols-12 lg:px-8">
             <div className="lg:col-span-4">
               <div className="lg:sticky lg:top-24">
-                <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900">{ui.faqTitle}</h2>
-                <a href="#tool" className="mt-6 hidden lg:inline-flex items-center gap-2 rounded-xl bg-slate-900 px-5 py-3 font-semibold text-white hover:bg-slate-800">
-                  {ui.useTool} <ArrowRight className="w-4 h-4 rtl:rotate-180" aria-hidden />
+                <h2 className="text-3xl font-extrabold tracking-tight text-slate-950 md:text-4xl">{ui.faqTitle}</h2>
+                <a href="#tool" className="mt-6 hidden items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-3 font-bold text-white shadow-lg shadow-blue-600/25 transition-all hover:-translate-y-0.5 lg:inline-flex">
+                  {ui.useTool} <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
                 </a>
               </div>
             </div>
-            <div className="lg:col-span-8 space-y-3">
+            <div className="space-y-3 lg:col-span-8">
               {c.faqs.map((f, i) => (
-                <details key={i} open={i === 0} className="group rounded-2xl border border-slate-200 bg-white shadow-sm open:border-blue-200">
+                <details key={i} open={i === 0} className="group rounded-2xl border border-slate-200 bg-white shadow-sm transition-colors open:border-blue-200 open:shadow-md">
                   <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 [&::-webkit-details-marker]:hidden">
-                    <h3 className="font-bold text-base md:text-lg text-slate-900 group-hover:text-blue-700">{f.q}</h3>
+                    <h3 className="text-base font-bold text-slate-900 group-hover:text-blue-700 md:text-lg">{f.q}</h3>
                     <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition-all group-open:rotate-45 group-open:bg-blue-600 group-open:text-white">
-                      <Plus className="w-4 h-4" aria-hidden />
+                      <Plus className="h-4 w-4" aria-hidden />
                     </span>
                   </summary>
-                  <p className="px-6 pb-6 -mt-1 text-slate-600 leading-relaxed">{f.a}</p>
+                  <p className="-mt-1 px-6 pb-6 leading-relaxed text-slate-600">{f.a}</p>
                 </details>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Related tools (internal links) */}
+        {/* ───────── Related tools ───────── */}
         {related.length > 0 && (
           <section className="py-16 md:py-20">
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="flex items-end justify-between gap-4 mb-8">
-                <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900">{ui.moreTools}</h2>
-                <Link href={home} className="text-sm font-semibold text-blue-700 hover:underline">{ui.allTools}</Link>
+            <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+              <div className="mb-8 flex items-end justify-between gap-4">
+                <h2 className="text-2xl font-extrabold tracking-tight text-slate-950 md:text-3xl">{ui.moreTools}</h2>
+                <Link href={home} className="text-sm font-bold text-blue-700 hover:underline">{ui.allTools}</Link>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div data-reveal className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {related.map((t) => <RelatedCard key={t.id} t={t} lang={lang} />)}
               </div>
             </div>
           </section>
         )}
+
+        {/* ───────── Closing call to action (dark, like the homepage) ───────── */}
+        <section className="pb-16 md:pb-24">
+          <div className="mx-auto max-w-6xl px-4">
+            <div data-reveal className="relative overflow-hidden rounded-[2rem] bg-slate-950 px-6 py-12 text-center text-white shadow-2xl shadow-indigo-900/30 md:px-16 md:py-16">
+              <div aria-hidden className="absolute inset-0 bg-map-grid opacity-[0.12]" />
+              <div aria-hidden className="absolute -start-20 -top-24 h-72 w-72 rounded-full bg-blue-600/50 blur-3xl" />
+              <div aria-hidden className="absolute -bottom-24 -end-20 h-72 w-72 rounded-full bg-violet-600/45 blur-3xl" />
+              <div className="relative">
+                <h2 className="mx-auto max-w-3xl text-3xl font-extrabold tracking-tight md:text-5xl md:leading-[1.1]">
+                  <span className="bg-gradient-to-r from-sky-300 via-blue-300 to-violet-300 bg-clip-text text-transparent">{toolName}</span>
+                </h2>
+                <p className="mx-auto mt-4 max-w-xl text-lg text-slate-300">{c.subtitle}</p>
+                <a href="#tool" className="mt-8 inline-flex items-center gap-2 rounded-xl bg-white px-7 py-4 font-bold text-indigo-700 shadow-lg transition-all hover:-translate-y-0.5 hover:bg-blue-50">
+                  {ui.useTool} <ArrowRight className="h-5 w-5 rtl:rotate-180" aria-hidden />
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Same tool in every other language (internal links that mirror the hreflang tags). */}
-        <section className="border-t border-rule py-10" aria-label="Languages">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <ul className="flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-xs font-semibold uppercase tracking-wider">
+        <section className="border-t border-slate-200 py-8" aria-label="Languages">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+            <ul className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm font-medium">
               {LANGUAGES.filter((l) => tool && toolLangs(tool.id).includes(l.code)).map((l) => (
                 <li key={l.code}>
                   {l.code === lang ? (
-                    <span className="text-ink" aria-current="page">{l.name}</span>
+                    <span className="font-bold text-slate-900" aria-current="page">{l.name}</span>
                   ) : (
-                    <Link href={pathFor(l.code, tool!.path)} hrefLang={l.code} lang={l.code} className="text-ink-3 hover:text-pin-2">
+                    <Link href={pathFor(l.code, tool!.path)} hrefLang={l.code} lang={l.code} className="text-slate-500 hover:text-blue-700">
                       {l.name}
                     </Link>
                   )}

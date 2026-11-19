@@ -53,17 +53,17 @@ export function LanguageSwitcher({
       <button 
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1 font-mono text-xs font-bold text-ink transition-colors uppercase border border-ink/25 bg-paper hover:border-ink px-3 py-2.5 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-pin"
+        className="flex items-center gap-1 text-sm font-semibold text-slate-700 hover:text-slate-950 transition-colors uppercase border border-slate-200 bg-white hover:bg-slate-50 px-3 py-2 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
         aria-expanded={isOpen}
       >
         {currentLang.toUpperCase()}
-        <svg className="w-4 h-4 text-ink-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
         </svg>
       </button>
       
       {isOpen && (
-        <div className="absolute end-0 mt-2 w-52 origin-top-right bg-paper border border-ink rounded-lg shadow-hard p-1 focus:outline-none z-[100] max-h-[60vh] overflow-y-auto">
+        <div className="absolute end-0 mt-2 w-52 origin-top-right bg-white border border-slate-200 rounded-2xl shadow-xl shadow-slate-900/10 p-1 focus:outline-none z-[100] max-h-[60vh] overflow-y-auto">
           <div className="py-1">
             {LANGUAGES.map((lang) => {
               const targetPath = targetFor(lang.code);
@@ -74,7 +74,7 @@ export function LanguageSwitcher({
                     setIsOpen(false);
                     router.push(targetPath);
                   }}
-                  className={`w-full text-start block rounded-md px-3 py-2 text-sm transition-colors ${lang.code === currentLang ? 'font-semibold bg-ink text-paper' : 'text-ink hover:bg-paper-2'}`}
+                  className={`w-full text-start block rounded-xl px-3 py-2 text-sm transition-colors ${lang.code === currentLang ? 'font-semibold bg-blue-50 text-blue-700' : 'text-slate-700 hover:bg-slate-50'}`}
                 >
                   {lang.name}
                 </button>

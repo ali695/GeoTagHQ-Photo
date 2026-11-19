@@ -12,6 +12,7 @@ const converter: ConverterTemplate = {
   chips: { free: '100% gratis', batch: 'Tot 20 bestanden', noUpload: 'Geen upload', nothingStored: 'Niets opgeslagen', noWatermark: 'Geen watermerk' },
   privacyBrowser: 'Het omzetten van {F} naar {T} gebeurt volledig in je browser. Je afbeeldingen worden nooit geüpload.',
   privacyMixed: 'Het omzetten gebeurt in je browser. Alleen als je browser geen WebP kan maken, zet onze server de afbeelding om in het geheugen en slaat niets op.',
+  privacyTiff: 'Safari zet {F} om naar {T} in je browser. Andere browsers kunnen geen TIFF lezen; dan wordt het bestand in het geheugen van onze server verwerkt en meteen gewist. Er wordt niets bewaard.',
   stepsTitle: 'Zo zet je {F} om naar {T}',
   steps: {
     add: ['Voeg je {F}-bestanden toe', 'Sleep tot 20 {F}-afbeeldingen naar het vak of klik om ze te kiezen.'],
@@ -27,6 +28,9 @@ const converter: ConverterTemplate = {
     webp: ['WebP-bestanden zijn meestal 25–35% kleiner dan JPG bij vergelijkbare kwaliteit.', 'Kleinere afbeeldingen maken je website sneller, vooral op mobiel.', 'Alle huidige browsers, WordPress en Shopify ondersteunen WebP.'],
   },
   fromNote: {
+    gif: 'Bij een geanimeerde GIF wordt het eerste beeld omgezet: JPG en PNG kunnen geen animatie opslaan.',
+    bmp: 'BMP-bestanden zijn meestal ongecomprimeerd en daardoor 10 tot 20 keer groter dan nodig.',
+    tiff: 'Browsers, websites en de meeste telefoons kunnen geen TIFF-bestanden openen.',
     heic: 'Windows, veel Android-toestellen en de meeste websites kunnen HEIC-foto’s van de iPhone niet openen.',
     webp: 'Afbeeldingen die je van websites opslaat zijn vaak WebP, en oudere programma’s en sommige formulieren accepteren dat niet.',
     avif: 'AVIF is een nieuw formaat dat veel programma’s nog niet openen.',
@@ -41,6 +45,9 @@ const converter: ConverterTemplate = {
     webp: ['Met of zonder verlies', 'Ja', 'Alle moderne browsers', 'Snelle website-afbeeldingen'],
     avif: ['Met verlies, zeer efficiënt', 'Ja', 'Moderne browsers; weinig programma’s', 'De kleinste webafbeeldingen'],
     svg: ['Vector (tekst)', 'Ja', 'Browsers; nauwelijks sociale media', 'Logo’s en iconen op elk formaat'],
+    gif: ['Verliesvrij, max. 256 kleuren', 'Ja (alleen aan/uit)', 'Overal', 'Korte animaties en eenvoudige graphics'],
+    bmp: ['Meestal ongecomprimeerd (erg groot)', 'Zelden', 'Windows; nauwelijks op het web', 'Oudere Windows-software'],
+    tiff: ['Verliesvrij of ongecomprimeerd', 'Ja', 'Drukwerk en pro-software; geen browsers', 'Scans, drukwerk en archief'],
   },
   faqs: {
     free: ['Is de {F}-naar-{T}-converter gratis?', 'Ja. Geen account, geen watermerk en geen daglimiet. Tot 20 bestanden per keer, elk tot 25 MB.'],
