@@ -1,8 +1,128 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 @theme {
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", "Noto Sans", "Noto Sans Arabic", "Noto Sans Devanagari", "Hiragino Sans", "Apple SD Gothic Neo", sans-serif;
   --font-display: var(--font-jakarta), var(--font-inter), ui-sans-serif, system-ui, "Noto Sans", sans-serif;
+  --font-serif: var(--font-instrument), "Iowan Old Style", Georgia, serif;
+  --font-mono: var(--font-jbmono), ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* Field-notes palette: paper, ink and one pin colour. */
+  --color-paper: #f4f1ea;
+  --color-paper-2: #ebe6db;
+  --color-ink: #16150f;
+  --color-ink-2: #4a473d;
+  --color-ink-3: #8a8676;
+  --color-rule: #d9d3c4;
+  --color-pin: #ff4f1f;
+  --color-pin-2: #e23d10;
+  --color-water: #cfdfe6;
+  --color-moss: #2f5d3a;
+
+  /* Site-wide retheme: the tool UIs were built with slate/blue/indigo/sky/violet classes.
+     Remapping those scales here moves every component to the field-notes palette at once. */
+  --color-slate-50: #f7f4ee;
+  --color-slate-100: #ece7dc;
+  --color-slate-200: #dcd5c6;
+  --color-slate-300: #c6bfae;
+  --color-slate-400: #9a9584;
+  --color-slate-500: #77735f;
+  --color-slate-600: #4a473d;
+  --color-slate-700: #36332b;
+  --color-slate-800: #24221b;
+  --color-slate-900: #16150f;
+  --color-slate-950: #0d0c08;
+
+  --color-blue-50: #fff3ec;
+  --color-blue-100: #ffe3d6;
+  --color-blue-200: #ffc6ae;
+  --color-blue-300: #ffa07d;
+  --color-blue-400: #ff7a4d;
+  --color-blue-500: #ff5a2a;
+  --color-blue-600: #ff4f1f;
+  --color-blue-700: #d93a0e;
+  --color-blue-800: #a92d0b;
+  --color-blue-900: #6e1f09;
+  --color-blue-950: #3a1004;
+
+  --color-indigo-50: #fff3ec;
+  --color-indigo-100: #ffe3d6;
+  --color-indigo-200: #ffc6ae;
+  --color-indigo-300: #ffa07d;
+  --color-indigo-400: #f0683a;
+  --color-indigo-500: #e8521f;
+  --color-indigo-600: #e04512;
+  --color-indigo-700: #b9360c;
+  --color-indigo-800: #8a2a0b;
+  --color-indigo-900: #24221b;
+  --color-indigo-950: #16150f;
+
+  --color-sky-50: #eef4f5;
+  --color-sky-100: #dbe8eb;
+  --color-sky-200: #bcd5db;
+  --color-sky-300: #94bac3;
+  --color-sky-400: #6a9aa6;
+  --color-sky-500: #4a7d8a;
+  --color-sky-600: #3a6672;
+  --color-sky-700: #2e525c;
+  --color-sky-800: #233f47;
+  --color-sky-900: #182c32;
+
+  --color-violet-50: #eef3ec;
+  --color-violet-100: #dce7d8;
+  --color-violet-200: #bcd2b6;
+  --color-violet-300: #93b38b;
+  --color-violet-400: #6b9363;
+  --color-violet-500: #4d7745;
+  --color-violet-600: #3d6337;
+  --color-violet-700: #2f5d3a;
+  --color-violet-800: #244a2d;
+  --color-violet-900: #183420;
+}
+
+/* Native dropdowns: drop the OS arrow and draw our own ink chevron, so every <select> matches the design.
+   Unlayered on purpose, so it wins over utility padding and keeps room for the arrow. */
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2316150f' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.9rem center;
+  background-size: 1rem;
+  padding-inline-end: 2.6rem;
+  cursor: pointer;
+}
+[dir='rtl'] select { background-position: left 0.9rem center; }
+select::-ms-expand { display: none; }
+select:disabled { cursor: not-allowed; opacity: 0.6; }
+select[multiple], select[size]:not([size='1']) { background-image: none; padding-inline-end: 0.75rem; }
+
+/* Pages built on white now sit on paper. */
+body { background-color: var(--color-paper); color: var(--color-ink); }
+
+/* Hard offset shadow used on buttons and key cards. */
+.shadow-hard { box-shadow: 4px 4px 0 0 var(--color-ink); }
+.shadow-hard-sm { box-shadow: 2px 2px 0 0 var(--color-ink); }
+.press { transition: transform 0.12s ease, box-shadow 0.12s ease; }
+.press:hover { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 0 var(--color-ink); }
+.press:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 0 var(--color-ink); }
+
+/* Paper grain (static SVG noise, no JS). */
+.paper-grain {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.09 0 0 0 0 0.08 0 0 0 0 0.06 0 0 0 0.09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Topographic contour lines. */
+.topo {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600' viewBox='0 0 600 600'%3E%3Cg fill='none' stroke='%2316150f' stroke-opacity='0.09' stroke-width='1'%3E%3Cpath d='M300 80c120 0 230 70 230 200s-90 240-230 240S60 430 60 300 180 80 300 80z'/%3E%3Cpath d='M300 130c95 0 180 55 180 155s-70 185-180 185-185-75-185-175 90-165 185-165z'/%3E%3Cpath d='M305 180c70 0 128 42 128 112s-50 130-128 130-130-52-130-122 60-120 130-120z'/%3E%3Cpath d='M310 230c45 0 78 28 78 70s-32 78-78 78-80-30-80-72 35-76 80-76z'/%3E%3Cpath d='M312 278c20 0 34 12 34 30s-14 32-34 32-34-14-34-30 14-32 34-32z'/%3E%3Cpath d='M-20 520c90-40 160-10 230 30s150 60 250 10 140-20 160 0'/%3E%3Cpath d='M-20 570c90-40 170-10 240 30s150 50 250 0 130-20 150 0'/%3E%3Cpath d='M-20 40c80 30 150 20 220-10s160-50 240-10 150 30 180 10'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 600px 600px;
+}
+
+/* Ruled paper lines for section backgrounds. */
+.ruled {
+  background-image: linear-gradient(to bottom, var(--color-rule) 1px, transparent 1px);
+  background-size: 100% 32px;
 }
 
 html {
@@ -90,4 +210,76 @@ h1, h2, h3 {
   &::-webkit-scrollbar-thumb:hover {
     background: #94a3b8;
   }
+}
+
+/* ───────────────── Motion system ─────────────────
+   Rules: transform/opacity only (no layout shift), content visible without JS,
+   everything off under prefers-reduced-motion. */
+
+/* Scroll reveal: hidden only when JS is present. If the motion script never starts,
+   the inline head script adds .motion-failed after 3s and everything is shown. */
+.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+}
+.js.motion-failed [data-reveal], .js.motion-failed [data-reveal] .stagger { opacity: 1; transform: none; }
+.js [data-reveal].in {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.7s cubic-bezier(0.2, 0.7, 0.2, 1), transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition-delay: var(--d, 0ms);
+}
+
+/* Children animations wait until their section is revealed. */
+.js [data-reveal]:not(.in) .on-reveal { animation-play-state: paused; }
+
+/* Staggered children: give each a --i index. */
+.js [data-reveal] .stagger { opacity: 0; transform: translateY(12px); }
+.js [data-reveal].in .stagger {
+  opacity: 1; transform: none;
+  transition: opacity 0.55s ease, transform 0.55s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition-delay: calc(var(--i, 0) * 70ms + 120ms);
+}
+
+/* Hero sequence (plays once on load). */
+@keyframes photo-in { from { opacity: 0; transform: translate(-30px, 20px) rotate(-9deg); } to { opacity: 1; } }
+@keyframes card-in { from { opacity: 0; transform: translate(40px, 30px) rotate(6deg); } to { opacity: 1; } }
+@keyframes row-type { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes pin-drop {
+  0% { opacity: 0; transform: translateY(-90px); }
+  60% { opacity: 1; transform: translateY(6px); }
+  78% { transform: translateY(-5px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes pin-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+@keyframes stamp-in {
+  0% { opacity: 0; transform: scale(2.4) rotate(8deg); }
+  70% { opacity: 0.95; transform: scale(0.92) rotate(-1deg); }
+  100% { opacity: 0.9; transform: scale(1) rotate(0deg); }
+}
+@keyframes draw { from { stroke-dashoffset: var(--len, 300); } to { stroke-dashoffset: 0; } }
+@keyframes march { to { stroke-dashoffset: -24; } }
+@keyframes pop { 0% { opacity: 0; transform: scale(0); } 70% { transform: scale(1.25); } 100% { opacity: 1; transform: scale(1); } }
+@keyframes drift { from { transform: rotate(0deg) translate(0, 0); } to { transform: rotate(8deg) translate(-20px, 14px); } }
+@keyframes blink { 50% { opacity: 0; } }
+
+.anim-photo { animation: photo-in 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.anim-card { animation: card-in 0.9s 0.25s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.anim-row { animation: row-type 0.45s steps(18, end) both; animation-delay: calc(0.9s + var(--i, 0) * 0.22s); }
+.anim-pin { animation: pin-drop 0.8s 0.55s cubic-bezier(0.3, 0.8, 0.3, 1) both, pin-bob 3.2s 2s ease-in-out infinite; }
+.anim-stamp { animation: stamp-in 0.45s 2.4s cubic-bezier(0.5, 1.6, 0.4, 1) both; }
+.anim-draw { stroke-dasharray: var(--len, 300); animation: draw 0.9s 0.6s cubic-bezier(0.6, 0, 0.2, 1) both; }
+.anim-march { stroke-dasharray: 3 3; animation: march 1.6s linear infinite; }
+.anim-pop { animation: pop 0.5s cubic-bezier(0.3, 1.5, 0.5, 1) both; animation-delay: calc(0.2s + var(--i, 0) * 0.12s); transform-box: fill-box; transform-origin: center; }
+.anim-drift { animation: drift 40s ease-in-out infinite alternate; }
+.caret::after { content: '▍'; margin-inline-start: 2px; color: var(--color-pin); animation: blink 1s steps(1) infinite; }
+
+/* Converter matrix: row highlight on hover. */
+.matrix tbody tr:hover th { background: var(--color-ink); color: var(--color-paper); }
+.matrix tbody tr:hover td { background: var(--color-paper-2); }
+
+@media (prefers-reduced-motion: reduce) {
+  .js [data-reveal], .js [data-reveal] .stagger { opacity: 1 !important; transform: none !important; transition: none !important; animation: none !important; }
+  .anim-photo, .anim-card, .anim-row, .anim-pin, .anim-stamp, .anim-draw, .anim-march, .anim-pop, .anim-drift, .caret::after { animation: none !important; clip-path: none !important; }
+  .anim-stamp { opacity: 0.9; }
 }

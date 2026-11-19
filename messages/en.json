@@ -8,10 +8,11 @@
     "about": "About",
     "howItWorks": "How It Works",
     "localSeo": "Local SEO Guide",
-    "footerDesc": "A free, browser-based geo tagging tool for adding exact GPS locations to your photos instantly. Built for local SEO, photographers, and privacy-conscious users.",
+    "footerDesc": "Free photo tools to geotag photos, read and remove EXIF data, find where a photo was taken, convert iPhone HEIC and WebP, and compress images. No sign-up, no watermark, and most tools never upload your files.",
     "usefulLinks": "Useful Links",
     "legal": "Legal",
-    "allRightsReserved": "All rights reserved."
+    "allRightsReserved": "All rights reserved.",
+    "faq": "FAQ"
   },
   "nav": {
     "tool": "Geo Tagging Tool",

@@ -1,5 +1,8 @@
 // Server component: all page copy is rendered as HTML so search engines can read it.
 // Only <GeoTaggingTool /> (and the language switcher) run on the client.
+import Link from 'next/link';
+import { CONTENT_UPDATED, FOUNDER, updatedLabel } from '@/lib/site';
+import { factsFor } from '@/lib/i18n/facts';
 import {
   ShieldCheck,
   MapPin,
@@ -79,14 +82,19 @@ export default function ToolPageContent({
   const dir = lang === 'ar' ? 'rtl' : 'ltr';
   const heroRows = (c.metadataRows || []).map((r) => ({ field: r.field, example: r.example }));
 
+  // The interactive tool only needs its UI strings. Page copy (headings, SEO text, FAQ fallbacks)
+  // is rendered as HTML above, so it is not shipped to the browser a second time.
+  const PAGE_COPY = new Set(['h1', 'subtitle', 'metaTitle', 'metaDesc', 'seoTitle', 'seoDesc', 'privacyTitle', 'privacyDesc', 'howItWorks', 'howItWorksDesc', 'step1Title', 'step1Desc', 'step2Title', 'step2Desc', 'step3Title', 'step3Desc']);
+  const toolMessages = { tool: Object.fromEntries(Object.entries(messages?.tool || {}).filter(([k]) => !PAGE_COPY.has(k))) };
+
   return (
-    <div className="min-h-screen bg-white flex flex-col font-sans text-slate-900" dir={dir}>
+    <div className="min-h-screen bg-paper flex flex-col font-sans text-slate-900" dir={dir}>
       <Header lang={lang} messages={messages} />
 
       <main className="flex-grow">
         {/* ───────── Hero ───────── */}
         <section className="relative overflow-hidden">
-          <div aria-hidden className="absolute inset-0 bg-gradient-to-b from-blue-50/80 via-white to-white" />
+          <div aria-hidden className="absolute inset-0 bg-gradient-to-b from-paper-2/70 via-paper to-paper" />
           <div
             aria-hidden
             className="absolute inset-0 bg-map-grid"
@@ -144,6 +152,12 @@ export default function ToolPageContent({
                     ))}
                   </ul>
                 )}
+                <p className="mt-7 font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-3">
+                  {factsFor(lang).by}{' '}
+                  <Link href="/about" rel="author" className="text-ink underline decoration-pin decoration-2 underline-offset-2 hover:text-pin-2">{FOUNDER.name}</Link>
+                  , {factsFor(lang).role} <span className="mx-1.5 text-ink/30">·</span> {factsFor(lang).updated}{' '}
+                  <time dateTime={CONTENT_UPDATED}>{updatedLabel(lang)}</time>
+                </p>
               </div>
 
               {heroRows.length > 0 && (
@@ -164,7 +178,7 @@ export default function ToolPageContent({
                   <span className="h-3 w-3 rounded-full bg-red-400" aria-hidden />
                   <span className="h-3 w-3 rounded-full bg-amber-400" aria-hidden />
                   <span className="h-3 w-3 rounded-full bg-emerald-400" aria-hidden />
-                  <div className="mx-auto flex items-center gap-2 rounded-lg bg-white border border-slate-200 px-4 py-1.5 text-xs font-medium text-slate-500" dir="ltr">
+                  <div className="mx-auto flex items-center gap-2 rounded-lg bg-paper border border-slate-200 px-4 py-1.5 text-xs font-medium text-slate-500" dir="ltr">
                     <Lock className="w-3 h-3 text-emerald-600" aria-hidden />
                     {SITE_HOST}
                   </div>
@@ -172,7 +186,7 @@ export default function ToolPageContent({
                 </div>
                 <div className="p-3 sm:p-6 lg:p-8">
                   <UiProvider lang={lang} dict={getUi(lang)}>
-            <GeoTaggingTool messages={messages} />
+            <GeoTaggingTool messages={toolMessages} />
           </UiProvider>
                 </div>
               </div>
@@ -191,7 +205,7 @@ export default function ToolPageContent({
                   <span className="relative z-10 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 text-xl font-extrabold text-white shadow-lg shadow-blue-600/30 ring-8 ring-slate-50">
                     {i + 1}
                   </span>
-                  <div className="mt-6 w-full flex-1 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                  <div className="mt-6 w-full flex-1 rounded-2xl border border-slate-200 bg-paper p-6 shadow-sm">
                     <h3 className="text-lg font-bold text-slate-900 mb-2">{step.title}</h3>
                     <p className="text-slate-600 leading-relaxed">{step.desc}</p>
                   </div>
@@ -325,7 +339,7 @@ export default function ToolPageContent({
 
             <div className="lg:col-span-5 space-y-6">
               {c.seoChecklist && (
-                <div className="rounded-3xl border border-slate-200 bg-white p-7 shadow-xl shadow-slate-900/5">
+                <div className="rounded-3xl border border-slate-200 bg-paper p-7 shadow-xl shadow-slate-900/5">
                   {c.seoChecklistTitle && <h3 className="text-lg font-bold text-slate-900 mb-5">{c.seoChecklistTitle}</h3>}
                   <ul className="space-y-4">
                     {c.seoChecklist.map((item) => (
@@ -377,7 +391,7 @@ export default function ToolPageContent({
                         ? { badge: 'bg-blue-100 text-blue-800', bar: 'bg-blue-500', w: 'w-3/4' }
                         : { badge: 'bg-amber-100 text-amber-800', bar: 'bg-amber-500', w: 'w-1/2' };
                   return (
-                    <div key={f.format} className="flex flex-col rounded-2xl border border-slate-200 bg-white p-5">
+                    <div key={f.format} className="flex flex-col rounded-2xl border border-slate-200 bg-paper p-5">
                       <h3 className="font-mono text-sm font-bold text-slate-900" dir="ltr">{f.format}</h3>
                       <div className="mt-3 h-1.5 w-full rounded-full bg-slate-100">
                         <div className={`h-1.5 rounded-full ${tone.bar} ${tone.w}`} />
@@ -435,7 +449,7 @@ export default function ToolPageContent({
             <div className="max-w-5xl mx-auto px-4">
               <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-blue-600 via-indigo-600 to-violet-700 px-6 py-14 md:px-16 md:py-16 text-center text-white shadow-2xl shadow-indigo-600/30">
                 <div aria-hidden className="absolute inset-0 bg-map-grid opacity-25" />
-                <div aria-hidden className="absolute -top-20 -end-20 h-64 w-64 rounded-full bg-white/15 blur-3xl" />
+                <div aria-hidden className="absolute -top-20 -end-20 h-64 w-64 rounded-full bg-paper/15 blur-3xl" />
                 <MapPin aria-hidden className="absolute -bottom-6 -start-6 h-40 w-40 text-white/10" />
                 <div className="relative">
                   <h2 className="text-3xl md:text-[2.5rem] md:leading-[1.15] font-extrabold tracking-tight">{c.finalCtaTitle}</h2>

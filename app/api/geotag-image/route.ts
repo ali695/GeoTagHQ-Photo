@@ -1,3 +1,4 @@
+import { guard } from '@/lib/rateLimit';
 import { NextRequest, NextResponse } from "next/server";
 import sharp from "sharp";
 import { z } from "zod";
@@ -50,6 +51,8 @@ const SEOSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  const limited = guard(req, 'geotag', 150, 10 * 60 * 1000);
+  if (limited) return limited;
   try {
     const formData = await req.formData();
     
@@ -90,7 +93,13 @@ export async function POST(req: NextRequest) {
     }
 
     if (!file) {
-      return NextResponse.json({ error: "Missing uploaded file. Received formData keys: " + Array.from(formData.keys()).join(', ') }, { status: 400 });
+      return NextResponse.json({ error: "Missing uploaded file." }, { status: 400 });
+    }
+    if (file.size > 25 * 1024 * 1024) {
+      return NextResponse.json({ error: "File is larger than 25 MB." }, { status: 413 });
+    }
+    if (file.type && !/^image\//.test(file.type)) {
+      return NextResponse.json({ error: "Only image files are supported." }, { status: 415 });
     }
     
     if (lat && !lng) {

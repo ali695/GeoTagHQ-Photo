@@ -1,3 +1,4 @@
+import { guard } from '@/lib/rateLimit';
 import { NextRequest, NextResponse } from "next/server";
 import sharp from "sharp";
 
@@ -7,6 +8,8 @@ const MAX_BYTES = 25 * 1024 * 1024;
 // (e.g. when a browser cannot encode WebP) and for PNG palette compression.
 // Images are processed in memory and never written to disk.
 export async function POST(req: NextRequest) {
+  const limited = guard(req, 'convert', 150, 10 * 60 * 1000);
+  if (limited) return limited;
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File | null;

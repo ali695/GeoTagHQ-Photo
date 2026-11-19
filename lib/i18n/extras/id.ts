@@ -7,14 +7,14 @@ const id: ToolExtras = {
       {
         title: 'Apa itu data EXIF?',
         paragraphs: [
-          'EXIF adalah singkatan dari “Exchangeable Image File Format”. Setiap kali kamu memotret, kamera atau HP menyimpan info tersembunyi di dalam file: merek dan tipe perangkat, lensa, bukaan, kecepatan rana, ISO, tanggal dan jam — dan kalau lokasi aktif, juga koordinat GPS yang persis.',
+          'EXIF adalah singkatan dari “Exchangeable Image File Format”. Setiap kali Anda memotret, kamera atau HP menyimpan info tersembunyi di dalam file: merek dan tipe perangkat, lensa, bukaan, kecepatan rana, ISO, tanggal dan jam — dan kalau lokasi aktif, juga koordinat GPS yang persis.',
           'Sering juga ada data XMP dan IPTC dari Lightroom, Photoshop, atau aplikasi lain: judul, keterangan, kata kunci, nama fotografer, dan hak cipta. Penampil ini menampilkan semuanya sekaligus, jauh lebih lengkap daripada beberapa kolom di “Properties” Windows.',
         ],
       },
       {
         title: 'Kenapa ada foto yang tidak punya metadata?',
         paragraphs: [
-          'Foto yang diunggah ke WhatsApp, Facebook, Instagram, atau X hampir selalu dihapus metadatanya, demi privasi dan supaya hemat ruang. Jadi gambar yang kamu simpan dari chat biasanya sudah tidak punya info kamera maupun lokasi.',
+          'Foto yang diunggah ke WhatsApp, Facebook, Instagram, atau X hampir selalu dihapus metadatanya, demi privasi dan supaya hemat ruang. Jadi gambar yang Anda simpan dari chat biasanya sudah tidak punya info kamera maupun lokasi.',
           'Screenshot, dokumen hasil scan, dan banyak gambar yang sudah diedit juga nyaris tidak punya EXIF. Kalau ingin tahu isi asli sebuah foto, selalu gunakan file aslinya dari HP atau kamera.',
         ],
       },
@@ -28,9 +28,9 @@ const id: ToolExtras = {
         ],
       },
       {
-        title: 'Lindungi lokasimu sendiri',
+        title: 'Lindungi lokasi Anda sendiri',
         paragraphs: [
-          'Yang berguna untuk melacak lokasi foto orang lain juga bisa berbalik ke kamu: siapa pun yang menerima foto aslimu lewat email, link cloud, atau AirDrop bisa melihat persis di mana rumahmu atau sekolah anakmu.',
+          'Yang berguna untuk melacak lokasi foto orang lain juga bisa berbalik ke Anda: siapa pun yang menerima foto asli Anda lewat email, link cloud, atau AirDrop bisa melihat persis di mana rumah Anda atau sekolah anak Anda.',
           'Sebelum pasang iklan di OLX, jualan di Tokopedia atau Shopee, atau membagikan foto rumah, hapus lokasinya dengan alat “Hapus data EXIF” kami. Cuma butuh beberapa detik.',
         ],
       },
@@ -79,14 +79,14 @@ const id: ToolExtras = {
           'Gambar biasanya bagian terberat dari halaman web. File yang lebih kecil lebih cepat dimuat dan memperbaiki skor Core Web Vitals.',
           'Banyak layanan email dan formulir online membatasi ukuran lampiran.',
           'Marketplace, toko online, dan Google Profil Bisnis memproses gambar ringan lebih cepat.',
-          'Hemat penyimpanan, dan pengunjungmu juga hemat kuota.',
+          'Hemat penyimpanan, dan pengunjung Anda juga hemat kuota.',
         ],
       },
       {
         title: 'Cara kerja kompresi PNG',
         paragraphs: [
-          'PNG itu lossless, jadi browser hampir tidak bisa mengecilkannya. Kalau kamu tetap memilih PNG, server kami mengubahnya ke palet warna yang dioptimalkan — teknik yang sama dengan kompresor PNG terkenal. Ukurannya biasanya turun 60–80% dengan perbedaan yang hampir tidak terlihat.',
-          'File hanya diproses di memori dan tidak disimpan. Kalau ingin tidak ada yang keluar dari perangkatmu, pilih WebP sebagai format hasil: semuanya terjadi di browser dan hasilnya sering lebih kecil lagi.',
+          'PNG itu lossless, jadi browser hampir tidak bisa mengecilkannya. Kalau Anda tetap memilih PNG, server kami mengubahnya ke palet warna yang dioptimalkan — teknik yang sama dengan kompresor PNG terkenal. Ukurannya biasanya turun 60–80% dengan perbedaan yang hampir tidak terlihat.',
+          'File hanya diproses di memori dan tidak disimpan. Kalau ingin tidak ada yang keluar dari perangkat Anda, pilih WebP sebagai format hasil: semuanya terjadi di browser dan hasilnya sering lebih kecil lagi.',
         ],
       },
     ],
@@ -99,7 +99,7 @@ const id: ToolExtras = {
         title: 'Cara agar iPhone langsung menyimpan foto dalam JPG',
         paragraphs: [
           'Kalau ingin foto langsung berformat JPG, buka Pengaturan › Kamera › Format di iPhone lalu pilih “Paling Kompatibel”. Foto baru akan disimpan sebagai JPG; foto lama tetap HEIC, dan untuk itulah konverter ini.',
-          'Catatan: saat berbagi lewat AirDrop atau email, iOS sering otomatis mengubah foto ke JPG. Tapi kalau kamu memindahkannya pakai kabel ke PC Windows atau lewat iCloud untuk Windows, foto tetap HEIC.',
+          'Catatan: saat berbagi lewat AirDrop atau email, iOS sering otomatis mengubah foto ke JPG. Tapi kalau Anda memindahkannya pakai kabel ke PC Windows atau lewat iCloud untuk Windows, foto tetap HEIC.',
         ],
       });
     }

@@ -22,11 +22,12 @@ function formatBytes(bytes: number, decimals = 2) {
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 }
 
-export default function MetadataPanel({ metadata, onMetadataChange, d = {} }: MetadataPanelProps) {
+export default function MetadataPanel({ metadata, onMetadataChange, d = {}, lang = 'en' }: MetadataPanelProps & { lang?: string }) {
   const [copied, setCopied] = useState(false);
   const [editState, setEditState] = useState<Partial<ImageMetadata>>({});
   const [isGenerating, setIsGenerating] = useState(false);
-  const [seoLang, setSeoLang] = useState('en');
+  // Content language defaults to the page language (it can still be changed in the picker).
+  const [seoLang, setSeoLang] = useState(lang);
   const [businessType, setBusinessType] = useState('general');
 
   const getLocationLabels = (country?: string) => {
@@ -68,7 +69,8 @@ export default function MetadataPanel({ metadata, onMetadataChange, d = {} }: Me
     return { state: d.stateRegionLabel || 'State / Region', postal: d.postalCodeLabel || 'Postal Code', district: 'District / Area' };
   };
 
-  const currentLabels = UI_LABELS[seoLang] || UI_LABELS.en;
+  // Interface labels always follow the page language.
+  const currentLabels = UI_LABELS[lang] || UI_LABELS.en;
   const labels = getLocationLabels(editState.country);
 
   useEffect(() => {
@@ -553,7 +555,7 @@ export default function MetadataPanel({ metadata, onMetadataChange, d = {} }: Me
                  />
               </div>
               <div>
-                 <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1.5">{seoLang !== 'en' ? currentLabels.district : (labels.district || "District")}</label>
+                 <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1.5">{lang !== 'en' ? currentLabels.district : (labels.district || "District")}</label>
                  <input 
                    type="text" 
                    value={editState.district || ''} 
@@ -566,7 +568,7 @@ export default function MetadataPanel({ metadata, onMetadataChange, d = {} }: Me
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                 <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1.5">{seoLang !== 'en' ? currentLabels.stateRegion : labels.state}</label>
+                 <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1.5">{lang !== 'en' ? currentLabels.stateRegion : labels.state}</label>
                  <input 
                    type="text" 
                    maxLength={80} 
@@ -577,7 +579,7 @@ export default function MetadataPanel({ metadata, onMetadataChange, d = {} }: Me
                  />
               </div>
               <div>
-                 <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1.5">{seoLang !== 'en' ? currentLabels.postalCode : labels.postal}</label>
+                 <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1.5">{lang !== 'en' ? currentLabels.postalCode : labels.postal}</label>
                  <input 
                    type="text" 
                    maxLength={20} 

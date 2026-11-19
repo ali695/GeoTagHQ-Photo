@@ -8,10 +8,11 @@
     "about": "À propos",
     "howItWorks": "Comment ça marche",
     "localSeo": "Guide SEO Local",
-    "footerDesc": "Un outil de géolocalisation gratuit via navigateur pour ajouter des emplacements GPS exacts à vos photos instantanément. Conçu pour le SEO local, les photographes et les utilisateurs soucieux de leur vie privée.",
+    "footerDesc": "Des outils photo gratuits pour géolocaliser vos photos, lire et supprimer les données EXIF, retrouver le lieu d’une photo, convertir HEIC et WebP et compresser vos images. Sans inscription, sans filigrane, et la plupart sans envoi de fichier.",
     "usefulLinks": "Liens Utiles",
     "legal": "Légal",
-    "allRightsReserved": "Tous droits réservés."
+    "allRightsReserved": "Tous droits réservés.",
+    "faq": "FAQ"
   },
   "nav": {
     "tool": "Outil de géolocalisation",
@@ -35,9 +36,9 @@
     "step3Title": "3. Exporter l'image",
     "step3Desc": "Téléchargez votre photo optimisée et insérez-la dans Google Business Profile.",
     "metaKeywords": "Géolocalisation, Éditeur EXIF, Localisation GPS, SEO Local, Métadonnées Photo, Ajouter localisation photo, PinPixl",
-    "step1Drop": "1. Déposez Photos",
-    "step2Pin": "2. Épinglez l'emplacement",
-    "step3Apply": "3. Appliquer Géotag",
+    "step1Drop": "1. Déposez vos photos",
+    "step2Pin": "2. Épinglez l’emplacement",
+    "step3Apply": "3. Appliquez le géotag",
     "processingMode": "Mode de traitement",
     "bestCompatibility": "Meilleure compatibilité",
     "keepOriginal": "Conserver le format original",

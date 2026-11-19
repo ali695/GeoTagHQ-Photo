@@ -8,10 +8,11 @@
     "about": "Hakkımızda",
     "howItWorks": "Nasıl Çalışır",
     "localSeo": "Yerel SEO Rehberi",
-    "footerDesc": "Fotoğraflarınıza anında kesin GPS konumları eklemek için tarayıcı tabanlı ücretsiz bir coğrafi etiketleme aracı. Yerel SEO, fotoğrafçılar ve gizlilik bilincine sahip kullanıcılar için tasarlandı.",
+    "footerDesc": "Fotoğraflara konum ekleme, EXIF verilerini görme ve silme, fotoğrafın çekildiği yeri bulma, iPhone HEIC ve WebP dönüştürme ve resim sıkıştırma için ücretsiz araçlar. Üyelik yok, filigran yok; araçların çoğu dosyanızı yüklemez.",
     "usefulLinks": "Faydalı Bağlantılar",
     "legal": "Yasal",
-    "allRightsReserved": "Tüm hakları saklıdır."
+    "allRightsReserved": "Tüm hakları saklıdır.",
+    "faq": "SSS"
   },
   "nav": {
     "tool": "Harita & Etiketleme Aracı",
@@ -35,9 +36,9 @@
     "step3Title": "3. İndirip Kullanın",
     "step3Desc": "Nokta verileri fotoğrafın içine gömülür, tek tuşla hazır hâle gelir.",
     "metaKeywords": "Konum Etiketleme, EXIF Düzenleyici, GPS Konumu, Yerel SEO, Fotoğraf Meta Verileri, Fotoğrafa konum ekle, PinPixl",
-    "step1Drop": "1. Fotoğraf Bırak",
-    "step2Pin": "2. Konum İşaretle",
-    "step3Apply": "3. Geotag Uygula",
+    "step1Drop": "1. Fotoğrafları bırakın",
+    "step2Pin": "2. Konumu işaretleyin",
+    "step3Apply": "3. Geotag uygulayın",
     "processingMode": "İşleme Modu",
     "bestCompatibility": "En İyi Uyumluluk",
     "keepOriginal": "Orijinal Formatı Koru",

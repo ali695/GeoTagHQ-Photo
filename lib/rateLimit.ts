@@ -11,6 +11,16 @@ export function clientIp(req: Request): string {
   return (fwd ? fwd.split(',')[0] : req.headers.get('x-real-ip')) || 'unknown';
 }
 
+/** Returns a 429 response when the caller is over the limit, or null to continue. */
+export function guard(req: Request, name: string, limit: number, windowMs: number): Response | null {
+  const r = rateLimit(`${name}:${clientIp(req)}`, limit, windowMs);
+  if (r.ok) return null;
+  return new Response(JSON.stringify({ success: false, error: 'Too many requests. Please wait a moment and try again.' }), {
+    status: 429,
+    headers: { 'Content-Type': 'application/json', 'Retry-After': String(r.retryAfter) },
+  });
+}
+
 export function rateLimit(key: string, limit: number, windowMs: number): { ok: boolean; retryAfter: number; remaining: number } {
   const now = Date.now();
   if (buckets.size > 5000) {

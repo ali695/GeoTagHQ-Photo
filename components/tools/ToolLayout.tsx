@@ -11,7 +11,9 @@ import { getUi, pathFor, toolLangs, toolText } from '@/lib/i18n';
 import { UiProvider } from './UiProvider';
 import { uiStrings } from '@/lib/tools';
 import type { Landing, Privacy } from '@/lib/content/landing';
-import { OG_IMAGE, SITE_URL } from '@/lib/site';
+import { CONTENT_UPDATED, FOUNDER, OG_IMAGE, SITE_URL, ogAlternates, ogLocale, updatedLabel } from '@/lib/site';
+import { factsFor } from '@/lib/i18n/facts';
+import { LANGUAGES } from '@/lib/constants';
 
 const SITE = SITE_URL;
 
@@ -27,8 +29,17 @@ export function landingMetadata(c: Landing, lang = 'en'): Metadata {
     title: { absolute: `${c.metaTitle} | PinPixl` },
     description: c.metaDescription,
     alternates: { canonical: url, languages },
-    openGraph: { title: c.metaTitle, description: c.metaDescription, url, type: 'website', siteName: 'PinPixl', images: [OG_IMAGE] },
-    twitter: { card: 'summary_large_image', title: c.metaTitle, description: c.metaDescription },
+    openGraph: {
+      title: c.metaTitle,
+      description: c.metaDescription,
+      url,
+      type: 'website',
+      siteName: 'PinPixl',
+      locale: ogLocale(lang),
+      alternateLocale: ogAlternates(lang, toolLangs(c.id)),
+      images: [OG_IMAGE],
+    },
+    twitter: { card: 'summary_large_image', title: c.metaTitle, description: c.metaDescription, images: [OG_IMAGE.url] },
     robots: { index: true, follow: true },
   };
 }
@@ -72,13 +83,30 @@ export default function ToolLayout({ content: c, children, lang = 'en' }: { cont
     .map(toolById)
     .filter((t): t is ToolEntry => !!t && t.id !== c.id && (t.id === 'geotag' || toolLangs(t.id).includes(lang)));
 
+  const fx = factsFor(lang);
+  const BATCH_TOOLS = ['remove-exif', 'image-compressor', 'image-converter'];
+  const takesFiles = c.id !== 'lat-long-finder';
+  const facts: Array<[string, string]> = [
+    [fx.price, fx.priceVal],
+    [fx.signup, fx.signupVal],
+    ...(takesFiles ? [[fx.files, c.privacy === 'browser' ? fx.browserVal : c.privacy === 'mixed' ? fx.mixedVal : fx.serverVal] as [string, string]] : []),
+    ...(BATCH_TOOLS.includes(c.id) || c.id.includes('-to-') ? [[fx.batch, fx.batchVal] as [string, string]] : []),
+    [fx.works, fx.worksVal],
+  ];
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
       {
         '@type': 'WebApplication',
-        name: c.h1,
+        '@id': `${url}#app`,
+        name: toolName,
+        alternateName: c.h1,
         url,
+        image: `${SITE}${OG_IMAGE.url}`,
+        browserRequirements: 'Requires a modern browser with JavaScript enabled',
+        featureList: c.chips,
+        isPartOf: { '@id': `${SITE}/#website` },
         applicationCategory: 'MultimediaApplication',
         operatingSystem: 'Any (web browser)',
         inLanguage: lang,
@@ -86,6 +114,18 @@ export default function ToolLayout({ content: c, children, lang = 'en' }: { cont
         offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
         description: c.metaDescription,
         publisher: { '@id': `${SITE}/#organization` },
+      },
+      {
+        '@type': 'WebPage',
+        '@id': `${url}#webpage`,
+        url,
+        name: c.metaTitle,
+        description: c.metaDescription,
+        inLanguage: lang,
+        dateModified: CONTENT_UPDATED,
+        author: { '@id': `${SITE}/#founder` },
+        isPartOf: { '@id': `${SITE}/#website` },
+        mainEntity: { '@id': `${url}#app` },
       },
       {
         '@type': 'BreadcrumbList',
@@ -107,14 +147,14 @@ export default function ToolLayout({ content: c, children, lang = 'en' }: { cont
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col font-sans text-slate-900" dir={dir} lang={lang}>
+    <div className="min-h-screen bg-paper flex flex-col font-sans text-slate-900" dir={dir} lang={lang}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <Header lang={lang} />
 
       <main className="flex-grow">
         {/* Hero */}
         <section className="relative overflow-hidden">
-          <div aria-hidden className="absolute inset-0 bg-gradient-to-b from-blue-50/80 via-white to-white" />
+          <div aria-hidden className="absolute inset-0 bg-gradient-to-b from-paper-2/70 via-paper to-paper" />
           <div aria-hidden className="absolute inset-0 bg-map-grid" style={{ maskImage: 'radial-gradient(ellipse at top, black 30%, transparent 70%)', WebkitMaskImage: 'radial-gradient(ellipse at top, black 30%, transparent 70%)' }} />
           <div aria-hidden className="absolute -top-24 end-[-8%] h-80 w-80 rounded-full bg-indigo-400/20 blur-3xl" />
           <div className="relative max-w-4xl mx-auto px-4 sm:px-6 pt-10 pb-10 md:pt-16 md:pb-12 text-center">
@@ -135,6 +175,12 @@ export default function ToolLayout({ content: c, children, lang = 'en' }: { cont
                 </li>
               ))}
             </ul>
+            <p className="mt-6 font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-3">
+              {fx.by}{' '}
+              <Link href="/about" rel="author" className="text-ink underline decoration-pin decoration-2 underline-offset-2 hover:text-pin-2">{FOUNDER.name}</Link>
+              , {fx.role} <span className="mx-1.5 text-ink/30">·</span> {fx.updated}{' '}
+              <time dateTime={CONTENT_UPDATED}>{updatedLabel(lang)}</time>
+            </p>
           </div>
         </section>
 
@@ -161,6 +207,17 @@ export default function ToolLayout({ content: c, children, lang = 'en' }: { cont
               <Lock className="w-4 h-4 mt-0.5 shrink-0" aria-hidden />
               {c.privacyNote}
             </p>
+            <section aria-labelledby="quick-facts" className="mt-8 rounded-sm border-2 border-ink bg-paper shadow-hard">
+              <h2 id="quick-facts" className="border-b border-ink px-5 py-2.5 font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-ink">{fx.title}</h2>
+              <dl className="grid sm:grid-cols-2 lg:grid-cols-3">
+                {facts.map(([k, v]) => (
+                  <div key={k} className="border-b border-rule px-5 py-4 sm:border-e last:border-b-0">
+                    <dt className="font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-ink-3">{k}</dt>
+                    <dd className="mt-1 font-semibold leading-snug text-ink">{v}</dd>
+                  </div>
+                ))}
+              </dl>
+            </section>
           </div>
         </section>
 
@@ -173,7 +230,7 @@ export default function ToolLayout({ content: c, children, lang = 'en' }: { cont
               {c.steps.map((s, i) => (
                 <li key={i} className="relative flex flex-col items-center text-center">
                   <span className="relative z-10 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 text-xl font-extrabold text-white shadow-lg shadow-blue-600/30 ring-8 ring-slate-50">{i + 1}</span>
-                  <div className="mt-6 w-full flex-1 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                  <div className="mt-6 w-full flex-1 rounded-2xl border border-slate-200 bg-paper p-6 shadow-sm">
                     <h3 className="text-lg font-bold text-slate-900 mb-2">{s.title}</h3>
                     <p className="text-slate-600 leading-relaxed">{s.desc}</p>
                   </div>
@@ -281,6 +338,24 @@ export default function ToolLayout({ content: c, children, lang = 'en' }: { cont
             </div>
           </section>
         )}
+        {/* Same tool in every other language (internal links that mirror the hreflang tags). */}
+        <section className="border-t border-rule py-10" aria-label="Languages">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <ul className="flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-xs font-semibold uppercase tracking-wider">
+              {LANGUAGES.filter((l) => tool && toolLangs(tool.id).includes(l.code)).map((l) => (
+                <li key={l.code}>
+                  {l.code === lang ? (
+                    <span className="text-ink" aria-current="page">{l.name}</span>
+                  ) : (
+                    <Link href={pathFor(l.code, tool!.path)} hrefLang={l.code} lang={l.code} className="text-ink-3 hover:text-pin-2">
+                      {l.name}
+                    </Link>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
       </main>
 
       <Footer lang={lang} />

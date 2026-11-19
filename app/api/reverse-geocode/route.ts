@@ -1,3 +1,4 @@
+import { guard } from '@/lib/rateLimit';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { SITE_URL } from '@/lib/site';
@@ -8,6 +9,8 @@ const schema = z.object({
 });
 
 export async function GET(request: Request) {
+  const limited = guard(request, 'reverse', 60, 60 * 1000);
+  if (limited) return limited;
   try {
     const { searchParams } = new URL(request.url);
     const latStr = searchParams.get('lat');

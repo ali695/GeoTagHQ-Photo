@@ -1,28 +1,52 @@
 import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
+  // Security headers on every response. The CSP allows only what the tools need:
+  // Google Maps (script + Places API), OpenStreetMap/Esri tiles (images), Leaflet CSS from unpkg,
+  // and the HEIC decoder (WebAssembly in a blob: worker). Next.js injects inline bootstrap scripts,
+  // so script-src keeps 'unsafe-inline' (nonces would force every page to render dynamically).
   async headers() {
+    const isDev = process.env.NODE_ENV !== 'production';
+    const csp = [
+      "default-src 'self'",
+      `script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'${isDev ? " 'unsafe-eval'" : ''} https://maps.googleapis.com https://maps.gstatic.com`,
+      "style-src 'self' 'unsafe-inline' https://unpkg.com https://fonts.googleapis.com",
+      "img-src 'self' data: blob: https:",
+      "font-src 'self' data: https://fonts.gstatic.com",
+      "connect-src 'self' data: blob: https://*.googleapis.com https://*.gstatic.com",
+      "worker-src 'self' blob:",
+      "media-src 'self' blob:",
+      "object-src 'none'",
+      "base-uri 'self'",
+      "form-action 'self'",
+      "frame-ancestors 'none'",
+    ].join('; ');
     return [
       {
         source: '/(.*)',
         headers: [
-          {
-            key: 'X-Frame-Options',
-            value: 'DENY',
-          },
-          {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff',
-          },
-          {
-            key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin',
-          },
-          {
-            key: 'Permissions-Policy',
-            value: 'camera=(), microphone=(), payment=(), usb=(), geolocation=(self)',
-          },
+          { key: 'Content-Security-Policy', value: csp },
+          { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
+          { key: 'X-Frame-Options', value: 'DENY' },
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), payment=(), usb=(), interest-cohort=(), browsing-topics=(), geolocation=(self)' },
+          { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
+          { key: 'X-DNS-Prefetch-Control', value: 'on' },
         ],
+      },
+      {
+        // API responses are per-request and must never be indexed or cached by shared caches.
+        source: '/api/:path*',
+        headers: [
+          { key: 'X-Robots-Tag', value: 'noindex, nofollow' },
+          { key: 'Cache-Control', value: 'no-store' },
+        ],
+      },
+      {
+        // Plain-text files for crawlers and AI assistants.
+        source: '/:file(llms.txt|llms-full.txt)',
+        headers: [{ key: 'Content-Type', value: 'text/plain; charset=utf-8' }],
       },
     ];
   },
@@ -60,22 +84,13 @@ const nextConfig: NextConfig = {
     ];
   },
   reactStrictMode: true,
+  // Don't advertise the framework in an X-Powered-By header.
+  poweredByHeader: false,
   eslint: {
     ignoreDuringBuilds: true,
   },
   typescript: {
     ignoreBuildErrors: false,
-  },
-  // Allow access to remote image placeholder.
-  images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'picsum.photos',
-        port: '',
-        pathname: '/**', // This allows any path under the hostname
-      },
-    ],
   },
   output: 'standalone',
   transpilePackages: ['motion'],

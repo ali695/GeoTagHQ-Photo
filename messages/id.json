@@ -8,10 +8,11 @@
     "about": "Tentang Kami",
     "howItWorks": "Cara Kerja",
     "localSeo": "Panduan SEO Lokal",
-    "footerDesc": "Alat penandaan geografis berbasis browser gratis untuk menambahkan lokasi GPS persis ke foto Anda secara instan. Dibuat untuk SEO lokal, fotografer, dan pengguna yang sadar privasi.",
+    "footerDesc": "Alat foto gratis untuk menambah geotag, melihat dan menghapus data EXIF, mencari lokasi foto, mengubah HEIC iPhone dan WebP, serta mengompres gambar. Tanpa daftar, tanpa watermark, dan sebagian besar tanpa unggah file.",
     "usefulLinks": "Tautan Berguna",
     "legal": "Hukum",
-    "allRightsReserved": "Hak cipta dilindungi undang-undang."
+    "allRightsReserved": "Hak cipta dilindungi undang-undang.",
+    "faq": "FAQ"
   },
   "nav": {
     "tool": "Alat Geotag",
@@ -35,9 +36,9 @@
     "step3Title": "3. Simpan dan Unduh",
     "step3Desc": "Data GPS akan disisipkan ke file foto, siap untuk dipakai berpromosi.",
     "metaKeywords": "Geo Tagging, Editor EXIF, Lokasi GPS, SEO Lokal, Metadata Foto, Tambahkan lokasi ke foto, PinPixl",
-    "step1Drop": "1. Taruh Foto",
-    "step2Pin": "2. Pasang Pin Lokasi",
-    "step3Apply": "3. Terapkan Geotag",
+    "step1Drop": "1. Masukkan foto",
+    "step2Pin": "2. Tandai lokasi",
+    "step3Apply": "3. Terapkan geotag",
     "processingMode": "Mode Pemrosesan",
     "bestCompatibility": "Kompatibilitas Terbaik",
     "keepOriginal": "Pertahankan Format Asli",

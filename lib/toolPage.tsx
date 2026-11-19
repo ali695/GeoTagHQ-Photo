@@ -3,7 +3,7 @@ import { getMessages } from '@/lib/messages';
 import { LANGUAGES, UI_LABELS } from '@/lib/constants';
 import { buildToolPageContent } from '@/lib/content/toolPage';
 import ToolPageContent from '@/components/tool/ToolPageContent';
-import { OG_IMAGE, SITE_URL } from '@/lib/site';
+import { CONTENT_UPDATED, OG_IMAGE, SITE_URL, ogAlternates, ogLocale } from '@/lib/site';
 
 export { SITE_URL };
 const TOOL_PATH = '/free-geo-tagging-tool';
@@ -37,14 +37,15 @@ export async function toolMetadata(lang: string): Promise<Metadata> {
       type: 'website',
       url,
       siteName: 'PinPixl',
-      locale: lang,
+      locale: ogLocale(lang),
+      alternateLocale: ogAlternates(lang, LANGUAGES.map((l) => l.code)),
       images: [OG_IMAGE],
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: [OG_IMAGE],
+      images: [OG_IMAGE.url],
     },
     robots: { index: true, follow: true },
   };
@@ -60,7 +61,10 @@ export async function ToolPage({ lang }: { lang: string }) {
     {
       '@type': 'WebApplication',
       '@id': `${url}#app`,
-      name: 'PinPixl Free Geo Tagging Tool',
+      name: content.h1,
+      alternateName: 'PinPixl Geo Tagging Tool',
+      image: `${SITE_URL}${OG_IMAGE.url}`,
+      isPartOf: { '@id': `${SITE_URL}/#website` },
       url,
       inLanguage: lang,
       applicationCategory: 'MultimediaApplication',
@@ -69,6 +73,17 @@ export async function ToolPage({ lang }: { lang: string }) {
       offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
       description: content.subtitle,
       publisher: { '@id': `${SITE_URL}/#organization` },
+    },
+    {
+      '@type': 'WebPage',
+      '@id': `${url}#webpage`,
+      url,
+      name: content.h1,
+      inLanguage: lang,
+      dateModified: CONTENT_UPDATED,
+      author: { '@id': `${SITE_URL}/#founder` },
+      isPartOf: { '@id': `${SITE_URL}/#website` },
+      mainEntity: { '@id': `${url}#app` },
     },
     {
       '@type': 'BreadcrumbList',

@@ -8,10 +8,11 @@
     "about": "소개",
     "howItWorks": "이용 방법",
     "localSeo": "로컬 SEO 가이드",
-    "footerDesc": "사진에 정확한 GPS 위치를 즉시 추가하는 무료 브라우저 기반 지오태깅 도구입니다. 로컬 SEO, 사진작가 및 개인 정보 보호를 중시하는 사용자를 위해 설계되었습니다.",
+    "footerDesc": "사진 위치 추가, EXIF 확인·삭제, 촬영 장소 찾기, 아이폰 HEIC·WebP 변환, 이미지 압축까지 할 수 있는 무료 사진 도구입니다. 회원가입·워터마크가 없고, 대부분의 도구는 파일을 업로드하지 않습니다.",
     "usefulLinks": "유용한 링크",
     "legal": "법적 고지",
-    "allRightsReserved": "모든 권리 보유."
+    "allRightsReserved": "모든 권리 보유.",
+    "faq": "자주 묻는 질문"
   },
   "nav": {
     "tool": "지오태그 툴",
@@ -35,8 +36,8 @@
     "step3Title": "3. 저장 및 다운로드",
     "step3Desc": "정보 저장 버튼을 눌러 GPS가 기록된 완성된 사진을 바로 다운로드하세요.",
     "metaKeywords": "지오태깅, EXIF 편집기, GPS 위치, 로컬 SEO, 사진 메타데이터, 사진에 위치 추가, PinPixl",
-    "step1Drop": "1. 사진 드롭",
-    "step2Pin": "2. 위치 핀",
+    "step1Drop": "1. 사진 올리기",
+    "step2Pin": "2. 위치 지정",
     "step3Apply": "3. 지오태그 적용",
     "processingMode": "처리 모드",
     "bestCompatibility": "최고의 호환성",

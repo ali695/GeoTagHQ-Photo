@@ -8,10 +8,11 @@
     "about": "Over Ons",
     "howItWorks": "Hoe Het Werkt",
     "localSeo": "Lokale SEO Gids",
-    "footerDesc": "Een gratis browsergebaseerde geotagging-tool om direct exacte GPS-locaties aan uw foto's toe te voegen. Gebouwd voor lokale SEO, fotografen en privacybewuste gebruikers.",
+    "footerDesc": "Gratis fototools om foto’s te geotaggen, EXIF-gegevens te bekijken en te verwijderen, te zien waar een foto is gemaakt, HEIC en WebP om te zetten en afbeeldingen te verkleinen. Zonder account, zonder watermerk en meestal zonder uploaden.",
     "usefulLinks": "Handige Links",
     "legal": "Juridisch",
-    "allRightsReserved": "Alle rechten voorbehouden."
+    "allRightsReserved": "Alle rechten voorbehouden.",
+    "faq": "FAQ"
   },
   "nav": {
     "tool": "Geotag Tool",
@@ -21,23 +22,23 @@
     "metaTitle": "Gratis Foto Geotagging Tool voor Lokale SEO",
     "metaDesc": "Voeg GPS-coördinaten toe aan bedrijfsfoto's en scoor in lokale SEO en Google Bedrijfsprofiel. Dé gratis tool voor dienstverleners en bedrijven.",
     "h1": "Geotag Bedrijfsfoto's in één klik",
-    "subtitle": "Koppel razendsnel locatiegegevens aan afbeeldingen voor dienstverleners en winkels. Boost uw Google Bedrijfsprofiel (GMB) en lokale SEO met 100% privacy in uw eigen browser.",
-    "privacyTitle": "Uw bedrijfsfoto's blijven privé",
-    "privacyDesc": "Om de metadata te schrijven, wordt uw foto via een versleutelde verbinding naar onze server gestuurd, in het geheugen verwerkt en aan u teruggegeven. We bewaren geen foto's en houden geen kopieën.",
+    "subtitle": "Zet in een paar seconden GPS-coördinaten en bedrijfsgegevens in je foto’s. Handig voor je website, je Google Bedrijfsprofiel en je eigen fotoarchief.",
+    "privacyTitle": "Je bedrijfsfoto’s blijven privé",
+    "privacyDesc": "Om de metadata te schrijven gaat je foto via een versleutelde verbinding naar onze server. Daar wordt hij in het geheugen verwerkt en direct aan je teruggegeven. We bewaren geen foto’s en maken geen kopieën.",
     "seoTitle": "Bereik meer klanten via Lokale SEO",
-    "seoDesc": "Maakt u gebruik van een Google Bedrijfsprofiel? Lokale zoekopdrachten hechten veel waarde aan geo-signalen. Met een correcte geotag bij alle bedrijfsfoto's vergroot de kans om door lokale klanten ontdekt te worden.",
+    "seoDesc": "Gebruik je een Google Bedrijfsprofiel of een website met projectfoto’s? Met een geotag weet je altijd precies waar elke foto is gemaakt, en blijven je locatiegegevens overal gelijk. Let op: Google haalt EXIF-gegevens weg uit foto’s in je Bedrijfsprofiel, dus een geotag is geen rankingtruc.",
     "howItWorks": "Locatie toevoegen aan afbeeldingen",
     "howItWorksDesc": "Een locatie instellen hoeft niet lastig te zijn met deze simpele workflow.",
     "step1Title": "1. Upload de foto",
-    "step1Desc": "Upload foto's van uw bedrijfspand, klussen of producten.",
+    "step1Desc": "Upload foto’s van je pand, je klussen of je producten.",
     "step2Title": "2. Selecteer de locatie",
-    "step2Desc": "Zoek je bedrijf op de map of typ direct uw coördinaten in.",
+    "step2Desc": "Zoek je adres op de kaart of vul de coördinaten zelf in.",
     "step3Title": "3. Geotaggen en Downloaden",
     "step3Desc": "We stoppen de locatie en SEO-data in het EXIF bestand.",
     "metaKeywords": "Geo-tagging, EXIF-editor, GPS-locatie, Lokale SEO, Foto metadata, Locatie toevoegen aan foto, PinPixl",
-    "step1Drop": "1. Foto's Toevoegen",
-    "step2Pin": "2. Locatie Markeren",
-    "step3Apply": "3. Geotag Toepassen",
+    "step1Drop": "1. Foto’s toevoegen",
+    "step2Pin": "2. Locatie markeren",
+    "step3Apply": "3. Geotag toepassen",
     "processingMode": "Verwerkingsmodus",
     "bestCompatibility": "Beste Compatibiliteit",
     "keepOriginal": "Origineel Formaat Behouden",
@@ -47,8 +48,8 @@
     "compressMedium": "Gemiddeld",
     "compressHigh": "Hoog",
     "uploadToConfigure": "Upload een afbeelding om metadata te configureren",
-    "privacyNote": "Privacyopmerking: uw foto's worden in het geheugen verwerkt en nooit opgeslagen.",
-    "privacyNoteSub": "Om metadata te schrijven en het formaat om te zetten, wordt elke foto versleuteld naar onze server gestuurd, verwerkt en als download aan u teruggegeven. Er wordt niets bewaard.",
+    "privacyNote": "Privacy: je foto’s worden in het geheugen verwerkt en nooit opgeslagen.",
+    "privacyNoteSub": "Om metadata te schrijven en het formaat om te zetten, gaat elke foto versleuteld naar onze server en komt hij direct als download bij je terug. Er wordt niets bewaard.",
     "dragDropHere": "Sleep foto's hierheen of klik om te selecteren",
     "supportsFormats": "Ondersteunt JPG, JPEG, PNG, WebP, HEIC, HEIF, AVIF en TIFF.",
     "noLocationSelected": "Nog geen locatie geselecteerd.",
@@ -96,11 +97,11 @@
   "faq": [
     {
       "q": "Hoe helpt dit dienstverleners?",
-      "a": "Als dienstverlener werkt u in een specifieke regio. Met getagde foto's van werklocaties (zoals afgeronde bouwprojecten), ziet Google Bedrijfsprofiel precies waar uw werkgebied zich bevindt."
+      "a": "Werk je als dienstverlener in een bepaalde regio, dan leg je met geotags vast waar elke projectfoto is gemaakt. Dat houdt je archief en je website overzichtelijk. Google Bedrijfsprofiel verwijdert EXIF-gegevens bij het publiceren, dus reken niet op een directe rankingboost."
     },
     {
       "q": "Slaat deze tool foto's op in een database?",
-      "a": "Nee. Uw foto's worden alleen in het geheugen van onze server verwerkt om de metadata te schrijven en daarna aan u teruggegeven. Ze worden niet opgeslagen of gedeeld."
+      "a": "Nee. Je foto’s worden alleen in het geheugen van onze server verwerkt om de metadata te schrijven en daarna direct aan je teruggegeven. Ze worden niet opgeslagen of gedeeld."
     },
     {
       "q": "Werkt dit met alle foto of afbeeldingsformaten?",

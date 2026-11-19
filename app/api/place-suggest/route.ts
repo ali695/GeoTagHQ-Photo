@@ -1,3 +1,4 @@
+import { guard } from '@/lib/rateLimit';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { SITE_URL } from '@/lib/site';
@@ -15,6 +16,8 @@ const schema = z.object({
 const PHOTON_LANGS = new Set(['en', 'de', 'fr', 'it']);
 
 export async function GET(request: Request) {
+  const limited = guard(request, 'suggest', 120, 60 * 1000);
+  if (limited) return limited;
   const sp = new URL(request.url).searchParams;
   const parsed = schema.safeParse({
     q: sp.get('q') || '',

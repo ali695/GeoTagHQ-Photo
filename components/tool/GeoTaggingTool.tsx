@@ -408,7 +408,7 @@ export default function GeoTaggingTool({ messages }: { messages?: any }) {
                   onChange={(c, source, displayName, provider, fullSuggestion) => handleLocationChange(c, source || 'map', displayName, provider, fullSuggestion)} 
                 />
             </div>
-            <CoordinateInput coords={coords} onChange={(c) => handleLocationChange(c, 'manual')} />
+            <CoordinateInput lang={lang} coords={coords} onChange={(c) => handleLocationChange(c, 'manual')} />
             <div className="flex justify-end pt-2">
               <TooltipProvider>
                 <Tooltip>
@@ -454,6 +454,7 @@ export default function GeoTaggingTool({ messages }: { messages?: any }) {
           )}
           <div className="mb-6">
              <MetadataPanel 
+               lang={lang}
                metadata={(files[0] || Object.keys(globalMetadataEdits).length > 0 || coords) ? { ...(files[0]?.metadata || { format: 'image/jpeg', fileSize: 0 } as any), ...globalMetadataEdits, gps: coords || files[0]?.metadata?.gps } as ImageMetadata : undefined} 
                onMetadataChange={(changes) => {
                  setGlobalMetadataEdits(prev => ({ ...prev, ...changes }));

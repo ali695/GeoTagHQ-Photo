@@ -8,10 +8,11 @@
     "about": "Sobre",
     "howItWorks": "Como Funciona",
     "localSeo": "Guia de SEO Local",
-    "footerDesc": "Uma ferramenta de geoetiquetagem gratuita baseada no navegador para adicionar localizações GPS exatas às suas fotos instantaneamente. Construída para SEO local, fotógrafos e utilizadores preocupados com a privacidade.",
+    "footerDesc": "Ferramentas grátis para fotos: colocar localização, ver e remover dados EXIF, descobrir onde a foto foi tirada, converter HEIC do iPhone e WebP e comprimir imagens. Sem cadastro, sem marca d’água e quase tudo sem enviar arquivos.",
     "usefulLinks": "Links Úteis",
     "legal": "Legal",
-    "allRightsReserved": "Todos os direitos reservados."
+    "allRightsReserved": "Todos os direitos reservados.",
+    "faq": "FAQ"
   },
   "nav": {
     "tool": "Ferramenta de Geotag",
@@ -35,9 +36,9 @@
     "step3Title": "3. Gravar e Baixar",
     "step3Desc": "As etiquetas EXIF serão aplicadas e sua foto com geolocalização estará pronta.",
     "metaKeywords": "Geo Tagging, Editor EXIF, Localização GPS, SEO Local, Metadados de Foto, Adicionar localização à foto, PinPixl",
-    "step1Drop": "1. Soltar Fotos",
-    "step2Pin": "2. Fixar o local",
-    "step3Apply": "3. Aplicar Geotag",
+    "step1Drop": "1. Solte as fotos",
+    "step2Pin": "2. Marque o local",
+    "step3Apply": "3. Aplique o geotag",
     "processingMode": "Modo de Processamento",
     "bestCompatibility": "Melhor Compatibilidade",
     "keepOriginal": "Manter Formato Original",

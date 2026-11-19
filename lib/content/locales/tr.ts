@@ -9,7 +9,7 @@ const tr: ToolPageContent = {
     'Fotoğraflarınıza ücretsiz konum ekleyin: JPG, PNG, WebP ve HEIC dosyalarına GPS koordinatı, başlık ve işletme bilgisi yazın. Üyelik gerekmez.',
 
   eyebrow: 'Ücretsiz · Üyelik yok · Filigran yok',
-  h1: 'Fotoğrafa Konum Ekleme: GPS Koordinatlarını Ücretsiz Yazın',
+  h1: 'Fotoğrafa konum ekleme: GPS koordinatlarını ücretsiz yazın',
   subtitle:
     'Haritada bir nokta seçin, işletme bilgilerinizi girin ve GPS koordinatları EXIF verisine yazılmış fotoğraflarınızı indirin. JPG, PNG, WebP, HEIC ve daha fazlasıyla çalışır; tek seferde 10 fotoğrafa kadar.',
   trustChips: ['%100 ücretsiz', 'Tek seferde 10 fotoğraf', 'Fotoğraflar saklanmaz', 'JPG, PNG, WebP, HEIC'],

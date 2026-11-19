@@ -1,49 +1,23 @@
-import { MetadataRoute } from 'next';
+import type { MetadataRoute } from 'next';
 import { SITE_URL } from '@/lib/site';
 
+// Everything public is crawlable; only API endpoints are off-limits.
+// AI search and assistant crawlers are welcomed explicitly so PinPixl can be cited in AI answers.
+const AI_BOTS = [
+  'GPTBot', 'OAI-SearchBot', 'ChatGPT-User',
+  'ClaudeBot', 'Claude-SearchBot', 'Claude-User',
+  'PerplexityBot', 'Perplexity-User',
+  'Google-Extended', 'Applebot-Extended',
+  'CCBot', 'Bytespider', 'Amazonbot', 'DuckAssistBot', 'Meta-ExternalAgent',
+];
+
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = SITE_URL;
-  
   return {
     rules: [
-      {
-        userAgent: '*',
-        allow: [
-          '/',
-          '/free-geo-tagging-tool',
-          '/privacy-policy',
-          '/terms',
-          '/contact',
-          '/disclaimer',
-          '/about',
-        ],
-        disallow: [
-          '/api/',
-          '/admin/',
-          '/test/',
-          '/debug/',
-          '/*/_next/',
-          '/*.json$',
-          '/wp-admin/',
-          '/cart/',
-          '/checkout/',
-          '/account/',
-          '/login/',
-          '/search/',
-          '/tag/',
-          '/?s=',
-          '/cdn-cgi/'
-        ],
-      },
-      {
-        userAgent: 'GPTBot',
-        disallow: ['/api/', '/admin/'],
-      },
-      {
-        userAgent: 'CCBot',
-        disallow: ['/'], // Common Crawl usually not needed for SEO ranking
-      }
+      { userAgent: '*', allow: '/', disallow: ['/api/'] },
+      { userAgent: AI_BOTS, allow: '/', disallow: ['/api/'] },
     ],
-    sitemap: `${baseUrl}/sitemap.xml`,
+    sitemap: `${SITE_URL}/sitemap.xml`,
+    host: SITE_URL,
   };
 }

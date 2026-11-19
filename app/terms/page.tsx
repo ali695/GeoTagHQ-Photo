@@ -1,11 +1,21 @@
+import type { Metadata } from 'next';
+import { OG_IMAGE, SITE_URL } from '@/lib/site';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 
+export const metadata: Metadata = {
+  title: 'Terms of Service',
+  description: 'The terms for using PinPixl’s free online photo tools, including acceptable use and limitations.',
+  alternates: { canonical: `${SITE_URL}/terms` },
+  openGraph: { title: 'Terms of Service', description: 'The terms for using PinPixl’s free online photo tools, including acceptable use and limitations.', url: `${SITE_URL}/terms`, type: 'website', siteName: 'PinPixl', locale: 'en_US', images: [OG_IMAGE] },
+  twitter: { card: 'summary_large_image', title: 'Terms of Service', description: 'The terms for using PinPixl’s free online photo tools, including acceptable use and limitations.', images: [OG_IMAGE.url] },
+};
+
 export default function Terms() {
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
+    <div className="min-h-screen bg-paper flex flex-col font-sans text-ink">
       <Header />
-      <main className="flex-grow max-w-4xl mx-auto px-4 py-12 w-full prose prose-slate">
+      <main className="flex-grow max-w-3xl mx-auto px-4 sm:px-6 py-16 md:py-24 w-full prose prose-slate prose-lg prose-headings:tracking-tight prose-h1:text-5xl prose-h1:font-extrabold prose-a:text-pin-2 prose-a:decoration-pin">
         <h1>Terms of Service</h1>
         <p>Last updated: {new Date().toLocaleDateString()}</p>
         

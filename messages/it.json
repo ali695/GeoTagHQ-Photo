@@ -8,10 +8,11 @@
     "about": "Chi Siamo",
     "howItWorks": "Come Funziona",
     "localSeo": "Guida SEO Locale",
-    "footerDesc": "Un tool di geotagging gratuito via browser per aggiungere istantaneamente posizioni GPS esatte alle tue foto. Realizzato per SEO locale, fotografi e utenti attenti alla privacy.",
+    "footerDesc": "Strumenti foto gratuiti per geotaggare le foto, leggere e rimuovere i dati EXIF, scoprire dove è stata scattata una foto, convertire HEIC e WebP e comprimere immagini. Senza registrazione, senza filigrana e quasi sempre senza caricare file.",
     "usefulLinks": "Link Utili",
     "legal": "Note Legali",
-    "allRightsReserved": "Tutti i diritti riservati."
+    "allRightsReserved": "Tutti i diritti riservati.",
+    "faq": "FAQ"
   },
   "nav": {
     "tool": "Tool di Geotag",
@@ -35,9 +36,9 @@
     "step3Title": "3. Applica e Salva",
     "step3Desc": "Salva la foto. I metadati per la SEO locale saranno impressi nella nuova immagine.",
     "metaKeywords": "Geotagging, Editor EXIF, Posizione GPS, SEO Locale, Metadati Foto, Aggiungi posizione a foto, PinPixl",
-    "step1Drop": "1. Trascina foto",
-    "step2Pin": "2. Fissa posizione",
-    "step3Apply": "3. Applica Geotag",
+    "step1Drop": "1. Trascina le foto",
+    "step2Pin": "2. Fissa la posizione",
+    "step3Apply": "3. Applica il geotag",
     "processingMode": "Modalità di elaborazione",
     "bestCompatibility": "Migliore compatibilità",
     "keepOriginal": "Mantieni formato originale",
