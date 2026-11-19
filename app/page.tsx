@@ -9,8 +9,9 @@ import Footer from '@/components/layout/Footer';
 import ToolIcon from '@/components/layout/ToolIcon';
 import ToolFinder from '@/components/home/ToolFinder';
 import HomeVisual from '@/components/home/HomeVisual';
-import { CATEGORY_LABEL, TOOLS, isPair, toolById, type ToolCategory, type ToolEntry } from '@/lib/tools';
+import { CATEGORY_LABEL, FORMAT_LABEL, TOOLS, isPair, toolById, type ToolCategory, type ToolEntry } from '@/lib/tools';
 import NumberTicker from '@/components/motion/NumberTicker';
+import DottedWorld, { type Pin } from '@/components/home/DottedWorld';
 import { LANGUAGES } from '@/lib/constants';
 import { OG_IMAGE, SITE_URL } from '@/lib/site';
 
@@ -55,9 +56,31 @@ const SERVER_NOTE: Record<string, string> = {
   'image-compressor': 'PNG mode only; JPG & WebP stay in your browser',
   'lat-long-finder': 'Sends only the address you search, never a photo',
   'ai-alt-text': 'Sends the image to an AI model',
+  'tiff-to-jpg': 'Most browsers can’t read TIFF, so it is decoded on our server',
+  'tiff-to-png': 'Most browsers can’t read TIFF, so it is decoded on our server',
 };
 
 const POPULAR_SMALL = ['jpg-to-pdf', 'heic-to-jpg', 'image-resizer', 'compress-to-100kb'];
+
+/** One pin per language market on the world map; each links to that language's tools. */
+const PINS: Pin[] = [
+  { label: 'EN', lat: 40.7, lng: -74, href: '/' },
+  { label: 'ES', lat: 40.4, lng: -3.7, href: '/es', dx: -10, dy: 1.6 },
+  { label: 'FR', lat: 48.9, lng: 2.35, href: '/fr', dx: -10, dy: 1.6 },
+  { label: 'NL', lat: 52.4, lng: 4.9, href: '/nl', dx: -9, dy: -2.4 },
+  { label: 'DE', lat: 52.5, lng: 13.4, href: '/de' },
+  { label: 'IT', lat: 41.9, lng: 12.5, href: '/it', dx: 2.6, dy: 4 },
+  { label: 'TR', lat: 41, lng: 29, href: '/tr' },
+  { label: 'AR', lat: 24.7, lng: 46.7, href: '/ar' },
+  { label: 'HI', lat: 28.6, lng: 77.2, href: '/hi' },
+  { label: 'ID', lat: -6.2, lng: 106.8, href: '/id' },
+  { label: 'KO', lat: 37.6, lng: 127, href: '/ko', dx: -9.5, dy: -1.6 },
+  { label: 'JA', lat: 35.7, lng: 139.7, href: '/ja' },
+  { label: 'PT', lat: -23.5, lng: -46.6, href: '/pt' },
+];
+const ROUTES: Array<[string, string]> = [['EN', 'DE'], ['EN', 'PT'], ['DE', 'TR'], ['TR', 'HI'], ['HI', 'ID'], ['ID', 'JA'], ['JA', 'KO'], ['FR', 'AR']];
+const MATRIX_FROM = ['heic', 'webp', 'jpg', 'png', 'avif', 'gif', 'bmp', 'tiff', 'svg'] as const;
+const MATRIX_TO = ['jpg', 'png', 'webp'] as const;
 
 const FORMATS = ['HEIC', 'HEIF', 'JPG', 'PNG', 'WebP', 'AVIF', 'GIF', 'BMP', 'TIFF', 'SVG', 'PDF', 'iPhone', 'Android', 'Windows', 'Mac', 'Chrome', 'Safari'];
 
@@ -445,6 +468,58 @@ export default function Home() {
           </div>
         </section>
 
+        {/* ───────── Converter matrix ───────── */}
+        <section className="border-y border-slate-200/70 bg-slate-50 py-20 md:py-28">
+          <div className="mx-auto grid max-w-7xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-[1fr_1.25fr] lg:px-8">
+            <div data-reveal>
+              <Eyebrow><Layers className="h-3.5 w-3.5" aria-hidden /> Converters</Eyebrow>
+              <h2 className="text-3xl font-extrabold tracking-tight text-slate-950 md:text-[2.75rem] md:leading-[1.12]">
+                Pick a row. <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 bg-clip-text text-transparent">Pick a column.</span>
+              </h2>
+              <p className="mt-5 max-w-md text-lg leading-relaxed text-slate-600">
+                {converters.length} one-click converters, almost all running in your browser. iPhone photos open everywhere, heavy PNGs shrink to WebP, old BMP and TIFF files become JPGs, and logos become PNGs at any size.
+              </p>
+              <Link href="/image-converter" className="mt-8 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-3.5 font-bold text-white shadow-lg shadow-blue-600/25 transition-all hover:-translate-y-0.5">
+                Convert any format <ArrowRight className="h-4 w-4" aria-hidden />
+              </Link>
+            </div>
+            <div data-reveal style={{ ['--d' as string]: '150ms' }} className="overflow-x-auto">
+              <table className="w-full min-w-[440px] overflow-hidden rounded-3xl border border-slate-200 bg-white text-start shadow-xl shadow-slate-900/[0.06]">
+                <caption className="sr-only">Image format converters: rows are the format you have, columns the format you get</caption>
+                <thead>
+                  <tr className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+                    <th scope="col" className="px-4 py-3.5 text-start text-xs font-semibold uppercase tracking-wider text-blue-100">From ↓ / To →</th>
+                    {MATRIX_TO.map((t) => (
+                      <th key={t} scope="col" className="px-4 py-3.5 text-center text-sm font-bold">{FORMAT_LABEL[t]}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {MATRIX_FROM.map((f) => (
+                    <tr key={f} className="transition-colors hover:bg-blue-50/40">
+                      <th scope="row" className="px-4 py-3 text-start text-sm font-bold text-slate-900">{FORMAT_LABEL[f]}</th>
+                      {MATRIX_TO.map((t) => {
+                        const tool = toolById(`${f}-to-${t}`);
+                        return (
+                          <td key={t} className="p-1.5 text-center">
+                            {tool ? (
+                              <Link href={tool.path} className="inline-flex w-full items-center justify-center gap-1 rounded-xl px-2 py-2 text-sm font-semibold text-blue-700 transition hover:bg-gradient-to-r hover:from-blue-600 hover:to-indigo-600 hover:text-white" title={tool.name}>
+                                {tool.name} <ArrowRight className="h-3.5 w-3.5 opacity-60" aria-hidden />
+                              </Link>
+                            ) : (
+                              <span className="text-slate-300" aria-label={f === t ? 'same format' : 'not available'}>{f === t ? '—' : '·'}</span>
+                            )}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
         {/* ───────── Who it's for ───────── */}
         <section className="border-y border-slate-200/70 bg-slate-50 py-20 md:py-28">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -508,8 +583,8 @@ export default function Home() {
               <div className="relative grid items-center gap-8 md:grid-cols-[1fr_1.4fr]">
                 <div>
                   <span className="inline-flex rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 p-3 text-white shadow-lg shadow-blue-600/25"><Languages className="h-6 w-6" aria-hidden /></span>
-                  <h2 className="mt-5 text-2xl font-extrabold tracking-tight text-slate-950 md:text-3xl">Available in {LANGUAGES.length} languages</h2>
-                  <p className="mt-3 leading-relaxed text-slate-600">Written natively for each market, with the words people actually search for, not machine-translated.</p>
+                  <h2 className="mt-5 text-2xl font-extrabold tracking-tight text-slate-950 md:text-3xl">Written for {LANGUAGES.length} markets, not translated</h2>
+                  <p className="mt-3 leading-relaxed text-slate-600">Each language is written natively, with the words people there actually search for: Marktplaats tips in Dutch, メルカリ in Japanese, Haraj in Arabic.</p>
                 </div>
                 <ul className="flex flex-wrap gap-2">
                   {LANGUAGES.map((l) => (
@@ -525,6 +600,9 @@ export default function Home() {
                     </li>
                   ))}
                 </ul>
+              </div>
+              <div data-reveal className="relative mt-10 rounded-2xl border border-slate-200 bg-white/80 p-3 shadow-sm backdrop-blur sm:p-6">
+                <DottedWorld pins={PINS} routes={ROUTES} className="h-auto w-full text-blue-300/70" />
               </div>
             </div>
           </div>

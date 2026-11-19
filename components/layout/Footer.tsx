@@ -20,7 +20,7 @@ export default async function Footer({ lang = 'en', messages }: { lang?: string;
       <div aria-hidden className="pointer-events-none absolute -top-40 start-1/2 h-80 w-[48rem] -translate-x-1/2 rtl:translate-x-1/2 rounded-full bg-blue-600/20 blur-3xl" />
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-10">
         <div className="grid grid-cols-2 md:grid-cols-12 gap-10">
-          <div className="col-span-2 md:col-span-5">
+          <div className="col-span-2 md:col-span-4">
             <Link href={lang === 'en' ? '/' : TOOL_LANGS.includes(lang) ? `/${lang}` : toolLink} className="inline-flex mb-5 hover:opacity-90 transition-opacity" aria-label="PinPixl home">
               <BrandLogo dark size="lg" />
             </Link>
@@ -30,15 +30,16 @@ export default async function Footer({ lang = 'en', messages }: { lang?: string;
             </p>
           </div>
 
-          <div className="col-span-2 md:col-span-3">
+          <div className="col-span-2 md:col-span-4">
             <h2 className={heading}>{ui.tools}</h2>
-            <ul className="space-y-3 text-sm">
+            {/* Two columns so the growing tool list stays compact. */}
+            <ul className="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
               {availableTools(lang)
                 .filter((t) => t.inMenu)
                 .map((t) => (
                   <li key={t.id}>
-                    <Link href={toolHref(lang, t.path)} className={`${link} inline-flex items-center gap-2`}>
-                      <ToolIcon name={t.icon} className="w-4 h-4 text-blue-400" />
+                    <Link href={toolHref(lang, t.path)} className={`${link} inline-flex items-start gap-2`}>
+                      <ToolIcon name={t.icon} className="mt-0.5 w-4 h-4 shrink-0 text-blue-400" />
                       {toolText(t, lang, { name: ui.geotagName, desc: ui.geotagDesc }).name}
                     </Link>
                   </li>
