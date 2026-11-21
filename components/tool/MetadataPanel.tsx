@@ -275,7 +275,7 @@ export default function MetadataPanel({ metadata, onMetadataChange, d = {}, lang
   if (!metadata) {
     return (
       <div className="w-full bg-slate-50 border border-slate-200 rounded-lg p-6 text-center text-slate-500 text-sm">
-        Upload an image to configure metadata
+        {d.uploadToConfigure || 'Upload an image to configure metadata'}
       </div>
     );
   }
@@ -286,7 +286,7 @@ export default function MetadataPanel({ metadata, onMetadataChange, d = {}, lang
       {/* Current Metadata (Read-only) */}
       <details className="bg-slate-50 border border-slate-200 rounded-lg group">
         <summary className="font-bold text-slate-900 text-sm p-5 cursor-pointer flex items-center justify-between list-none [&::-webkit-details-marker]:hidden">
-          Metadata Summary
+          {d.preview || 'Metadata Summary'}
           <svg className="w-4 h-4 text-slate-500 group-open:rotate-180 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
@@ -295,28 +295,28 @@ export default function MetadataPanel({ metadata, onMetadataChange, d = {}, lang
         <div className="px-5 pb-5 pt-2 border-t border-slate-200 space-y-4 text-sm mt-2">
           {/* GPS Location */}
           <div>
-            <h5 className="font-semibold text-slate-800 mb-1">GPS Location</h5>
+            <h5 className="font-semibold text-slate-800 mb-1">{d.gpsTab || 'GPS Location'}</h5>
             {metadata.gps ? (
               <div className="text-slate-600 ms-1 space-y-0.5">
-                <p><span className="font-medium text-slate-700">Status:</span> Found</p>
+                <p>{d.gpsFound || 'Status: Found'}</p>
                 <p><span className="font-medium text-slate-700">Latitude:</span> {metadata.gps.lat >= 0 ? `${metadata.gps.lat.toFixed(6)}° N` : `${Math.abs(metadata.gps.lat).toFixed(6)}° S`}</p>
                 <p><span className="font-medium text-slate-700">Longitude:</span> {metadata.gps.lng >= 0 ? `${metadata.gps.lng.toFixed(6)}° E` : `${Math.abs(metadata.gps.lng).toFixed(6)}° W`}</p>
               </div>
             ) : (
               <div className="text-slate-600 ms-1">
-                <p><span className="font-medium text-slate-700">Status:</span> Not found</p>
-                <p className="text-slate-500 mt-1 italic text-xs">No GPS coordinates were found in this image.</p>
+                <p>{d.gpsNotFound || 'Status: Not found'}</p>
+                <p className="text-slate-500 mt-1 italic text-xs">{d.noGpsMsg || 'No GPS coordinates were found in this image.'}</p>
               </div>
             )}
           </div>
 
           {/* Image Details */}
           <div>
-            <h5 className="font-semibold text-slate-800 mb-1">Image Details</h5>
+            <h5 className="font-semibold text-slate-800 mb-1">{d.imgDetails || 'Image Details'}</h5>
             <div className="text-slate-600 ms-1 space-y-0.5">
-              <p><span className="font-medium text-slate-700">Format:</span> {metadata.format.split('/')[1]?.toUpperCase() || 'Unknown'}</p>
+              <p><span className="font-medium text-slate-700">{d.format || 'Format'}:</span> {metadata.format.split('/')[1]?.toUpperCase() || 'Unknown'}</p>
               {(metadata.width && metadata.height) ? (
-                <p><span className="font-medium text-slate-700">Dimensions:</span> {metadata.width} x {metadata.height}</p>
+                <p><span className="font-medium text-slate-700">{d.dimensions || 'Dimensions'}:</span> {metadata.width} x {metadata.height}</p>
               ) : null}
               <p><span className="font-medium text-slate-700">File Size:</span> {formatBytes(metadata.fileSize)}</p>
             </div>
@@ -324,11 +324,11 @@ export default function MetadataPanel({ metadata, onMetadataChange, d = {}, lang
 
           {/* Camera Info */}
           <div>
-            <h5 className="font-semibold text-slate-800 mb-1">Camera Info</h5>
+            <h5 className="font-semibold text-slate-800 mb-1">{d.cameraInfo || 'Camera Info'}</h5>
             <div className="text-slate-600 ms-1 space-y-0.5">
-              <p><span className="font-medium text-slate-700">Camera Make:</span> {metadata.cameraMake || 'Not available'}</p>
-              <p><span className="font-medium text-slate-700">Camera Model:</span> {metadata.cameraModel || 'Not available'}</p>
-              <p><span className="font-medium text-slate-700">Date Taken:</span> {metadata.dateTaken ? new Date(metadata.dateTaken).toLocaleString() : 'Not available'}</p>
+              <p><span className="font-medium text-slate-700">{d.make || 'Camera Make'}:</span> {metadata.cameraMake || 'Not available'}</p>
+              <p><span className="font-medium text-slate-700">{d.model || 'Camera Model'}:</span> {metadata.cameraModel || 'Not available'}</p>
+              <p><span className="font-medium text-slate-700">{d.date || 'Date Taken'}:</span> {metadata.dateTaken ? new Date(metadata.dateTaken).toLocaleString() : 'Not available'}</p>
             </div>
           </div>
           
@@ -357,8 +357,8 @@ export default function MetadataPanel({ metadata, onMetadataChange, d = {}, lang
               <Map className="w-5 h-5 text-blue-600" />
             </div>
             <div>
-              <h3 className="text-lg font-extrabold text-slate-900 leading-none">Address & Local Info</h3>
-              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-1">Global settings for all images</p>
+              <h3 className="text-lg font-extrabold text-slate-900 leading-none">{d.metadataHeader || 'Address & Local Info'}</h3>
+              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-1">{d.batchApply || 'Global settings for all images'}</p>
             </div>
           </div>
 

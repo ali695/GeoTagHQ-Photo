@@ -6,13 +6,14 @@ import { MapPin, Navigation, MousePointerClick, Edit3, Search, Copy } from 'luci
 interface SelectedLocationCardProps {
   location: SelectedLocation | null;
   onAutoFillMetadata?: (details: Partial<SelectedLocation>) => void;
+  d?: Record<string, string>;
 }
 
-export default function SelectedLocationCard({ location, onAutoFillMetadata }: SelectedLocationCardProps) {
+export default function SelectedLocationCard({ location, onAutoFillMetadata, d = {} }: SelectedLocationCardProps) {
   if (!location) {
     return (
       <div className="bg-slate-50 border border-dashed border-slate-300 rounded-lg p-4 mb-4 text-center text-sm text-slate-500">
-        No location selected yet.
+        {d.noLocationSelected || 'No location selected yet.'}
       </div>
     );
   }
@@ -42,8 +43,8 @@ export default function SelectedLocationCard({ location, onAutoFillMetadata }: S
             </h4>
             
             <div className="flex flex-col gap-0.5 text-xs text-slate-600 mb-2">
-              <span className="truncate">Latitude: {location.lat}</span>
-              <span className="truncate">Longitude: {location.lon}</span>
+              <span className="truncate">{d.lat || 'Latitude'}: {location.lat}</span>
+              <span className="truncate">{d.lng || 'Longitude'}: {location.lon}</span>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-0.5 mt-1 border-t border-blue-100 pt-1">
                 {location.street && <span className="truncate">Street: <span className="text-slate-900 font-medium">{location.street} {location.houseNumber}</span></span>}
                 {location.district && <span className="truncate">District: <span className="text-slate-900 font-medium">{location.district}</span></span>}

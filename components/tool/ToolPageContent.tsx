@@ -85,7 +85,10 @@ export default function ToolPageContent({
   // The interactive tool only needs its UI strings. Page copy (headings, SEO text, FAQ fallbacks)
   // is rendered as HTML above, so it is not shipped to the browser a second time.
   const PAGE_COPY = new Set(['h1', 'subtitle', 'metaTitle', 'metaDesc', 'seoTitle', 'seoDesc', 'privacyTitle', 'privacyDesc', 'howItWorks', 'howItWorksDesc', 'step1Title', 'step1Desc', 'step2Title', 'step2Desc', 'step3Title', 'step3Desc']);
-  const toolMessages = { tool: Object.fromEntries(Object.entries(messages?.tool || {}).filter(([k]) => !PAGE_COPY.has(k))) };
+  const toolMessages = {
+    tool: Object.fromEntries(Object.entries(messages?.tool || {}).filter(([k]) => !PAGE_COPY.has(k))),
+    extract: messages?.extract || {},
+  };
 
   return (
     <div className="min-h-screen bg-white flex flex-col font-sans text-slate-900" dir={dir}>

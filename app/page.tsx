@@ -86,7 +86,7 @@ const FORMATS = ['HEIC', 'HEIF', 'JPG', 'PNG', 'WebP', 'AVIF', 'GIF', 'BMP', 'TI
 
 const STEPS = [
   { icon: MousePointerClick, title: 'Pick a tool', text: 'Search above or choose from the list. Every tool opens instantly, with no account.' },
-  { icon: Upload, title: 'Drop your photos', text: 'Add up to 20 files at once, straight from your phone or computer. iPhone HEIC included.' },
+  { icon: Upload, title: 'Drop your photos', text: 'Add up to 20 files at once to the converters (10 for geotagging), straight from your phone or computer. iPhone HEIC included.' },
   { icon: Download, title: 'Download verified files', text: 'Each result is checked before you get it: GPS written, metadata gone, file really smaller.' },
 ];
 
@@ -104,7 +104,7 @@ const COMPARE = [
   { label: 'Sign-up', us: 'None', them: 'Email or account required' },
   { label: 'Your files', us: 'Most tools never upload them', them: 'Usually uploaded to their servers' },
   { label: 'Watermark', us: 'Never', them: 'Often on free plans' },
-  { label: 'Batch processing', us: 'Up to 20 files', them: 'Often 1 file on free plans' },
+  { label: 'Batch processing', us: '20 files (10 for geotagging)', them: 'Often 1 file on free plans' },
   { label: 'iPhone HEIC', us: 'Supported everywhere', them: 'Often missing or paid' },
   { label: 'Languages', us: `${LANGUAGES.length}, written natively`, them: 'English, or machine-translated' },
 ];
@@ -331,7 +331,7 @@ export default function Home() {
                   <h3 className="mt-6 text-3xl font-extrabold leading-tight md:text-4xl">{geotag.name}</h3>
                   <p className="mt-3 max-w-md text-lg leading-relaxed text-blue-100/85">{geotag.desc}</p>
                   <ul className="mt-6 grid max-w-md gap-2 text-sm text-blue-100">
-                    {['Google Maps search for any street address', 'Batch up to 20 photos, HEIC included', 'Every file read back to verify the GPS'].map((s) => (
+                    {['Search any street address or landmark', 'Batch up to 10 photos, HEIC included', 'Every file read back to verify the GPS'].map((s) => (
                       <li key={s} className="flex items-center gap-2"><Check className="h-4 w-4 text-emerald-400" aria-hidden /> {s}</li>
                     ))}
                   </ul>

@@ -378,6 +378,7 @@ export default function GeoTaggingTool({ messages }: { messages?: any }) {
           <h2 className="text-xl font-bold text-slate-900 mb-4">{d.step2Pin || "2. Pin Location"}</h2>
           <div className="space-y-4 flex-grow flex flex-col">
             <SelectedLocationCard 
+               d={d}
                location={selectedLoc} 
                onAutoFillMetadata={(details) => {
                   const newEdits: Partial<ImageMetadata> = {};
@@ -454,6 +455,7 @@ export default function GeoTaggingTool({ messages }: { messages?: any }) {
           )}
           <div className="mb-6">
              <MetadataPanel 
+               d={d}
                lang={lang}
                metadata={(files[0] || Object.keys(globalMetadataEdits).length > 0 || coords) ? { ...(files[0]?.metadata || { format: 'image/jpeg', fileSize: 0 } as any), ...globalMetadataEdits, gps: coords || files[0]?.metadata?.gps } as ImageMetadata : undefined} 
                onMetadataChange={(changes) => {

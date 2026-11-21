@@ -22,6 +22,11 @@ export type ConverterTemplate = {
   why: Record<'jpg' | 'png' | 'webp', string[]>;
   /** Extra reason shown first when converting from this source format. */
   fromNote: Partial<Record<Fmt, string>>;
+  /** Heading for the source-format section, e.g. "About {F} files". */
+  sourceTitle: string;
+  /** Per source format: two native paragraphs and one format-specific FAQ.
+   *  This is what makes sibling pages (GIF→JPG vs BMP→JPG) genuinely different. */
+  sources: Record<Fmt, { p: [string, string]; faq: [string, string] }>;
   tableTitle: string; // {F} {T}
   tableRows: [string, string, string, string]; // compression, transparency, support, best for
   formats: Record<Fmt, [string, string, string, string]>;
@@ -53,6 +58,7 @@ export function buildConverter(t: ConverterTemplate, c: ConverterCtx): Landing {
 
   const why = [...(t.fromNote[from] ? [t.fromNote[from]!] : []), ...t.why[to]].map((s) => fill(s, c));
   const faqs = [
+    { q: fill(t.sources[from].faq[0], c), a: fill(t.sources[from].faq[1], c) },
     { q: fill(t.faqs.free[0], c), a: fill(t.faqs.free[1], c) },
     { q: fill(t.faqs.upload[0], c), a: fill(mixed ? t.faqs.uploadMixed : t.faqs.upload[1], c) },
     { q: fill(t.faqs.quality[0], c), a: fill(to === 'png' ? t.faqs.qualityPng : t.faqs.quality[1], c) },
@@ -77,7 +83,10 @@ export function buildConverter(t: ConverterTemplate, c: ConverterCtx): Landing {
       { title: fill(t.steps.settings[0], c), desc: fill(to === 'png' ? t.steps.settingsPng : t.steps.settings[1] + (to === 'jpg' ? ' ' + t.steps.bgNote : ''), c) },
       { title: fill(t.steps.download[0], c), desc: fill(t.steps.download[1], c) },
     ],
-    sections: [{ title: fill(t.whyTitle, c), bullets: why }],
+    sections: [
+      { title: fill(t.sourceTitle, c), paragraphs: t.sources[from].p.map((x) => fill(x, c)) },
+      { title: fill(t.whyTitle, c), bullets: why },
+    ],
     table: {
       title: fill(t.tableTitle, c),
       headers: ['', c.F, c.T],

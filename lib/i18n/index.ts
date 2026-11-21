@@ -53,7 +53,10 @@ export function landingFor(id: string, lang: string): Landing | null {
     l ? { ...l, sections: [...l.sections, ...extra] } : null;
   if (pair) {
     const c = { from: pair[0], to: pair[1], F: FORMAT_LABEL[pair[0]], T: FORMAT_LABEL[pair[1]] };
-    return withExtra(loc.converter(c), ex?.converter(c));
+    // Keep the iPhone (HEIC) and website (WebP) tips; the generic "good to know" note is
+    // replaced by the format-specific section, which keeps sibling pages distinct.
+    const tips = c.from === 'heic' || c.to === 'webp' ? ex?.converter(c) : [];
+    return withExtra(loc.converter(c), tips);
   }
   if (id === 'image-converter') return withExtra(loc.imageConverter, ex?.imageConverter);
   return withExtra(loc.landings[id], ex?.sections[id]);
