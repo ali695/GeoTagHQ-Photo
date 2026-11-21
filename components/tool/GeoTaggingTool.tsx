@@ -19,12 +19,13 @@ import { MapPin, Download, Loader2, CheckCircle2, AlertCircle } from 'lucide-rea
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import SelectedLocationCard from './SelectedLocationCard';
 import { toolDict } from '@/lib/toolDict';
+import { toolDictExtra } from '@/lib/toolDictExtra';
 
 export default function GeoTaggingTool({ messages }: { messages?: any }) {
   const params = useParams();
   const lang = (typeof params?.lang === 'string' ? params.lang : 'en');
   
-  const d = { ...toolDict['en'], ...toolDict[lang], ...(messages?.tool || {}) };
+  const d = { ...toolDict['en'], ...toolDictExtra['en'], ...toolDict[lang], ...toolDictExtra[lang], ...(messages?.tool || {}) };
 
   const [files, setFiles] = useState<ImageFile[]>([]);
   const [coords, setCoords] = useState<GeoCoordinates | undefined>();
@@ -456,6 +457,7 @@ export default function GeoTaggingTool({ messages }: { messages?: any }) {
           <div className="mb-6">
              <MetadataPanel 
                d={d}
+               hasImage={files.length > 0}
                lang={lang}
                metadata={(files[0] || Object.keys(globalMetadataEdits).length > 0 || coords) ? { ...(files[0]?.metadata || { format: 'image/jpeg', fileSize: 0 } as any), ...globalMetadataEdits, gps: coords || files[0]?.metadata?.gps } as ImageMetadata : undefined} 
                onMetadataChange={(changes) => {
@@ -474,7 +476,7 @@ export default function GeoTaggingTool({ messages }: { messages?: any }) {
                 className="w-full text-sm font-medium border border-slate-300 rounded-lg px-4 py-2.5 outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-slate-50 hover:bg-slate-100 transition-colors shadow-sm appearance-none cursor-pointer"
                 style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.75rem center', backgroundSize: '1rem' }}
               >
-                <option value="original">Autodetect / Original</option>
+                <option value="original">{d.exportOriginal}</option>
                 <option value="jpg">JPG / JPEG</option>
                 <option value="png">PNG</option>
                 <option value="webp">WebP</option>

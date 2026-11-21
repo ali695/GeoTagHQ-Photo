@@ -20,16 +20,16 @@ export default function SelectedLocationCard({ location, onAutoFillMetadata, d =
 
   const getSourceLabel = (source: string) => {
     switch (source) {
-      case 'search': return 'Address search';
-      case 'map': return 'Map click';
-      case 'manual': return 'Manual input';
-      case 'current-location': return 'Current location';
-      default: return 'Selected';
+      case 'search': return d.srcSearch || 'Address search';
+      case 'map': return d.srcMap || 'Map click';
+      case 'manual': return d.srcManual || 'Manual entry';
+      case 'current-location': return d.srcCurrent || 'Current location';
+      default: return d.srcSelected || 'Selected';
     }
   };
   
   const isExact = location.source === 'search' && (location.type === 'address' || location.houseNumber || location.exactMatch);
-  const confidenceText = isExact ? 'Exact or close match' : 'Approximate match';
+  const confidenceText = isExact ? (d.exactMatch || 'Exact or close match') : (d.approxMatch || 'Approximate match');
 
   return (
     <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 mb-4">
@@ -46,14 +46,14 @@ export default function SelectedLocationCard({ location, onAutoFillMetadata, d =
               <span className="truncate">{d.lat || 'Latitude'}: {location.lat}</span>
               <span className="truncate">{d.lng || 'Longitude'}: {location.lon}</span>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-0.5 mt-1 border-t border-blue-100 pt-1">
-                {location.street && <span className="truncate">Street: <span className="text-slate-900 font-medium">{location.street} {location.houseNumber}</span></span>}
-                {location.district && <span className="truncate">District: <span className="text-slate-900 font-medium">{location.district}</span></span>}
-                {location.city && <span className="truncate">City: <span className="text-slate-900 font-medium">{location.city}</span></span>}
-                {location.state && <span className="truncate">State: <span className="text-slate-900 font-medium">{location.state}</span></span>}
-                {location.postcode && <span className="truncate">Postal: <span className="text-slate-900 font-medium">{location.postcode}</span></span>}
-                {location.country && <span className="truncate">Country: <span className="text-slate-900 font-medium">{location.country}</span></span>}
+                {location.street && <span className="truncate">{d.street || 'Street'}: <span className="text-slate-900 font-medium">{location.street} {location.houseNumber}</span></span>}
+                {location.district && <span className="truncate">{d.district || 'District'}: <span className="text-slate-900 font-medium">{location.district}</span></span>}
+                {location.city && <span className="truncate">{d.city || 'City'}: <span className="text-slate-900 font-medium">{location.city}</span></span>}
+                {location.state && <span className="truncate">{d.state || 'State'}: <span className="text-slate-900 font-medium">{location.state}</span></span>}
+                {location.postcode && <span className="truncate">{d.postal || 'Postcode'}: <span className="text-slate-900 font-medium">{location.postcode}</span></span>}
+                {location.country && <span className="truncate">{d.country || 'Country'}: <span className="text-slate-900 font-medium">{location.country}</span></span>}
               </div>
-              <span className="truncate mt-1 opacity-70 italic text-[10px]">Source: {getSourceLabel(location.source)} {location.provider && ` via ${location.provider}`}</span>
+              <span className="truncate mt-1 opacity-70 italic text-[10px]">{d.source || 'Source'}: {getSourceLabel(location.source)}{location.provider && ` ${d.via || 'via'} ${location.provider}`}</span>
             </div>
 
             {location.source === 'search' && (
@@ -63,7 +63,7 @@ export default function SelectedLocationCard({ location, onAutoFillMetadata, d =
                  </span>
                  {location.exactMatch === false && (
                     <span className="text-[10px] text-amber-600 font-medium mt-1">
-                       Exact house number was not found. Showing the closest available location.
+                       {d.houseNotFound || 'The exact house number was not found, so the closest available location is shown.'}
                     </span>
                  )}
               </div>
@@ -74,16 +74,16 @@ export default function SelectedLocationCard({ location, onAutoFillMetadata, d =
                     <button 
                         onClick={() => onAutoFillMetadata(location)}
                         className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white border border-slate-200 shadow-sm text-xs text-slate-600 hover:text-blue-600 hover:border-blue-200 rounded transition-colors"
-                        title="Copy address details into metadata fields"
+                        title={d.useLocDetailsTitle || 'Copy the address details into the metadata fields'}
                     >
                         <Copy className="w-3.5 h-3.5" />
-                        Use location details for metadata
+                        {d.useLocDetails || 'Use location details for metadata'}
                     </button>
                 </div>
             )}
             
             <p className="mt-3 text-[10px] text-slate-500 italic leading-snug">
-               Note: This location will be applied to all uploaded images. Per-image GPS editing will be available later as a Pro feature.
+               {d.applyAllNote || 'This location is applied to every uploaded photo. Setting a different location per photo is not currently available.'}
             </p>
         </div>
       </div>

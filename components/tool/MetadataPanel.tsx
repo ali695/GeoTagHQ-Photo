@@ -22,7 +22,7 @@ function formatBytes(bytes: number, decimals = 2) {
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 }
 
-export default function MetadataPanel({ metadata, onMetadataChange, d = {}, lang = 'en' }: MetadataPanelProps & { lang?: string }) {
+export default function MetadataPanel({ metadata, onMetadataChange, d = {}, lang = 'en', hasImage = true }: MetadataPanelProps & { lang?: string; hasImage?: boolean }) {
   const [copied, setCopied] = useState(false);
   const [editState, setEditState] = useState<Partial<ImageMetadata>>({});
   const [isGenerating, setIsGenerating] = useState(false);
@@ -283,7 +283,8 @@ export default function MetadataPanel({ metadata, onMetadataChange, d = {}, lang
   return (
     <div className="w-full flex flex-col gap-6">
       
-      {/* Current Metadata (Read-only) */}
+      {/* Current Metadata (Read-only): only once a real photo is loaded */}
+      {hasImage && (
       <details className="bg-slate-50 border border-slate-200 rounded-lg group">
         <summary className="font-bold text-slate-900 text-sm p-5 cursor-pointer flex items-center justify-between list-none [&::-webkit-details-marker]:hidden">
           {d.preview || 'Metadata Summary'}
@@ -299,8 +300,8 @@ export default function MetadataPanel({ metadata, onMetadataChange, d = {}, lang
             {metadata.gps ? (
               <div className="text-slate-600 ms-1 space-y-0.5">
                 <p>{d.gpsFound || 'Status: Found'}</p>
-                <p><span className="font-medium text-slate-700">Latitude:</span> {metadata.gps.lat >= 0 ? `${metadata.gps.lat.toFixed(6)}° N` : `${Math.abs(metadata.gps.lat).toFixed(6)}° S`}</p>
-                <p><span className="font-medium text-slate-700">Longitude:</span> {metadata.gps.lng >= 0 ? `${metadata.gps.lng.toFixed(6)}° E` : `${Math.abs(metadata.gps.lng).toFixed(6)}° W`}</p>
+                <p><span className="font-medium text-slate-700">{d.lat || 'Latitude'}:</span> {metadata.gps.lat >= 0 ? `${metadata.gps.lat.toFixed(6)}° N` : `${Math.abs(metadata.gps.lat).toFixed(6)}° S`}</p>
+                <p><span className="font-medium text-slate-700">{d.lng || 'Longitude'}:</span> {metadata.gps.lng >= 0 ? `${metadata.gps.lng.toFixed(6)}° E` : `${Math.abs(metadata.gps.lng).toFixed(6)}° W`}</p>
               </div>
             ) : (
               <div className="text-slate-600 ms-1">
@@ -314,11 +315,11 @@ export default function MetadataPanel({ metadata, onMetadataChange, d = {}, lang
           <div>
             <h5 className="font-semibold text-slate-800 mb-1">{d.imgDetails || 'Image Details'}</h5>
             <div className="text-slate-600 ms-1 space-y-0.5">
-              <p><span className="font-medium text-slate-700">{d.format || 'Format'}:</span> {metadata.format.split('/')[1]?.toUpperCase() || 'Unknown'}</p>
+              <p><span className="font-medium text-slate-700">{d.format || 'Format'}:</span> {metadata.format.split('/')[1]?.toUpperCase() || d.unknown || 'Unknown'}</p>
               {(metadata.width && metadata.height) ? (
                 <p><span className="font-medium text-slate-700">{d.dimensions || 'Dimensions'}:</span> {metadata.width} x {metadata.height}</p>
               ) : null}
-              <p><span className="font-medium text-slate-700">File Size:</span> {formatBytes(metadata.fileSize)}</p>
+              <p><span className="font-medium text-slate-700">{d.fileSize || 'File size'}:</span> {formatBytes(metadata.fileSize)}</p>
             </div>
           </div>
 
@@ -326,29 +327,30 @@ export default function MetadataPanel({ metadata, onMetadataChange, d = {}, lang
           <div>
             <h5 className="font-semibold text-slate-800 mb-1">{d.cameraInfo || 'Camera Info'}</h5>
             <div className="text-slate-600 ms-1 space-y-0.5">
-              <p><span className="font-medium text-slate-700">{d.make || 'Camera Make'}:</span> {metadata.cameraMake || 'Not available'}</p>
-              <p><span className="font-medium text-slate-700">{d.model || 'Camera Model'}:</span> {metadata.cameraModel || 'Not available'}</p>
-              <p><span className="font-medium text-slate-700">{d.date || 'Date Taken'}:</span> {metadata.dateTaken ? new Date(metadata.dateTaken).toLocaleString() : 'Not available'}</p>
+              <p><span className="font-medium text-slate-700">{d.make || 'Camera Make'}:</span> {metadata.cameraMake || d.notAvailable || 'Not available'}</p>
+              <p><span className="font-medium text-slate-700">{d.model || 'Camera Model'}:</span> {metadata.cameraModel || d.notAvailable || 'Not available'}</p>
+              <p><span className="font-medium text-slate-700">{d.date || 'Date Taken'}:</span> {metadata.dateTaken ? new Date(metadata.dateTaken).toLocaleString() : (d.notAvailable || 'Not available')}</p>
             </div>
           </div>
           
           {/* Local SEO Metadata Viewer */}
           {(metadata.title || metadata.description || metadata.keywords || metadata.businessName || metadata.city || metadata.district || metadata.country) ? (
             <div>
-              <h5 className="font-semibold text-slate-800 mb-1">Local SEO Metadata</h5>
+              <h5 className="font-semibold text-slate-800 mb-1">{d.seoSummary || 'Local SEO metadata'}</h5>
               <div className="text-slate-600 ms-1 space-y-0.5 break-words">
-                {metadata.title && <p><span className="font-medium text-slate-700">Title:</span> {metadata.title}</p>}
-                {metadata.description && <p><span className="font-medium text-slate-700">Description:</span> {metadata.description}</p>}
-                {metadata.keywords && <p><span className="font-medium text-slate-700">Keywords:</span> {metadata.keywords}</p>}
-                {metadata.businessName && <p><span className="font-medium text-slate-700">Business Name:</span> {metadata.businessName}</p>}
-                {metadata.city && <p><span className="font-medium text-slate-700">City:</span> {metadata.city}</p>}
-                {metadata.district && <p><span className="font-medium text-slate-700">District:</span> {metadata.district}</p>}
-                {metadata.country && <p><span className="font-medium text-slate-700">Country:</span> {metadata.country}</p>}
+                {metadata.title && <p><span className="font-medium text-slate-700">{d.title || 'Title'}:</span> {metadata.title}</p>}
+                {metadata.description && <p><span className="font-medium text-slate-700">{d.desc || 'Description'}:</span> {metadata.description}</p>}
+                {metadata.keywords && <p><span className="font-medium text-slate-700">{d.keywords || 'Keywords'}:</span> {metadata.keywords}</p>}
+                {metadata.businessName && <p><span className="font-medium text-slate-700">{d.business || 'Business name'}:</span> {metadata.businessName}</p>}
+                {metadata.city && <p><span className="font-medium text-slate-700">{d.city || 'City'}:</span> {metadata.city}</p>}
+                {metadata.district && <p><span className="font-medium text-slate-700">{d.district || 'District'}:</span> {metadata.district}</p>}
+                {metadata.country && <p><span className="font-medium text-slate-700">{d.country || 'Country'}:</span> {metadata.country}</p>}
               </div>
             </div>
           ) : null}
         </div>
       </details>
+      )}
 
       <div className="w-full">
         <section className="bg-white border-2 border-blue-100 rounded-2xl p-6 shadow-sm">
